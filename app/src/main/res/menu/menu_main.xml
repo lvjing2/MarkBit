@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.liwn.zzl.markbit.MainActivity">
+
+        <item
+            android:id="@+id/menu_connect_device"
+            android:title="@string/menu_connect_device"/>
+        <item
+            android:id="@+id/menu_marks_management"
+            android:title="@string/marks_management"/>
+
+    </menu>
