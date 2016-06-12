@@ -49,6 +49,7 @@ import java.util.Date;
 @SuppressLint("NewApi")
 public abstract class FileIO {
 
+    private static final String TAG = FileIO.class.getSimpleName();
     private static File MEDIA_FILE = null;
     private static final int BUFFER_SIZE = 1024;
     public static final String default_prefix = "mark";
@@ -427,6 +428,12 @@ public abstract class FileIO {
     }
 
     public static File getFile(Uri uri) {
+        Log.d(TAG, "uri.getPath(): " + uri.getPath() + "; uri.getAuthority(): " + uri.getAuthority());
+        int i = 0;
+        i++;
+
+        boolean isMediaFile = "media".equalsIgnoreCase(uri.getAuthority());
+
         return new File(uri.getPath());
     }
 

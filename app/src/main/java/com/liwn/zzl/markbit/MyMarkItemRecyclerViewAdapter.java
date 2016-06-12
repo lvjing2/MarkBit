@@ -1,7 +1,10 @@
 package com.liwn.zzl.markbit;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -38,8 +41,8 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mImgView.setImageBitmap(mValues.get(position).img);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(String.valueOf(mValues.get(position).position));
+        holder.mNameView.setText(mValues.get(position).name);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +50,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onMarkItemFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -58,11 +61,12 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+
         public final View mView;
         public final ImageView mImgView;
         public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mNameView;
         public DummyItem mItem;
 
         public ViewHolder(View view) {
@@ -70,12 +74,31 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
             mView = view;
             mImgView = (ImageView) view.findViewById(R.id.markItem_img);
             mIdView = (TextView) view.findViewById(R.id.markItem_id);
-            mContentView = (TextView) view.findViewById(R.id.markItem_content);
+            mNameView = (TextView) view.findViewById(R.id.markItem_name);
+            view.setOnCreateContextMenuListener(this);
         }
 
         @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.delete_mark).setOnMenuItemClickListener(mOnMenu1ClickListener);
+            menu.add(Menu.NONE, MarkItemFragment.MENU2, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu2ClickListener);
         }
+
+        private final MenuItem.OnMenuItemClickListener mOnMenu1ClickListener = new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // TODO: add the menu1 procedure
+                return false;
+            }
+        };
+
+        private final MenuItem.OnMenuItemClickListener mOnMenu2ClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // TODO: add the menu2 procedure
+                return false;
+            }
+        };
     }
 }

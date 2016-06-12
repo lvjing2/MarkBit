@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_sendfile"
+    tools:context="com.liwn.zzl.markbit.SendFileFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <!--<ProgressBar-->
+        <!--android:id="@+id/send_file_progressbar"-->
+        <!--style="@android:style/Widget.ProgressBar.Horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
+        <Button
+            android:id="@+id/bt_file_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_and_send"/>
+    </LinearLayout>
+
+</FrameLayout>

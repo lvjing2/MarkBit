@@ -25,4 +25,22 @@
     <string name="copy">Copy saved</string>
     <string name="more">More</string>
 
+    <string name="delete_mark">delete this mark</string>
+    <string name="add_new_mark_by_this">add new mark by this mark</string>
+    <string name="send_file">send file by bluetooth</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="choose_and_send">choose file and send</string>
+    <string name="send_file_result_succeed">send file result succeed!</string>
+    <string name="file_sending_title">file sending...</string>
+    <string name="file_sending_msg">file send progress...</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bluetooth_not_available">Bluetooth is not available!</string>
+    <string name="unknown_device">unknown device</string>
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for devices</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving MarkBit.</string>
+
 </resources>

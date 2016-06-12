@@ -2,6 +2,7 @@ package com.liwn.zzl.markbit;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,9 @@ import com.liwn.zzl.markbit.dummy.DummyContent.DummyItem;
  * interface.
  */
 public class MarkItemFragment extends Fragment {
+
+    public static final int MENU1 = 1;
+    public static final int MENU2 = 2;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -49,7 +53,7 @@ public class MarkItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
 
@@ -68,10 +72,17 @@ public class MarkItemFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new MyMarkItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setSelected(true);
         }
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getActivity().setTitle(R.string.marks_management);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -90,9 +101,6 @@ public class MarkItemFragment extends Fragment {
         mListener = null;
     }
 
-
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -105,7 +113,7 @@ public class MarkItemFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onMarkItemFragmentInteraction(DummyItem item);
     }
 
 

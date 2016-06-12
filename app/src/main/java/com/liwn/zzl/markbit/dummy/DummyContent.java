@@ -7,6 +7,7 @@ import com.liwn.zzl.markbit.MarkBitApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class DummyContent {
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static final Map<Integer, DummyItem> ITEM_MAP = new HashMap<Integer, DummyItem>();
 
     private static final int COUNT = 6;
 
@@ -35,49 +36,39 @@ public class DummyContent {
 
         for (int i = 1; i <= COUNT; i++) {
 
-            Bitmap img = Bitmap.createBitmap(MarkBitApplication.BIT_LCD_WIDTH, MarkBitApplication.BIT_LCD_HEIGHT, Bitmap.Config.ARGB_8888);
+            Bitmap img = Bitmap.createBitmap(2*MarkBitApplication.BIT_LCD_WIDTH, 2*MarkBitApplication.BIT_LCD_HEIGHT, Bitmap.Config.ARGB_8888);
             img.eraseColor(Color.RED);
-            addItem(createDummyItem(i, img));
+            addItem(createDummyItem(i, i, i, "v1.0", img, "Item " + i));
         }
     }
 
     private static void addItem(DummyItem item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+        ITEM_MAP.put(item.position, item);
     }
 
-    private static DummyItem createDummyItem(int position, Bitmap img) {
-        return new DummyItem(String.valueOf(position), img, "Item " + position, makeDetails(position));
-    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
-        return builder.toString();
+    private static DummyItem createDummyItem(int position, int control_id, int server_id, String version, Bitmap img, String name) {
+        return new DummyItem(position, control_id, server_id, version, img, name);
     }
 
     /**
      * A dummy item representing a piece of content.
      */
     public static class DummyItem {
-        public final String id;
+        public final int position;
+        public final int control_id;
+        public final int server_id;
+        public final String version;
         public final Bitmap img;
-        public final String content;
-        public final String details;
+        public final String name;
 
-        public DummyItem(String id, Bitmap img,String content, String details) {
-            this.id = id;
+        public DummyItem(int position, int control_id, int server_id, String version, Bitmap img, String name) {
+            this.position = position;
+            this.control_id = control_id;
+            this.server_id = server_id;
+            this.version = version;
             this.img = img;
-            this.content = content;
-            this.details = details;
-        }
-
-        @Override
-        public String toString() {
-            return content;
+            this.name = name;
         }
     }
 }
