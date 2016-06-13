@@ -260,9 +260,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         // start send file
         try {
-            Log.d(TAG, "uri.getPath(): " + uri.getPath() + "; uri.getAuthority(): " + uri.getAuthority());
-//            File fileTmp = FileIO.getFile(uri);
-            file = new RandomAccessFile(FileIO.getFile(uri), "r");
+            file = new RandomAccessFile(FileIO.getFile(this, uri), "r");
             if (file != null) {
                 int allBytes = 0;
                 try {
