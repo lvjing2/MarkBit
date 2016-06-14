@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +23,9 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -57,13 +60,20 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private String mConnectedDeviceName = null;
     private String mDeviceAddress;
 
+    private int clickedIndex;
+    private int currentIndex;
+    private SendFileFragment mSendFileFragment;
+    private MarkItemFragment mMarkItemFragment;
+    private Fragment[] mFragments;
+    private Button[] mTabs;
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private SmartFragmentStatePagerAdapter mSmartFragmentStatePagerAdapter;
-    private ViewPager mViewPager;
+//    private SmartFragmentStatePagerAdapter mSmartFragmentStatePagerAdapter;
+//    private ViewPager mViewPager;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -118,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 isBluetoothConnected = true;
                 mConnectedDeviceName = intent.getStringExtra(MarkBitApplication.DEVICE_NAME);
                 bluetoothStatus.setImageResource(R.drawable.ic_bluetooth_connected);
-                ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).setFileSendButtonAble(true);
+                mSendFileFragment.enableBT();
 
                 Log.d(TAG, "broadcastReceiver connected " + mConnectedDeviceName);
                 Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -126,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 isBluetoothConnected = false;
                 bluetoothStatus.setImageResource(R.drawable.ic_bluetooth_disconnected);
                 mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
-                ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).setFileSendButtonAble(false);
+                mSendFileFragment.disableBT();
 
                 Log.d(TAG, "broadcastReceiver disconnected");
                 Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -164,6 +174,53 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         unregisterReceiver(mGattUpdateReceiver);
     }
 
+    public void onTabClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_send_file:
+                clickedIndex = 0;
+                break;
+            case R.id.btn_mark_management:
+                clickedIndex = 1;
+                break;
+            case R.id.btn_draw_mark:
+                clickedIndex = 2;
+                break;
+        }
+
+        if (currentIndex != clickedIndex) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.hide(mFragments[currentIndex]);
+            if (!mFragments[clickedIndex].isAdded()) {
+                ft.add(R.id.fragment_container, mFragments[clickedIndex]);
+            }
+            ft.show(mFragments[clickedIndex]).commit();
+        }
+
+        mTabs[currentIndex].setSelected(false);
+        // 把当前tab设为选中状态
+        mTabs[clickedIndex].setSelected(true);
+        currentIndex = clickedIndex;
+    }
+
+    private void initView() {
+        mTabs = new Button[3];
+        mTabs[0] = (Button) findViewById(R.id.btn_send_file);
+        mTabs[1] = (Button) findViewById(R.id.btn_mark_management);
+        mTabs[2] = (Button) findViewById(R.id.btn_draw_mark);
+        mTabs[0].setSelected(true);
+
+        mSendFileFragment = new SendFileFragment();
+        mMarkItemFragment = new MarkItemFragment();
+        mFragments = new Fragment [] {mSendFileFragment, mMarkItemFragment, mMarkItemFragment};
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.hide(mFragments[currentIndex]);
+        if (!mFragments[clickedIndex].isAdded()) {
+            ft.add(R.id.fragment_container, mFragments[clickedIndex]);
+        }
+        ft.show(mFragments[clickedIndex]).commit();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,11 +233,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
 
-        mSmartFragmentStatePagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSmartFragmentStatePagerAdapter);
+        initView();
 
         bluetoothStatus = (ImageButton) findViewById(R.id.icon_bluetooth_status);
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -266,7 +319,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).initProgressBar(allBytes);
+//                ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).initProgressBar(allBytes);
+                mSendFileFragment.initProgressBar(allBytes);
 
                 isFileFinished = false;
                 isFileStartSend = true;
@@ -310,82 +364,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 break;
         }
 
-    }
-
-    /*
-   Extension of FragmentStatePagerAdapter which intelligently caches
-   all active fragments and manages the fragment lifecycles.
-   Usage involves extending from SmartFragmentStatePagerAdapter as you would any other PagerAdapter.
-*/
-    public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
-        // Sparse array to keep track of registered fragments in memory
-        private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
-
-        public SmartFragmentStatePagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        // Register the fragment when the item is instantiated
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            registeredFragments.put(position, fragment);
-            return fragment;
-        }
-
-        // Unregister when the item is inactive
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            registeredFragments.remove(position);
-            super.destroyItem(container, position, object);
-        }
-
-        // Returns the fragment for the position (if instantiated)
-        public Fragment getRegisteredFragment(int position) {
-            return registeredFragments.get(position);
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends SmartFragmentStatePagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            switch (position) {
-                case 0:
-                    return SendFileFragment.newInstance(position);
-                case 1:
-                    return MarkItemFragment.newInstance(position);
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 0";
-                case 1:
-                    return "SECTION 1";
-            }
-            return null;
-        }
     }
 
     private void connectDevice(Intent data) {
@@ -437,7 +415,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         // file is not finished, so keep sending
         if (isFileStartSend && !isFileFinished) {
 
-            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).setProgressBarNum((address + 1) * diff);
+//            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).setProgressBarNum((address + 1) * diff);
+            mSendFileFragment.setProgressBarNum((address + 1) * diff);
 
             try {
                 file.seek(diff * address);
@@ -457,7 +436,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             sendMessage(sendBytes);
         } else if (isFileStartSend && isFileFinished){
 
-            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).destroyProgressBar();
+//            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).destroyProgressBar();
+            mSendFileFragment.destroyProgressBar();
 
             Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
             isFileStartSend = false;

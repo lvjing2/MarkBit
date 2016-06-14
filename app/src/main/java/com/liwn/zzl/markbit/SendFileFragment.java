@@ -35,13 +35,19 @@ public class SendFileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Button btFileSend;
     private Context activityContext = null;
     private static final String TAG = SendFileFragment.class.getSimpleName();
     private ProgressDialog dialog;
 
-    public void setFileSendButtonAble(boolean isEnable) {
-        btFileSend.setEnabled(isEnable);
+    private Button btFileSend;
+    private boolean isBTConnected;
+
+    public void enableBT() {
+        isBTConnected = true;
+    }
+
+    public void disableBT() {
+        isBTConnected = false;
     }
 
     public SendFileFragment() {
@@ -79,19 +85,23 @@ public class SendFileFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_sendfile, container, false);
 
         btFileSend = (Button) mView.findViewById(R.id.bt_file_send);
-        btFileSend.setEnabled(false);
         btFileSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.setType("file/*.bin");
-                i.addCategory(Intent.CATEGORY_OPENABLE);
 
-                try {
-                    startActivityForResult(i, REQUEST_CODE_CHOOSE_FILE);
-                } catch (android.content.ActivityNotFoundException e) {
-                    Toast.makeText(activityContext, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                if (isBTConnected) {
+                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                    i.setType("file/*.bin");
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+
+                    try {
+                        startActivityForResult(i, REQUEST_CODE_CHOOSE_FILE);
+                    } catch (android.content.ActivityNotFoundException e) {
+                        Toast.makeText(activityContext, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
                 }
             }
         });
