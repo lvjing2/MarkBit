@@ -8,38 +8,129 @@
     android:fitsSystemWindows="true"
     tools:context="com.liwn.zzl.markbit.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/appbar_padding_top"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/appbar_padding_top"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <ImageButton
+                    android:id="@+id/icon_bluetooth_status"
+                    android:layout_gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@color/color_transparent"
+                    android:src="@drawable/ic_bluetooth_disconnected"/>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:id="@+id/main_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_alignParentBottom="true"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
 
-            <ImageButton
-                android:id="@+id/icon_bluetooth_status"
-                android:layout_gravity="right"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:background="@color/color_transparent"
-                android:src="@drawable/ic_bluetooth_disconnected"/>
+            <RelativeLayout
+                android:id="@+id/btn_container_send_file"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
 
-        </android.support.v7.widget.Toolbar>
+                <Button
+                    android:id="@+id/btn_send_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/em_main_bottom_item_bg"
+                    android:drawableTop="@drawable/em_tab_chat_bg"
+                    android:onClick="onTabClicked"
+                    android:paddingBottom="2dip"
+                    android:paddingTop="7dip"
+                    android:scaleType="matrix"
+                    android:text="@string/send_file"
+                    android:textColor="@color/main_botton_text_color"
+                    android:textSize="12sp" />
 
-    </android.support.design.widget.AppBarLayout>
+            </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            <RelativeLayout
+                android:id="@+id/btn_container_mark_management"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                <Button
+                    android:id="@+id/btn_mark_management"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/em_main_bottom_item_bg"
+                    android:drawableTop="@drawable/em_tab_contact_list_bg"
+                    android:onClick="onTabClicked"
+                    android:paddingBottom="2dip"
+                    android:paddingTop="7dip"
+                    android:scaleType="matrix"
+                    android:text="@string/marks_management"
+                    android:textColor="@color/main_botton_text_color"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btn_container_draw_mark"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                <Button
+                    android:id="@+id/btn_draw_mark"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/em_main_bottom_item_bg"
+                    android:drawableTop="@drawable/em_tab_setting_bg"
+                    android:onClick="onTabClicked"
+                    android:paddingBottom="2dip"
+                    android:paddingTop="7dip"
+                    android:scaleType="matrix"
+                    android:text="@string/draw_mark"
+                    android:textColor="@color/main_botton_text_color"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/main_bottom"
+            android:layout_below="@id/appbar"
+            android:layout_marginTop="5dp">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>
