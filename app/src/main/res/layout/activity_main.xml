@@ -121,13 +121,6 @@
             android:layout_above="@id/main_bottom"
             android:layout_below="@id/appbar"
             android:layout_marginTop="5dp">
-
-            <!--<android.support.v4.view.ViewPager-->
-                <!--android:id="@+id/container"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
-
         </RelativeLayout>
     </RelativeLayout>
 

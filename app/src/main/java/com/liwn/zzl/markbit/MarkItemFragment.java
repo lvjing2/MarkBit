@@ -1,6 +1,8 @@
 package com.liwn.zzl.markbit;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,8 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.liwn.zzl.markbit.dummy.DummyContent;
-import com.liwn.zzl.markbit.dummy.DummyContent.DummyItem;
+import com.liwn.zzl.markbit.mark.DummyContent.DummyItem;
+import com.liwn.zzl.markbit.mark.MyMarkItemRecyclerViewAdapter;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * A fragment representing a list of Items.
@@ -57,6 +64,37 @@ public class MarkItemFragment extends Fragment {
         }
     }
 
+    private void loadData() {
+        File[] marks = FileIO.getFiles();
+        for (int i = 0; i < marks.length; ++i) {
+            File mark = marks[i];
+            String fileName = mark.getName().split("\\.")[0];
+            String[] fileInfos = fileName.split("_");
+            String tag;
+            int id;
+            String date;
+            String filePath = mark.getAbsolutePath();
+            if (fileInfos.length >= 4) {
+                id = Integer.valueOf(fileInfos[1]);
+                date = fileInfos[2];
+                tag = fileInfos[3];
+            } else {
+                id = Integer.valueOf(FileIO.default_num);
+                date = FileIO.default_date;
+                tag = FileIO.default_tag;
+            }
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(mark);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, MarkBitApplication.opts);
+                MarkBitApplication.dummyContent.setDummyContentItem(id, id, id, false, false, "v0.0", bitmap, filePath);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,7 +109,10 @@ public class MarkItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMarkItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+
+            loadData();
+            recyclerView.setAdapter(new MyMarkItemRecyclerViewAdapter(MarkBitApplication.dummyContent.ITEM_MAP, mListener));
             recyclerView.setSelected(true);
         }
         return view;

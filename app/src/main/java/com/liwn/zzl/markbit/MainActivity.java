@@ -8,35 +8,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.liwn.zzl.markbit.bluetooth.BluetoothLeService;
 import com.liwn.zzl.markbit.bluetooth.DeviceListActivity;
-import com.liwn.zzl.markbit.dummy.DummyContent;
+import com.liwn.zzl.markbit.mark.DummyContent;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -45,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
+    private static final String PREFERENCE = "PREFERENCE";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -103,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private byte[] sendBytes;
     private boolean isFileStartSend = false;
     private boolean isFileFinished = false;
+    private String marksFolderName = FileIO.default_prefix;;
 
     @Override
     protected void onResume() {
@@ -221,10 +221,50 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         ft.show(mFragments[clickedIndex]).commit();
     }
 
+    private void copyBitmapsFromAsset2External() {
+        FileIO.deleteAllFiles();
+
+        AssetManager assetManager = getAssets();
+        InputStream is;
+        try {
+            String[] files = assetManager.list(marksFolderName);
+            if (files != null) {
+                for (String filename : files) {
+                    is = assetManager.open(marksFolderName + "/" + filename);
+                    FileIO.copyStream(this, is, filename);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // if first run
+        if (getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true)) {
+            getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean("isFirstRun", false).commit();
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        boolean isFirstRun = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true);
+        if (isFirstRun) {
+            copyBitmapsFromAsset2External();
+        }
+
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

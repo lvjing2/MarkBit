@@ -1,4 +1,4 @@
-package com.liwn.zzl.markbit;
+package com.liwn.zzl.markbit.mark;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.liwn.zzl.markbit.MarkItemFragment;
 import com.liwn.zzl.markbit.MarkItemFragment.OnListFragmentInteractionListener;
-import com.liwn.zzl.markbit.dummy.DummyContent.DummyItem;
+import com.liwn.zzl.markbit.R;
+import com.liwn.zzl.markbit.mark.DummyContent.DummyItem;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -22,10 +24,10 @@ import java.util.List;
  */
 public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final Map<Integer, DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyMarkItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyMarkItemRecyclerViewAdapter(Map<Integer, DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -42,7 +44,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         holder.mItem = mValues.get(position);
         holder.mImgView.setImageBitmap(mValues.get(position).img);
         holder.mIdView.setText(String.valueOf(mValues.get(position).position));
-        holder.mNameView.setText(mValues.get(position).name);
+        holder.mNameView.setText(mValues.get(position).filePath);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

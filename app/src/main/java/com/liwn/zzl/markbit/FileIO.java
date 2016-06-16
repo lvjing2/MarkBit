@@ -225,9 +225,7 @@ public abstract class FileIO {
                 Environment.MEDIA_MOUNTED)) {
             MEDIA_FILE = new File(
                     Environment.getExternalStorageDirectory(),
-                    "/"
-                            + MarkBitApplication.applicationContext
-                            .getString(R.string.ext_storage_directory_name) + "/");
+                    "/" + MarkBitApplication.applicationContext.getString(R.string.ext_storage_directory_name) + "/");
         } else {
             return false;
         }
@@ -425,7 +423,7 @@ public abstract class FileIO {
     }
 
     public static void copyStream(Context context, InputStream inputStream, String fileNamePrefix) throws IOException {
-        File outFile = createNewEmptyPictureFile(context, getDefaultFileNameByPrefix(fileNamePrefix));
+        File outFile = createNewEmptyPictureFile(context, fileNamePrefix);
         OutputStream outputStream = new FileOutputStream(outFile);
         copyStream(inputStream, outputStream);
     }

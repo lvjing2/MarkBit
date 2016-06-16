@@ -34,6 +34,8 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.widget.ImageView;
 
+import com.liwn.zzl.markbit.mark.DummyContent;
+
 public class MarkBitApplication extends Application {
 	public static final String TAG = "PAINTROID";
 	public static final int BIT_LCD_WIDTH = 48;
@@ -54,6 +56,7 @@ public class MarkBitApplication extends Application {
 	public static final int MARK_STORAGE_NUM = 128;
 	public static StringBuilder markStorageMask = new StringBuilder(MARK_STORAGE_NUM);
 //	public static ArrayList<MarkItem> markItemList = new ArrayList<MarkItem>();
+	public static DummyContent dummyContent;
 	public static int markID1 = -2;
 	public static int markID2 = -2;
 
@@ -84,6 +87,7 @@ public class MarkBitApplication extends Application {
 		super.onCreate();
 		applicationContext = getApplicationContext();
 		opts = getOpts();
+		dummyContent = new DummyContent();
 //		commandManager = new CommandManagerImplementation();
 //		outPreview = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.out_preview);
 	}
