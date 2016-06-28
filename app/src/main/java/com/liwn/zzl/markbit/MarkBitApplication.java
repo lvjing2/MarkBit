@@ -34,7 +34,11 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.widget.ImageView;
 
+import com.liwn.zzl.markbit.command.CommandManager;
 import com.liwn.zzl.markbit.mark.DummyContent;
+import com.liwn.zzl.markbit.tools.Tool;
+import com.liwn.zzl.markbit.ui.DrawingSurface;
+import com.liwn.zzl.markbit.ui.Perspective;
 
 public class MarkBitApplication extends Application {
 	public static final String TAG = "PAINTROID";
@@ -56,6 +60,7 @@ public class MarkBitApplication extends Application {
 	public static final int MARK_STORAGE_NUM = 128;
 	public static StringBuilder markStorageMask = new StringBuilder(MARK_STORAGE_NUM);
 //	public static ArrayList<MarkItem> markItemList = new ArrayList<MarkItem>();
+	public static Bitmap defaultBitmap;
 	public static DummyContent dummyContent;
 	public static int markID1 = -2;
 	public static int markID2 = -2;
@@ -66,10 +71,10 @@ public class MarkBitApplication extends Application {
 	public static final String TOAST = "toast";
 
 	public static Context applicationContext;
-//	public static DrawingSurface drawingSurface;
-//	public static CommandManager commandManager;
-//	public static Tool currentTool;
-//	public static Perspective perspective;
+	public static DrawingSurface drawingSurface;
+	public static CommandManager commandManager;
+	public static Tool currentTool;
+	public static Perspective perspective;
 	public static boolean openedFromCatroid = false;
 	public static String catroidPicturePath;
 	public static boolean isPlainImage = true;
@@ -88,6 +93,9 @@ public class MarkBitApplication extends Application {
 		applicationContext = getApplicationContext();
 		opts = getOpts();
 		dummyContent = new DummyContent();
+		defaultBitmap = Bitmap.createBitmap(2*MarkBitApplication.BIT_LCD_WIDTH, 2*MarkBitApplication.BIT_LCD_HEIGHT, Bitmap.Config.ARGB_8888);
+		defaultBitmap.eraseColor(Color.BLACK);
+//		defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_add_mark, opts);
 //		commandManager = new CommandManagerImplementation();
 //		outPreview = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.out_preview);
 	}
@@ -113,6 +121,7 @@ public class MarkBitApplication extends Application {
 			opts.inTargetDensity = getResources().getDisplayMetrics().densityDpi;
 		}
 
+		opts.inMutable = true;
 		return opts;
 	}
 

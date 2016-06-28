@@ -56,17 +56,17 @@ public class BluetoothLeService extends Service {
     public static final int STATE_CONNECTED = 2;
 
     public final static String ACTION_GATT_CONNECTED =
-            "org.catrobat.paintroid.bluetooth.ACTION_GATT_CONNECTED";
+            "com.liwn.zzl.markbit.bluetooth.ACTION_GATT_CONNECTED";
     public final static String ACTION_GATT_DISCONNECTED =
-            "org.catrobat.paintroid.bluetooth.ACTION_GATT_DISCONNECTED";
+            "com.liwn.zzl.markbit.bluetooth.ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_CONNECTING =
-            "org.catrobat.paintroid.bluetooth.ACTION_GATT_CONNECTING";
+            "com.liwn.zzl.markbit.bluetooth.ACTION_GATT_CONNECTING";
     public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "org.catrobat.paintroid.bluetooth.ACTION_GATT_SERVICES_DISCOVERED";
+            "com.liwn.zzl.markbit.bluetooth.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE =
-            "org.catrobat.paintroid.bluetooth.ACTION_DATA_AVAILABLE";
+            "com.liwn.zzl.markbit.bluetooth.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
-            "org.catrobat.paintroid.bluetooth.EXTRA_DATA";
+            "com.liwn.zzl.markbit.bluetooth.EXTRA_DATA";
 
 
 //    public final static UUID UUID_HEART_RATE_MEASUREMENT =

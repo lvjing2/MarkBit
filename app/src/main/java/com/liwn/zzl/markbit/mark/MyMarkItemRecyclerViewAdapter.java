@@ -1,5 +1,9 @@
 package com.liwn.zzl.markbit.mark;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -9,7 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.liwn.zzl.markbit.DrawActivity;
+import com.liwn.zzl.markbit.FileIO;
+import com.liwn.zzl.markbit.MarkBitApplication;
 import com.liwn.zzl.markbit.MarkItemFragment;
 import com.liwn.zzl.markbit.MarkItemFragment.OnListFragmentInteractionListener;
 import com.liwn.zzl.markbit.R;
@@ -26,8 +34,10 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
 
     private final Map<Integer, DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private Context mContext;
 
-    public MyMarkItemRecyclerViewAdapter(Map<Integer, DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyMarkItemRecyclerViewAdapter(Context context, Map<Integer, DummyItem> items, OnListFragmentInteractionListener listener) {
+        mContext = context;
         mValues = items;
         mListener = listener;
     }
@@ -42,9 +52,9 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mImgView.setImageBitmap(mValues.get(position).img);
-        holder.mIdView.setText(String.valueOf(mValues.get(position).position));
-        holder.mNameView.setText(mValues.get(position).filePath);
+        holder.mImgView.setImageBitmap(mValues.get(position).getImg());
+        holder.mIdView.setText(String.valueOf(mValues.get(position).getPosition()));
+        holder.mNameView.setText(mValues.get(position).getFilePath());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,25 +92,69 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.delete_mark).setOnMenuItemClickListener(mOnMenu1ClickListener);
-            menu.add(Menu.NONE, MarkItemFragment.MENU2, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu2ClickListener);
+            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.edit_mark).setOnMenuItemClickListener(mOnEditClickListener);
+            menu.add(Menu.NONE, MarkItemFragment.MENU2, 0, R.string.replace_mark).setOnMenuItemClickListener(mOnReplaceClickListener);
+            if (mItem.isEmpty() == false) {
+                // this item is valued
+                menu.add(Menu.NONE, MarkItemFragment.MENU3, 0, R.string.delete_mark).setOnMenuItemClickListener(mOnDeleteClickListener);
+            }
         }
 
-        private final MenuItem.OnMenuItemClickListener mOnMenu1ClickListener = new MenuItem.OnMenuItemClickListener() {
+        private final MenuItem.OnMenuItemClickListener mOnEditClickListener = new MenuItem.OnMenuItemClickListener() {
 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // TODO: add the menu1 procedure
+                Intent i = new Intent(mContext, DrawActivity.class);
+                i.putExtra("baseMarkPath", mItem.getFilePath());
+                ((Activity) mContext).startActivityForResult(i, MarkItemFragment.REQUEST_CODE_EDIT_MARK);
                 return false;
             }
         };
 
-        private final MenuItem.OnMenuItemClickListener mOnMenu2ClickListener = new MenuItem.OnMenuItemClickListener() {
+        private final MenuItem.OnMenuItemClickListener mOnReplaceClickListener = new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // TODO: add the menu2 procedure
+
+                Uri uri = Uri.parse(FileIO.getMediaFolderName());
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.setDataAndType(uri, "file/*");
+                i.putExtra("position",          mItem.getPosition());
+                i.putExtra("is_empty",          mItem.isEmpty());
+                i.putExtra("control_id",        mItem.getControlId());
+                i.putExtra("server_id",         mItem.getServerId());
+                i.putExtra("is_control_synced", mItem.isControlSynced());
+                i.putExtra("is_server_synced",  mItem.isServerSynced());
+                i.putExtra("version",           mItem.getVersion());
+                i.putExtra("date",              mItem.getDate());
+                i.putExtra("tag",               mItem.getTag());
+                i.putExtra("filePath",          mItem.getFilePath());
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+
+                try {
+                    ((Activity) mContext).startActivityForResult(i, MarkItemFragment.REQUEST_CODE_REPLACE_MARK);
+                } catch (android.content.ActivityNotFoundException e) {
+                    Toast.makeText(mContext, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
                 return false;
             }
         };
+
+        private final MenuItem.OnMenuItemClickListener mOnDeleteClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                mItem.setEmpty(true);
+                FileIO.deleteFileByPath(mItem.getFilePath());
+//                FileIO.saveBitmap(MarkBitApplication.applicationContext, MarkBitApplication.defaultBitmap, mItem.getFilePath());
+                mItem.setImg(MarkBitApplication.defaultBitmap);
+                notifyDataSetChanged();
+
+                return true;
+            }
+        };
     }
+
 }

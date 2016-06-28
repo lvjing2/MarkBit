@@ -432,6 +432,16 @@ public abstract class FileIO {
         return new File(getPath(context, uri));
     }
 
+    public static String getFileExtension(String filePath) {
+        String extension = "";
+        int i = filePath.lastIndexOf('.');
+        if (i > 0) {
+            extension = filePath.substring(i+1);
+        }
+
+        return  extension;
+    }
+
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -607,6 +617,18 @@ public abstract class FileIO {
             }
         }
         return null;
+    }
+
+    public static boolean deleteFileByPath(String path) {
+        File file = new File(path);
+        if (file != null) {
+            if (file.delete()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     public static boolean deleteFileByID(int id) {
