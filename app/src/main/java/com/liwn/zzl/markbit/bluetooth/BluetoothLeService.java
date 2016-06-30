@@ -410,6 +410,7 @@ public class BluetoothLeService extends Service {
 
         Log.d(TAG, "writeCharacteristic: " + bytesToHexString(bytesValue));
         mNotifyCharacteristic.setValue(bytesValue);
+        mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mBluetoothGatt.writeCharacteristic(mNotifyCharacteristic);
 
         return true;

@@ -3,6 +3,7 @@ package com.liwn.zzl.markbit;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -165,6 +166,14 @@ public class SendFileFragment extends Fragment {
         dialog.setMax(max);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setIndeterminate(false);
+        dialog.setCancelable(false);
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancle), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                mListener.cancleFileSend();
+            }
+        });
         dialog.show();
     }
 
@@ -196,6 +205,7 @@ public class SendFileFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void sendFileFromUriByBT(Uri uri);
+        void cancleFileSend();
     }
 
 

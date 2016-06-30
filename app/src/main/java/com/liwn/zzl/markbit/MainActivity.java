@@ -10,11 +10,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +40,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements MarkItemFragment.OnListFragmentInteractionListener, SendFileFragment.OnFragmentInteractionListener {
 
@@ -58,6 +62,12 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private BluetoothLeService mBluetoothLeService = null;
     private String mConnectedDeviceName = null;
     private String mDeviceAddress;
+    private boolean isTimerStart = false;
+    private Timer timer;
+    private TimerTask timerTask;
+    private boolean isPackageSendSuccessed;
+    private int isResendCount = 0;
+    private AsyncTaskReadProcess sendAsyncTask;
 
     private int clickedIndex;
     private int currentIndex;
@@ -96,13 +106,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private boolean isBluetoothConnected;
     private int address;
-    private RandomAccessFile file;
+    private File file;
+    private RandomAccessFile randomAccessFile;
     private OutputStream outputStream;
     private final int diff = 32;
     private byte[] sendBytes;
     private boolean isFileStartSend = false;
     private boolean isFileFinished = false;
-    private String marksFolderName = FileIO.default_prefix;;
+    private boolean isFileCancled = false;
+    private String marksFolderName = FileIO.default_prefix;
 
     @Override
     protected void onResume() {
@@ -138,12 +150,23 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
                 mSendFileFragment.disableBT();
 
+                if (isTimerStart) {
+                    timer.cancel();
+                    isTimerStart = false;
+                    isResendCount = 0;
+                }
                 Log.d(TAG, "broadcastReceiver disconnected");
                 Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_CONNECTING.equals(action)) {
                 Log.d(TAG, "broadcastReceiver connecting");
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 breakAndCheck();
 
@@ -152,7 +175,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Log.d(TAG, "in action data available");
                 String recString = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 Log.d(TAG, "receive bytes: " + recString);
-                byte[] recBytes = hexStringToByteArray(recString);
+                final byte[] recBytes = hexStringToByteArray(recString);
+
+//                while (!sendAsyncTask.isCancelled()) {
+//                    sendAsyncTask.cancel(true);
+//                }
+
+//                sendAsyncTask.doInBackground(recBytes);
                 readProcess(recBytes);
             }
         }
@@ -253,6 +282,31 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    private void initTimer() {
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (!isPackageSendSuccessed) {
+                    sendMessage(sendBytes);
+                    //
+                    if (isResendCount >= 9) {
+                        timer.cancel();
+//                        Toast.makeText(MarkBitApplication.applicationContext, "send data failed", Toast.LENGTH_SHORT).show();
+                        isTimerStart = false;
+                        isResendCount = 0;
+                        Log.e(TAG, "send data failed after retry 4 times.");
+//                        isFileStartSend = false;
+//                        isFileFinished = false;
+                        mSendFileFragment.destroyProgressBar();
+                    }
+                    isResendCount++;
+                }
+            }
+        };
+        timer.schedule(timerTask, 2000, 2000);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -262,9 +316,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         if (isFirstRun) {
             copyBitmapsFromAsset2External();
         }
-
-
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -286,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        sendAsyncTask = new AsyncTaskReadProcess();
 
     }
 
@@ -342,6 +394,19 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     @Override
+    public void cancleFileSend() {
+//        isFileStartSend = true;
+//        isFileFinished = false;
+        if (isTimerStart) {
+            timer.cancel();
+        }
+
+        isPackageSendSuccessed = false;
+        isResendCount = 0;
+        isFileCancled = true;
+    }
+
+    @Override
     public void sendFileFromUriByBT(Uri uri) {
 
         if (uri == null || uri.toString().length() < 1) {
@@ -351,24 +416,33 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         // start send file
         try {
-            file = new RandomAccessFile(FileIO.getFile(this, uri), "r");
-            if (file != null) {
-                int allBytes = 0;
-                try {
-                    allBytes = (int)file.length();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            File tmp_file = FileIO.getFile(this, uri);
+            RandomAccessFile new_file = new RandomAccessFile(tmp_file, "r");
+
+            if (file != null && tmp_file.getAbsolutePath().equals(file.getAbsolutePath()) && !isFileCancled) {
+                if (new_file != null) {
+                    int allBytes = (int) new_file.length();
+                    mSendFileFragment.initProgressBar(allBytes);
+
+                    breakAndCheck();
                 }
-//                ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).initProgressBar(allBytes);
-                mSendFileFragment.initProgressBar(allBytes);
+            } else {
+                if (new_file != null) {
+                    int allBytes = (int)new_file.length();
+                    mSendFileFragment.initProgressBar(allBytes);
 
-                isFileFinished = false;
-                isFileStartSend = true;
-                initSendBytes();
+                    isFileFinished = false;
+                    isFileStartSend = true;
+                    isFileCancled = false;
+                    initSendBytes();
 
-                byte[] init = {(byte)0xA5, (byte)0x07, (byte)0x0A, (byte)0xC0, (byte)0x0C, (byte)0x0D, (byte)0x5A};
-                sendMessage(init);
+                    byte[] init = {(byte) 0xA5, (byte) 0x07, (byte) 0x0A, (byte) 0xC0, (byte) 0x0C, (byte) 0x0D, (byte) 0x5A};
+                    sendMessage(init);
+                    file = tmp_file;
+                    randomAccessFile = new_file;
+                }
             }
+
         } catch (IOException e) {
             Toast.makeText(this, "file not found.", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
@@ -444,7 +518,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         int length = recBytes[1] & 0xff;
         if (recBytes[0] == (byte) 0xA5 && recBytes[1] == (byte) 0x07
                 && recBytes[length - 2] == (byte) 0x0D && recBytes[length - 1] == (byte) 0x5A) {
-            address = (recBytes[3] & 0xff) * 255 + (recBytes[4] & 0xff);
+            address = (recBytes[3] & 0xff) * 256 + (recBytes[4] & 0xff);
+            isPackageSendSuccessed = true;
+            if (isTimerStart) {
+                timer.cancel();
+                isTimerStart = false;
+                isResendCount = 0;
+            }
         }
 
         byte[] tmp = new byte[diff];
@@ -459,10 +539,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             mSendFileFragment.setProgressBarNum((address + 1) * diff);
 
             try {
-                file.seek(diff * address);
-                int res = file.read(tmp, 0, diff);
+                randomAccessFile.seek(diff * address);
+                int res = randomAccessFile.read(tmp, 0, diff);
                 if (res == -1) {
                     isFileFinished = true;
+                    if (isTimerStart) {
+                        timer.cancel();
+                        isTimerStart = false;
+                        isResendCount = 0;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -473,7 +558,16 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 sendBytes[i + 5] = tmp[i];
             }
 
-            sendMessage(sendBytes);
+            if (sendMessage(sendBytes)) {
+                isPackageSendSuccessed = false;
+                if (!isTimerStart) {
+                    isResendCount = 0;
+                    isTimerStart = true;
+                    initTimer();
+                }
+            } else {
+
+            }
         } else if (isFileStartSend && isFileFinished){
 
 //            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).destroyProgressBar();
@@ -482,6 +576,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
             isFileStartSend = false;
             isFileFinished = false;
+            isFileCancled = false;
+
+            if (isTimerStart) {
+                timer.cancel();
+                isTimerStart = false;
+                isResendCount = 0;
+            }
         }
     }
 
@@ -548,9 +649,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     private void breakAndCheck() {
-        if(isFileStartSend && !isFileFinished) {
-            byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, sendBytes[3], sendBytes[4], (byte) 0x0D, (byte) 0x5A};
-            readProcess(feedbackInstruct);
+        if(isFileStartSend && !isFileFinished && !isPackageSendSuccessed && !isFileCancled) {
+//            byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, sendBytes[3], sendBytes[4], (byte) 0x0D, (byte) 0x5A};
+//            readProcess(feedbackInstruct);
+            if (!isTimerStart) {
+                isResendCount = 0;
+                isTimerStart = true;
+                initTimer();
+            }
+//            sendMessage(sendBytes);
         }
     }
 
@@ -559,11 +666,12 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
      *
      * @param message A string of text to send.
      */
-    protected void sendMessage(byte[] message) {
+    protected boolean sendMessage(byte[] message) {
         // Check that we're actually connected before trying anything
-        if (mBluetoothLeService.getConnectionState() != mBluetoothLeService.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
+        if (mBluetoothLeService.getConnectionState() != mBluetoothLeService.STATE_CONNECTED && mBluetoothLeService.getConnectionState() != mBluetoothLeService.STATE_CONNECTING) {
+//            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, getString(R.string.not_connected) + " data send failed!");
+            return false;
         }
 
         // Check that there's actually something to send
@@ -585,12 +693,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
             }
 
-
-
-            // Reset out string buffer to zero and clear the edit text field
-//            mOutStringBuffer.setLength(0);
-//            mOutEditText.setText(mOutStringBuffer);
         }
+
+        return true;
     }
 
     public static String bytesToHexString(byte[] bytes) {
@@ -609,5 +714,24 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     + Character.digit(s.charAt(i+1), 16));
         }
         return data;
+    }
+
+    private class AsyncTaskReadProcess extends AsyncTask<byte[], Integer, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(byte[]... params) {
+            readProcess(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }

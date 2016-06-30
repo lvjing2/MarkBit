@@ -44,4 +44,6 @@
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving MarkBit.</string>
     <string name="draw_mark">mark drawing</string>
 
+    <string name="cancle">Cancle</string>
+
 </resources>
