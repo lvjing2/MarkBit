@@ -10,13 +10,11 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -62,12 +61,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private BluetoothLeService mBluetoothLeService = null;
     private String mConnectedDeviceName = null;
     private String mDeviceAddress;
-    private boolean isTimerStart = false;
-    private Timer timer;
-    private TimerTask timerTask;
+    private boolean isDataTimerStart = false;
+    private Timer dataTimer;
+    private TimerTask dataTimerTask;
     private boolean isPackageSendSuccessed;
-    private int isResendCount = 0;
-    private AsyncTaskReadProcess sendAsyncTask;
+//    private int isResendCount = 0;
 
     private int clickedIndex;
     private int currentIndex;
@@ -150,11 +148,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
                 mSendFileFragment.disableBT();
 
-                if (isTimerStart) {
-                    timer.cancel();
-                    isTimerStart = false;
-                    isResendCount = 0;
-                }
+                isPackageSendSuccessed = false;
+
                 Log.d(TAG, "broadcastReceiver disconnected");
                 Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_CONNECTING.equals(action)) {
@@ -162,14 +157,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 breakAndCheck();
-
                 Log.d(TAG, "in action services discovered");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 Log.d(TAG, "in action data available");
@@ -177,11 +165,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Log.d(TAG, "receive bytes: " + recString);
                 final byte[] recBytes = hexStringToByteArray(recString);
 
-//                while (!sendAsyncTask.isCancelled()) {
-//                    sendAsyncTask.cancel(true);
-//                }
-
-//                sendAsyncTask.doInBackground(recBytes);
                 readProcess(recBytes);
             }
         }
@@ -282,29 +265,22 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    private void initTimer() {
-        timer = new Timer();
-        timerTask = new TimerTask() {
+    private void initDataTimer() {
+        dataTimer = new Timer();
+        dataTimerTask = new TimerTask() {
             @Override
             public void run() {
-                if (!isPackageSendSuccessed) {
+                if (isFileStartSend && !isFileFinished && !isPackageSendSuccessed) {
+//                    if (!isTimerStart) {
+//                        isResendCount = 0;
+//                        isTimerStart = true;
+//                        initTimer();
+//                    }
                     sendMessage(sendBytes);
-                    //
-                    if (isResendCount >= 9) {
-                        timer.cancel();
-//                        Toast.makeText(MarkBitApplication.applicationContext, "send data failed", Toast.LENGTH_SHORT).show();
-                        isTimerStart = false;
-                        isResendCount = 0;
-                        Log.e(TAG, "send data failed after retry 4 times.");
-//                        isFileStartSend = false;
-//                        isFileFinished = false;
-                        mSendFileFragment.destroyProgressBar();
-                    }
-                    isResendCount++;
                 }
             }
         };
-        timer.schedule(timerTask, 2000, 2000);
+        dataTimer.schedule(dataTimerTask, 2000, 2000);
     }
 
     @Override
@@ -326,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         initView();
 
+
         bluetoothStatus = (ImageButton) findViewById(R.id.icon_bluetooth_status);
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         // If the adapter is null, then Bluetooth is not supported
@@ -337,8 +314,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        sendAsyncTask = new AsyncTaskReadProcess();
-
     }
 
     @Override
@@ -358,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
+        recoveryScreenStatus();
     }
 
 
@@ -395,15 +371,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     @Override
     public void cancleFileSend() {
-//        isFileStartSend = true;
-//        isFileFinished = false;
-        if (isTimerStart) {
-            timer.cancel();
-        }
+        isFileStartSend = true;
+        isFileFinished = false;
 
         isPackageSendSuccessed = false;
-        isResendCount = 0;
         isFileCancled = true;
+
+        recoveryScreenStatus();
+
+        dataTimer.cancel();
     }
 
     @Override
@@ -423,8 +399,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 if (new_file != null) {
                     int allBytes = (int) new_file.length();
                     mSendFileFragment.initProgressBar(allBytes);
+                    isFileFinished = false;
+                    isFileStartSend = true;
+                    isPackageSendSuccessed = false;
+                    isFileCancled = false;
 
+//                    initSendBytes();
                     breakAndCheck();
+                    initDataTimer();
+                    keepScreenON();
                 }
             } else {
                 if (new_file != null) {
@@ -433,13 +416,22 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
                     isFileFinished = false;
                     isFileStartSend = true;
+                    isPackageSendSuccessed = false;
                     isFileCancled = false;
+
                     initSendBytes();
 
-                    byte[] init = {(byte) 0xA5, (byte) 0x07, (byte) 0x0A, (byte) 0xC0, (byte) 0x0C, (byte) 0x0D, (byte) 0x5A};
-                    sendMessage(init);
+                    byte[] send_init = {(byte) 0xA5, (byte) 0x07, (byte) 0x0A, (byte) 0xC0, (byte) 0x0C, (byte) 0x0D, (byte) 0x5A};
+
+                    for (int i = 0; i < send_init.length; ++i) {
+                        sendBytes[i] = send_init[i];
+                    }
+
                     file = tmp_file;
                     randomAccessFile = new_file;
+
+                    initDataTimer();
+                    keepScreenON();
                 }
             }
 
@@ -519,11 +511,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         if (recBytes[0] == (byte) 0xA5 && recBytes[1] == (byte) 0x07
                 && recBytes[length - 2] == (byte) 0x0D && recBytes[length - 1] == (byte) 0x5A) {
             address = (recBytes[3] & 0xff) * 256 + (recBytes[4] & 0xff);
-            isPackageSendSuccessed = true;
-            if (isTimerStart) {
-                timer.cancel();
-                isTimerStart = false;
-                isResendCount = 0;
+
+            if (address == 0) {
+                initSendBytes();
+            }
+            // if file is not cancle send, then the package is send correctly.
+            if (!isFileCancled) {
+                isPackageSendSuccessed = true;
             }
         }
 
@@ -533,7 +527,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         sendBytes[4] = recBytes[4];
 
         // file is not finished, so keep sending
-        if (isFileStartSend && !isFileFinished) {
+        if (isFileStartSend && !isFileFinished && !isFileCancled) {
 
 //            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).setProgressBarNum((address + 1) * diff);
             mSendFileFragment.setProgressBarNum((address + 1) * diff);
@@ -543,11 +537,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 int res = randomAccessFile.read(tmp, 0, diff);
                 if (res == -1) {
                     isFileFinished = true;
-                    if (isTimerStart) {
-                        timer.cancel();
-                        isTimerStart = false;
-                        isResendCount = 0;
-                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -560,11 +549,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
             if (sendMessage(sendBytes)) {
                 isPackageSendSuccessed = false;
-                if (!isTimerStart) {
-                    isResendCount = 0;
-                    isTimerStart = true;
-                    initTimer();
-                }
             } else {
 
             }
@@ -576,20 +560,17 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
             isFileStartSend = false;
             isFileFinished = false;
+            isPackageSendSuccessed = false;
             isFileCancled = false;
 
-            if (isTimerStart) {
-                timer.cancel();
-                isTimerStart = false;
-                isResendCount = 0;
-            }
+            recoveryScreenStatus();
+            dataTimer.cancel();
         }
     }
 
     private void readProcessRx(byte[] recBytes) {
         int length = recBytes[1] & 0xff;
-        if (recBytes[0] == (byte) 0xA5 && recBytes[length - 2] == (byte) 0x0D
-                && recBytes[length - 1] == (byte) 0x5A) {
+        if (recBytes[0] == (byte) 0xA5 && recBytes[length - 2] == (byte) 0x0D && recBytes[length - 1] == (byte) 0x5A) {
             // receive succeed.
             byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, recBytes[3], recBytes[4], (byte) 0x0D, (byte) 0x5A};
             if (recBytes[1] == (byte) 0x07) {
@@ -648,16 +629,31 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         }
     }
 
+    private void keepScreenON() {
+        // TODO: start to control screen always on
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+//        params.screenBrightness = 0;
+        getWindow().setAttributes(params);
+    }
+
+    private void recoveryScreenStatus() {
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        params.screenBrightness = -1;
+        getWindow().setAttributes(params);
+    }
+
     private void breakAndCheck() {
         if(isFileStartSend && !isFileFinished && !isPackageSendSuccessed && !isFileCancled) {
 //            byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, sendBytes[3], sendBytes[4], (byte) 0x0D, (byte) 0x5A};
 //            readProcess(feedbackInstruct);
-            if (!isTimerStart) {
-                isResendCount = 0;
-                isTimerStart = true;
-                initTimer();
-            }
-//            sendMessage(sendBytes);
+//            if (!isTimerStart) {
+//                isResendCount = 0;
+//                isTimerStart = true;
+//                initTimer();
+//            }
+            sendMessage(sendBytes);
         }
     }
 
@@ -714,24 +710,5 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     + Character.digit(s.charAt(i+1), 16));
         }
         return data;
-    }
-
-    private class AsyncTaskReadProcess extends AsyncTask<byte[], Integer, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(byte[]... params) {
-            readProcess(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
     }
 }

@@ -139,7 +139,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
                                           int status)
         {
-            Log.e(TAG, "OnCharacteristicWrite");
+//            Log.e(TAG, "OnCharacteristicWrite");
         }
 
         @Override
@@ -381,14 +381,6 @@ public class BluetoothLeService extends Service {
 
     }
 
-    public static String bytesToHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x ", b & 0xff));
-        }
-        return sb.toString().toUpperCase();
-    }
-
     public boolean WriteValue(byte[] bytesValue)
     {
         //check mBluetoothGatt is available
@@ -408,7 +400,6 @@ public class BluetoothLeService extends Service {
             return false;
         }
 
-        Log.d(TAG, "writeCharacteristic: " + bytesToHexString(bytesValue));
         mNotifyCharacteristic.setValue(bytesValue);
         mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mBluetoothGatt.writeCharacteristic(mNotifyCharacteristic);
