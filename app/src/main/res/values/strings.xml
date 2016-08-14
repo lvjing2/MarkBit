@@ -2,7 +2,7 @@
     <string name="app_name">MarkBit</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="ext_storage_directory_name">Mark Bit</string>
+    <string name="ext_storage_directory_name">MarkBit</string>
 
     <string name="menu_new_image">New image</string>
     <string name="menu_load_image">Load image</string>
@@ -21,13 +21,14 @@
     <string name="menu_connect_device">Connect a device</string>
 
     <string name="marks_management">marks management</string>
+    <string name="index_setting">index</string>
     <string name="saved">Image saved</string>
     <string name="copy">Copy saved</string>
     <string name="more">More</string>
 
     <string name="delete_mark">delete this mark</string>
-    <string name="add_new_mark_by_this">add new mark by this mark</string>
-    <string name="send_file">send file by bluetooth</string>
+    <string name="add_new_mark_by_this">replace this mark</string>
+    <string name="send_file">send file</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="choose_and_send">choose file and send</string>
@@ -43,7 +44,27 @@
     <string name="button_scan">Scan for devices</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving MarkBit.</string>
     <string name="draw_mark">mark drawing</string>
+    <string name="parameter_setting">setting</string>
 
     <string name="cancle">Cancle</string>
 
+    <string name="version">version: </string>
+    <string name="all_samples_num">all samples num: </string>
+    <string name="A_samples_num">A samples num: </string>
+    <string name="B_samples_num">B samples num: </string>
+    <string name="A_show_time">A show time: </string>
+    <string name="B_show_time">B show time: </string>
+    <string name="battery_type">battery type: </string>
+    <string name="magnetic_switch">magnetic switch: </string>
+    <string name="low_voltage_switch">low voltage switch: </string>
+    <string name="dump_switch">dump switch: </string>
+
+    <string-array name="battery_types">
+        <item>Three cell battery</item>
+        <item>lithium battery</item>
+    </string-array>
+
+
+    <string name="I_name">icon100.bin</string>
+    <string name="R_name">rcon100.bin</string>
 </resources>

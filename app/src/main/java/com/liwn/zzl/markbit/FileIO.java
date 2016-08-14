@@ -45,6 +45,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,6 +73,17 @@ public abstract class FileIO {
         }
     }
 
+    public static File getMediaFile() {
+        if(MEDIA_FILE == null){
+            if(initialisePaintroidMediaDirectory() == true) {
+                return MEDIA_FILE;
+            } else {
+                return null;
+            }
+        }
+        return MEDIA_FILE;
+    }
+
     public static String getMediaFolderName() {
         if(MEDIA_FILE == null){
             if(initialisePaintroidMediaDirectory() == true) {
@@ -81,6 +93,16 @@ public abstract class FileIO {
             }
         }
         return MEDIA_FILE.getAbsolutePath();
+    }
+
+    public static File getIconFile() {
+        File file = new File(getMediaFolderName() + "/" + MarkBitApplication.i_name);
+        return file;
+    }
+
+    public static File getRconFile() {
+        File file = new File(getMediaFolderName() + "/" + MarkBitApplication.r_name);
+        return file;
     }
 
     public static Uri getBaseUri() {
@@ -188,6 +210,15 @@ public abstract class FileIO {
             if (!filename.toLowerCase().endsWith(ENDING.toLowerCase())) {
                 filename += ENDING;
             }
+            return new File(MEDIA_FILE, filename);
+        } else {
+            return null;
+        }
+    }
+
+    public static File createNewEmptyBinFile(Context context,
+                                                 String filename) {
+        if (initialisePaintroidMediaDirectory() == true) {
             return new File(MEDIA_FILE, filename);
         } else {
             return null;
@@ -422,14 +453,84 @@ public abstract class FileIO {
         copyStream(inputStream, outputStream);
     }
 
-    public static void copyStream(Context context, InputStream inputStream, String fileNamePrefix) throws IOException {
-        File outFile = createNewEmptyPictureFile(context, fileNamePrefix);
+    public static void copyStream(Context context, InputStream inputStream, String fileName) throws IOException {
+        File outFile = createNewEmptyBinFile(context, fileName);
         OutputStream outputStream = new FileOutputStream(outFile);
         copyStream(inputStream, outputStream);
     }
 
     public static File getFile(Context context, Uri uri) {
         return new File(getPath(context, uri));
+    }
+
+    public static byte getByte(File file, int offset) {
+        byte res = 0;
+
+        try {
+            RandomAccessFile ra_file = new RandomAccessFile(file, "r");
+
+
+            byte[] tmp = new byte[1];
+            if (ra_file != null) {
+                ra_file.seek(offset);
+                if (ra_file.read(tmp, 0, 1) == 1) {
+                    res = tmp[0];
+                }
+            }
+
+            return res;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return res;
+        }
+    }
+
+    public static int getBytes(File file, byte[] buffer, int offset, int len) {
+        int res = -1;
+
+        try {
+            RandomAccessFile ra_file = new RandomAccessFile(file, "r");
+
+            if (ra_file != null) {
+                ra_file.seek(offset);
+                res = ra_file.read(buffer, 0, len);
+            }
+
+            return res;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return res;
+        }
+    }
+
+    public static int setBytes(File file, int offset, int length, byte[] value) {
+        int res = -1;
+        try {
+            RandomAccessFile ra_file = new RandomAccessFile(file, "rw");
+            if (ra_file != null) {
+
+//                int read_byte_num = 1;
+//                        byte[] brightness = new byte[read_byte_num];
+//                        ra_file.seek(0x13);
+//                        if (read_byte_num == ra_file.read(brightness, 0, read_byte_num)) {
+//                            Log.d(TAG, "brightness is: " + (brightness[0] & 0xff));
+//                        }
+
+//                Log.d(TAG, "new brightness is: " + (value[0] & 0xff));
+                ra_file.seek(offset);
+                ra_file.write(value, 0, length);
+                res = length;
+
+            } else {
+                Log.e(TAG, "file not found!");
+            }
+
+            return res;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return res;
+        }
     }
 
     /**

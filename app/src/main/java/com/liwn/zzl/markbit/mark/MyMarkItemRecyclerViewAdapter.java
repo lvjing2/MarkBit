@@ -1,5 +1,8 @@
 package com.liwn.zzl.markbit.mark;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -9,7 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.liwn.zzl.markbit.AllMarkItemActivity;
+import com.liwn.zzl.markbit.MarkBitApplication;
 import com.liwn.zzl.markbit.MarkItemFragment;
 import com.liwn.zzl.markbit.MarkItemFragment.OnListFragmentInteractionListener;
 import com.liwn.zzl.markbit.R;
@@ -32,19 +38,20 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         mListener = listener;
     }
 
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_markitem, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, parent.getContext());
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mImgView.setImageBitmap(mValues.get(position).img);
-        holder.mIdView.setText(String.valueOf(mValues.get(position).position));
-        holder.mNameView.setText(mValues.get(position).filePath);
+//        holder.mIdView.setText(String.valueOf(mValues.get(position).control_id));
+//        holder.mNameView.setText(mValues.get(position).filePath);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,23 +73,25 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         public final View mView;
+        public final Context mParentContext;
         public final ImageView mImgView;
-        public final TextView mIdView;
-        public final TextView mNameView;
+//        public final TextView mIdView;
+//        public final TextView mNameView;
         public DummyItem mItem;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view, Context context) {
             super(view);
             mView = view;
+            mParentContext = context;
             mImgView = (ImageView) view.findViewById(R.id.markItem_img);
-            mIdView = (TextView) view.findViewById(R.id.markItem_id);
-            mNameView = (TextView) view.findViewById(R.id.markItem_name);
+//            mIdView = (TextView) view.findViewById(R.id.markItem_id);
+//            mNameView = (TextView) view.findViewById(R.id.markItem_name);
             view.setOnCreateContextMenuListener(this);
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.delete_mark).setOnMenuItemClickListener(mOnMenu1ClickListener);
+//            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.delete_mark).setOnMenuItemClickListener(mOnMenu1ClickListener);
             menu.add(Menu.NONE, MarkItemFragment.MENU2, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu2ClickListener);
         }
 
@@ -91,6 +100,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // TODO: add the menu1 procedure
+                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
                 return false;
             }
         };
@@ -99,6 +109,11 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // TODO: add the menu2 procedure
+                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(mParentContext, AllMarkItemActivity.class);
+                i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
+
+                ((Activity)mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_NEW_MARK);
                 return false;
             }
         };

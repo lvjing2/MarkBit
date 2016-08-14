@@ -10,7 +10,7 @@
     <color name="color_green">#00FF00</color>
     <color name="color_black">#000000</color>
     <color name="color_gray">#cccccc</color>
-    <color name="color_border">#bbbbbb</color>
+    <color name="color_border">#cccccc</color>
     <color name="color_transparent">#00000000</color>
     <color name="main_botton_text_color">#ffffff</color>
 </resources>

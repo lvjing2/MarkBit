@@ -1,6 +1,8 @@
 package com.liwn.zzl.markbit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -9,10 +11,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.liwn.zzl.markbit.mark.DummyContent;
 import com.liwn.zzl.markbit.mark.DummyContent.DummyItem;
 import com.liwn.zzl.markbit.mark.MyMarkItemRecyclerViewAdapter;
 
@@ -28,6 +34,7 @@ import java.io.InputStream;
  * interface.
  */
 public class MarkItemFragment extends Fragment {
+    private final static String TAG = MarkItemFragment.class.getSimpleName();
 
     public static final int MENU1 = 1;
     public static final int MENU2 = 2;
@@ -35,8 +42,15 @@ public class MarkItemFragment extends Fragment {
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
+
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
+    public Context mContext;
+    public static final String OLD_POS_ID = "OLD_POS_ID";
+    public static final String NEW_POS_ID = "NEW MARK ID";
+    public static final int REQUEST_CHOOSE_NEW_MARK = 4;
+
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -56,42 +70,17 @@ public class MarkItemFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
 //            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-    }
-
-    private void loadData() {
-        File[] marks = FileIO.getFiles();
-        for (int i = 0; i < marks.length; ++i) {
-            File mark = marks[i];
-            String fileName = mark.getName().split("\\.")[0];
-            String[] fileInfos = fileName.split("_");
-            String tag;
-            int id;
-            String date;
-            String filePath = mark.getAbsolutePath();
-            if (fileInfos.length >= 4) {
-                id = Integer.valueOf(fileInfos[1]);
-                date = fileInfos[2];
-                tag = fileInfos[3];
-            } else {
-                id = Integer.valueOf(FileIO.default_num);
-                date = FileIO.default_date;
-                tag = FileIO.default_tag;
-            }
-            InputStream inputStream = null;
-            try {
-                inputStream = new FileInputStream(mark);
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, MarkBitApplication.opts);
-                MarkBitApplication.dummyContent.setDummyContentItem(id, id, id, false, false, "v0.0", bitmap, filePath);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -103,7 +92,9 @@ public class MarkItemFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
+            DisplayMetrics displayMetrics = MarkBitApplication.applicationContext.getResources().getDisplayMetrics();
+            mColumnCount =  (int) (displayMetrics.widthPixels / getResources().getDimension(R.dimen.itemHeight));
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -111,7 +102,9 @@ public class MarkItemFragment extends Fragment {
             }
 
 
-            loadData();
+//            loadData();
+
+            mContext = getContext();
             recyclerView.setAdapter(new MyMarkItemRecyclerViewAdapter(MarkBitApplication.dummyContent.ITEM_MAP, mListener));
             recyclerView.setSelected(true);
         }
@@ -155,6 +148,11 @@ public class MarkItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onMarkItemFragmentInteraction(DummyItem item);
+    }
+
+    public void replaceMark(int old_id, int new_id) {
+        DummyContent.replaceItem(old_id, new_id);
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
 

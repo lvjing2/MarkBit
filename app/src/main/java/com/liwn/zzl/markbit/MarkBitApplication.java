@@ -33,8 +33,11 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.liwn.zzl.markbit.mark.DummyContent;
+
+import java.io.File;
 
 public class MarkBitApplication extends Application {
 	public static final String TAG = "PAINTROID";
@@ -65,6 +68,10 @@ public class MarkBitApplication extends Application {
 	public static final String DEVICE_ADDRESS = "device_address";
 	public static final String TOAST = "toast";
 
+	public static String default_bins_dir_name = "bins";
+	public static String i_name;
+	public static String r_name;
+
 	public static Context applicationContext;
 //	public static DrawingSurface drawingSurface;
 //	public static CommandManager commandManager;
@@ -81,13 +88,18 @@ public class MarkBitApplication extends Application {
 	public static boolean saveCopy = false;
 	public static Bitmap outPreview;
 	public static ImageView previewImageView;
+	public static File i_file;
+	public static File r_file;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		applicationContext = getApplicationContext();
 		opts = getOpts();
-		dummyContent = new DummyContent();
+		i_name = applicationContext.getString(R.string.I_name);
+		r_name = applicationContext.getString(R.string.R_name);
+
+
 //		commandManager = new CommandManagerImplementation();
 //		outPreview = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.out_preview);
 	}

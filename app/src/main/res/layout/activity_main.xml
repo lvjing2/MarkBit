@@ -66,7 +66,7 @@
                     android:scaleType="matrix"
                     android:text="@string/send_file"
                     android:textColor="@color/main_botton_text_color"
-                    android:textSize="12sp" />
+                    android:textSize="10sp" />
 
             </RelativeLayout>
 
@@ -86,9 +86,9 @@
                     android:paddingBottom="2dip"
                     android:paddingTop="7dip"
                     android:scaleType="matrix"
-                    android:text="@string/marks_management"
+                    android:text="@string/index_setting"
                     android:textColor="@color/main_botton_text_color"
-                    android:textSize="12sp" />
+                    android:textSize="10sp" />
 
             </RelativeLayout>
 
@@ -108,9 +108,9 @@
                     android:paddingBottom="2dip"
                     android:paddingTop="7dip"
                     android:scaleType="matrix"
-                    android:text="@string/draw_mark"
+                    android:text="@string/parameter_setting"
                     android:textColor="@color/main_botton_text_color"
-                    android:textSize="12sp" />
+                    android:textSize="10sp" />
             </RelativeLayout>
         </LinearLayout>
 

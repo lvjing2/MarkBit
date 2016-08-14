@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
     private static final String PREFERENCE = "PREFERENCE";
+
+    private Context mContext;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private int currentIndex;
     private SendFileFragment mSendFileFragment;
     private MarkItemFragment mMarkItemFragment;
+    private SettingFragment mSettingFragment;
     private Fragment[] mFragments;
     private Button[] mTabs;
 
@@ -223,7 +226,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         mSendFileFragment = new SendFileFragment();
         mMarkItemFragment = new MarkItemFragment();
-        mFragments = new Fragment [] {mSendFileFragment, mMarkItemFragment, mMarkItemFragment};
+        mSettingFragment = new SettingFragment();
+        mFragments = new Fragment [] {mSendFileFragment, mMarkItemFragment, mSettingFragment};
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.hide(mFragments[currentIndex]);
@@ -243,6 +247,24 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             if (files != null) {
                 for (String filename : files) {
                     is = assetManager.open(marksFolderName + "/" + filename);
+                    FileIO.copyStream(this, is, filename);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyBinsFromAsset2External() {
+        FileIO.deleteAllFiles();
+
+        AssetManager assetManager = getAssets();
+        InputStream is;
+        try {
+            String[] files = assetManager.list(MarkBitApplication.default_bins_dir_name);
+            if (files != null) {
+                for (String filename : files) {
+                    is = assetManager.open(MarkBitApplication.default_bins_dir_name + "/" + filename);
                     FileIO.copyStream(this, is, filename);
                 }
             }
@@ -290,9 +312,23 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         boolean isFirstRun = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true);
         if (isFirstRun) {
-            copyBitmapsFromAsset2External();
+//            copyBitmapsFromAsset2External();
+            copyBinsFromAsset2External();
         }
 
+        MarkBitApplication.i_file = FileIO.getIconFile();
+        MarkBitApplication.r_file = FileIO.getRconFile();
+
+        if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
+            Log.d(TAG, "NO BINS FILE!");
+            Toast.makeText(MarkBitApplication.applicationContext, "please import 2 bins file and then restart app.", Toast.LENGTH_LONG).show();
+//			return;
+        } else {
+            MarkBitApplication.dummyContent = new DummyContent();
+        }
+
+
+        mContext = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -301,7 +337,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         // primary sections of the activity.
 
         initView();
-
 
         bluetoothStatus = (ImageButton) findViewById(R.id.icon_bluetooth_status);
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -314,6 +349,18 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+
+        bluetoothStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isBluetoothConnected) {
+                    mBluetoothLeService.disconnect();
+                } else {
+                    Intent serverIntent = new Intent(mContext, DeviceListActivity.class);
+                    startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+                }
+            }
+        });
     }
 
     @Override
@@ -468,6 +515,14 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     finish();
                 }
                 break;
+            case MarkItemFragment.REQUEST_CHOOSE_NEW_MARK:
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
+                        int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
+                        mMarkItemFragment.replaceMark(old_position_id, new_position_id);
+                    }
+                }
         }
 
     }
@@ -588,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 byte cc = getCheckSum(recBytes, 5, diff);
                 if (cc == recBytes[length - 3]) {
                     address = (recBytes[3] & 0xff) * 255 + (recBytes[4] & 0xff);
-                    address += diff;
+                    address += 1;
                     feedbackInstruct[3] = (byte) ((address & 0xff00) >> 8);
                     feedbackInstruct[4] = (byte) (address & 0xff);
 
@@ -683,7 +738,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 byte[] subMes = Arrays.copyOfRange(message, i * perLen, (i+1) * perLen);
                 mBluetoothLeService.WriteValue(subMes);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
