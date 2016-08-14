@@ -191,7 +191,7 @@ public class SettingFragment extends Fragment {
                 FileIO.setBytes(MarkBitApplication.i_file, 0x11, read_byte_num, A_samples);
                 FileIO.setBytes(MarkBitApplication.r_file, 0x11, read_byte_num, A_samples);
 
-
+                mListener.updateIndexMark(seekBar.getProgress());
             }
         });
 
@@ -396,6 +396,6 @@ public class SettingFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void updateIndexMark();
+        void updateIndexMark(int num);
     }
 }

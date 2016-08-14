@@ -155,5 +155,7 @@ public class MarkItemFragment extends Fragment {
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
-
+    public void updateMark(int num) {
+        DummyContent.updateItem(num);
+    }
 }

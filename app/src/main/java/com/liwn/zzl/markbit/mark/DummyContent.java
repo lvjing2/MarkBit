@@ -42,13 +42,7 @@ public class DummyContent {
         byte[] commonMarkIndex = new byte[COUNT];
         FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, 0x20, COUNT);
         Log.d(TAG, "count: " + COUNT);
-        for (int i = 0; i < COUNT; i++) {
-            int index = commonMarkIndex[i] & 0xff;
-            Bitmap bitmap = new GetBitmap().getBitmap(index);
 
-            DummyItem dummyItem = newDummyContentItem(i, index, index, false, false, "v0.0", bitmap, FileIO.default_file_name);
-            ITEM_MAP.put(dummyItem.position, dummyItem);
-        }
 
         for (int i = 0; i < ALL_COUNT; i++) {
             Bitmap bitmap = new GetBitmap().getBitmap(i);
@@ -56,26 +50,56 @@ public class DummyContent {
             ALL_ITEM_MAP.put(dummyItem.position, dummyItem);
         }
 
+        for (int i = 0; i < COUNT; i++) {
+            int index = commonMarkIndex[i] & 0xff;
+            Bitmap bitmap = new GetBitmap().getBitmap(index);
+            DummyItem dummyItem = newDummyContentItem(i, index, index, false, false, "v0.0", bitmap, FileIO.default_file_name);
+            ITEM_MAP.put(i, dummyItem);
+        }
+
+    }
+
+    public static void updateItem(int num) {
+        int size = ITEM_MAP.size();
+        if (num == ITEM_MAP.size()) {
+
+        } else if (num > size) {
+            byte[] commonMarkIndex = new byte[num];
+            FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, 0x20, num);
+            for (int i = size; i < num; i++) {
+                int index = commonMarkIndex[i] & 0xff;
+
+                Bitmap bitmap = new GetBitmap().getBitmap(index);
+                DummyItem dummyItem = newDummyContentItem(i, index, index, false, false, "v0.0", bitmap, FileIO.default_file_name);
+                ITEM_MAP.put(i, dummyItem);
+            }
+        } else if (num < size) {
+            for (int i = num; i < size; i++) {
+                ITEM_MAP.remove(i);
+            }
+        }
     }
 
     public static void replaceItem(int old_id, int new_id) {
 
-        DummyItem newItem = ALL_ITEM_MAP.get(new_id);
+        Log.e("DummyContent", "old_id: " + old_id + "; new_id: " + new_id);
+        Bitmap bitmap = new GetBitmap().getBitmap(new_id);
+        DummyItem dummyItem = newDummyContentItem(old_id, new_id, new_id, false, false, "v0.0", bitmap, FileIO.default_file_name);
+
         ITEM_MAP.remove(old_id);
-        ITEM_MAP.put(old_id, newItem);
+        ITEM_MAP.put(old_id, dummyItem);
 
         int i_offset = (0x20 & 0xff) + old_id;
         int r_offset = (0x40 & 0xff) + old_id;
 
-        Log.e("DummyContent", "i_offset: " + i_offset + "; r_offset: " + r_offset);
         int set_num = 1;
         byte[] value = new byte[set_num];
-        value[0] = (byte) newItem.control_id;
+        value[0] = (byte) new_id;
         FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
         FileIO.setBytes(MarkBitApplication.r_file, r_offset, set_num, value);
     }
 
-    public DummyItem newDummyContentItem(int position, int control_id, int server_id, boolean is_control_synced,
+    public static DummyItem newDummyContentItem(int position, int control_id, int server_id, boolean is_control_synced,
                                          boolean is_server_synced, String version, Bitmap img, String filePath) {
 
         String fileName = filePath.split("\\.")[0];

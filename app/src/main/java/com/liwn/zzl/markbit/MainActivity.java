@@ -42,7 +42,7 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements MarkItemFragment.OnListFragmentInteractionListener, SendFileFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements MarkItemFragment.OnListFragmentInteractionListener, SendFileFragment.OnFragmentInteractionListener, SettingFragment.OnFragmentInteractionListener {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
@@ -765,5 +765,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     + Character.digit(s.charAt(i+1), 16));
         }
         return data;
+    }
+
+    @Override
+    public void updateIndexMark(int num) {
+        mMarkItemFragment.updateMark(num);
     }
 }

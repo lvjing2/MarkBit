@@ -45,7 +45,9 @@ public class AllMarkItemActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             old_position_id = extras.getInt(MarkItemFragment.OLD_POS_ID);
+//            Log.e(TAG, "extras bundle is not null");
         }
+//        Log.e(TAG, "old position: " + old_position_id);
 
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));

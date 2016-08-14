@@ -109,7 +109,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // TODO: add the menu2 procedure
-                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.position, Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(mParentContext, AllMarkItemActivity.class);
                 i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
 
