@@ -68,7 +68,7 @@ public abstract class FileIO {
     public static final int  VERSION_LEN           = 4;
     public static final byte DEVICE_NAME_ADDR      = 0x07;
     public static final byte FACTORY_NAME_ADDR     = 0x08;
-    public static final int  DEVICE_NAME_LEN       = 8;
+    public static final int  FACTORY_NAME_LEN      = 8;
     public static final byte ALL_SAMPLE_NUM_ADDR   = 0x10;
     public static final byte A_SAMPLE_NUM_ADDR     = 0x11;
     public static final byte B_SAMPLE_NUM_ADDR     = 0x12;

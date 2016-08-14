@@ -61,7 +61,7 @@ public class DummyContent {
 
     public static void updateItem(int num) {
         int size = ITEM_MAP.size();
-        if (num == ITEM_MAP.size()) {
+        if (num == size) {
 
         } else if (num > size) {
             byte[] commonMarkIndex = new byte[num];
@@ -76,6 +76,23 @@ public class DummyContent {
         } else if (num < size) {
             for (int i = num; i < size; i++) {
                 ITEM_MAP.remove(i);
+            }
+        }
+    }
+
+    public static void updateAllItem(int num) {
+        int size = ALL_ITEM_MAP.size();
+        if (num == size) {
+
+        } else if (num > size) {
+            for (int i = size; i < num; i++) {
+                Bitmap bitmap = new GetBitmap().getBitmap(i);
+                DummyItem dummyItem = newDummyContentItem(i, i, i, false, false, "v0.0", bitmap, FileIO.default_file_name);
+                ALL_ITEM_MAP.put(i, dummyItem);
+            }
+        } else if (num < size) {
+            for (int i = num; i < size; i++) {
+                ALL_ITEM_MAP.remove(i);
             }
         }
     }

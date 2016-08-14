@@ -115,7 +115,7 @@ public class MarkItemFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getActivity().setTitle(R.string.marks_management);
+        getActivity().setTitle(R.string.index_setting);
     }
 
     @Override
@@ -157,5 +157,9 @@ public class MarkItemFragment extends Fragment {
 
     public void updateMark(int num) {
         DummyContent.updateItem(num);
+    }
+
+    public void updateAllMark(int num) {
+        DummyContent.updateAllItem(num);
     }
 }

@@ -1,32 +1,11 @@
 <resources>
     <string name="app_name">MarkBit</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="ext_storage_directory_name">MarkBit</string>
 
-    <string name="menu_new_image">New image</string>
-    <string name="menu_load_image">Load image</string>
-    <string name="menu_save_image">Save image</string>
-    <string name="menu_save_copy">Save copy</string>
-    <string name="menu_new_image_empty_image">Empty Image</string>
-    <string name="menu_item_tools">Tools menu</string>
-    <string name="menu_hide_menu">Fullscreen</string>
-    <string name="menu_new_image_from_camera">New image from camera</string>
-    <string name="menu_load_image_from_uri">Load image from files</string>
-    <string name="menu_load_image_from_camera">Load image from camera</string>
-    <string name="menu_terms_of_use_and_service">Terms of Use</string>
-    <string name="menu_about">About</string>
-    <string name="menu_export">Export</string>
-    <string name="menu_quit">Quit</string>
     <string name="menu_connect_device">Connect a device</string>
 
-    <string name="marks_management">marks management</string>
     <string name="index_setting">index</string>
-    <string name="saved">Image saved</string>
-    <string name="copy">Copy saved</string>
-    <string name="more">More</string>
 
-    <string name="delete_mark">delete this mark</string>
     <string name="add_new_mark_by_this">replace this mark</string>
     <string name="send_file">send file</string>
 
@@ -43,7 +22,6 @@
     <string name="title_other_devices">Other Available Devices</string>
     <string name="button_scan">Scan for devices</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving MarkBit.</string>
-    <string name="draw_mark">mark drawing</string>
     <string name="parameter_setting">setting</string>
 
     <string name="cancle">Cancle</string>
@@ -53,12 +31,15 @@
     <string name="index_num">index num: </string>
     <string name="A_samples_num">A samples num: </string>
     <string name="B_samples_num">B samples num: </string>
-    <string name="A_show_time">A show time: </string>
-    <string name="B_show_time">B show time: </string>
+    <string name="A_show_time">A show time(s): </string>
+    <string name="B_show_time">B show time(s): </string>
     <string name="battery_type">battery type: </string>
     <string name="magnetic_switch">magnetic switch: </string>
     <string name="low_voltage_switch">low voltage switch: </string>
     <string name="dump_switch">dump switch: </string>
+
+    <string name="not_synced">%1$s not synchronized!</string>
+    <string name="i_r_not_synced">%1$s and %2$s not synchronized!</string>
 
     <string-array name="battery_types">
         <item>Three cell battery</item>
@@ -68,4 +49,7 @@
 
     <string name="I_name">icon100.bin</string>
     <string name="R_name">rcon100.bin</string>
+    <string name="I_device_name">2C_LEDBOARD</string>
+    <string name="R_device_name">2C_TELECTRL</string>
+    <string name="factory_name">ZhongChe</string>
 </resources>

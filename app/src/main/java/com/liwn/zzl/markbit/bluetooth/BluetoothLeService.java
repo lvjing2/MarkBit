@@ -49,6 +49,7 @@ public class BluetoothLeService extends Service {
     private String mBluetoothDeviceAddress;
     private String mBluetoothDeviceName;
     private BluetoothGatt mBluetoothGatt;
+    private boolean isDisconnected = true;
     private int mConnectionState = STATE_DISCONNECTED;
 
     public static final int STATE_DISCONNECTED = 0;
@@ -85,7 +86,7 @@ public class BluetoothLeService extends Service {
             String intentAction;
 //            setState(newState);
 
-
+            Log.e(TAG, "onConnectionStateChange" + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
@@ -262,15 +263,21 @@ public class BluetoothLeService extends Service {
             return false;
         }
 
+
 //         Previously connected device.  Try to reconnect.
-        if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
-                && mBluetoothGatt != null) {
-            Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
-            if (mBluetoothGatt.connect()) {
-                mConnectionState = STATE_CONNECTING;
-                return true;
-            } else {
-                return false;
+        if (isDisconnected) {
+            isDisconnected = false;
+            if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
+                    && mBluetoothGatt != null) {
+                Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
+                if (mBluetoothGatt.connect()) {
+                    mConnectionState = STATE_CONNECTING;
+                    Log.e(TAG, "====== connect true =====");
+                    return true;
+                } else {
+                    Log.e(TAG, "====== connect false =====");
+                    return false;
+                }
             }
         }
 
@@ -308,7 +315,15 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.disconnect();
+
+        // to ensure the disconnect trigger the onConnectionStateChange callback
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         mBluetoothGatt.close();
+        isDisconnected = true;
     }
 
     /**
@@ -422,21 +437,21 @@ public class BluetoothLeService extends Service {
 
     public void findService(List<BluetoothGattService> gattServices)
     {
-        Log.i(TAG, "Count is:" + gattServices.size());
+//        Log.i(TAG, "Count is:" + gattServices.size());
         for (BluetoothGattService gattService : gattServices)
         {
-            Log.i(TAG, gattService.getUuid().toString());
+//            Log.i(TAG, gattService.getUuid().toString());
             if(gattService.getUuid().toString().equalsIgnoreCase(UUID_SERVICE.toString()))
             {
                 List<BluetoothGattCharacteristic> gattCharacteristics =
                         gattService.getCharacteristics();
-                Log.i(TAG, "Count is:" + gattCharacteristics.size());
+//                Log.i(TAG, "Count is:" + gattCharacteristics.size());
                 for (BluetoothGattCharacteristic gattCharacteristic :
                         gattCharacteristics)
                 {
                     if(gattCharacteristic.getUuid().toString().equalsIgnoreCase(UUID_NOTIFY.toString()))
                     {
-                        Log.i(TAG, gattCharacteristic.getUuid().toString());
+//                        Log.i(TAG, gattCharacteristic.getUuid().toString());
                         mNotifyCharacteristic = gattCharacteristic;
                         setCharacteristicNotification(gattCharacteristic, true);
                         broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);

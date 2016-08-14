@@ -25,11 +25,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liwn.zzl.markbit.bluetooth.BluetoothLeService;
 import com.liwn.zzl.markbit.bluetooth.DeviceListActivity;
 import com.liwn.zzl.markbit.mark.DummyContent;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +41,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -76,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private SettingFragment mSettingFragment;
     private Fragment[] mFragments;
     private Button[] mTabs;
+
+    private TextView synced_notification;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -235,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             ft.add(R.id.fragment_container, mFragments[clickedIndex]);
         }
         ft.show(mFragments[clickedIndex]).commit();
+
+        synced_notification = (TextView) findViewById(R.id.synced_notification);
     }
 
     private void copyBitmapsFromAsset2External() {
@@ -353,6 +362,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         bluetoothStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(TAG, "is connected:" + isBluetoothConnected + ", " + mBluetoothLeService.getConnectionState());
                 if (isBluetoothConnected) {
                     mBluetoothLeService.disconnect();
                 } else {
@@ -384,32 +394,29 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_connect_device) {
-            Intent serverIntent = new Intent(this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-            return true;
-        } else if (id == R.id.menu_marks_management) {
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.menu_connect_device) {
+//            Intent serverIntent = new Intent(this, DeviceListActivity.class);
+//            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onMarkItemFragmentInteraction(DummyContent.DummyItem item) {
@@ -442,6 +449,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             File tmp_file = FileIO.getFile(this, uri);
             RandomAccessFile new_file = new RandomAccessFile(tmp_file, "r");
 
+            // if not valid, then return and cancel the send procedure
+            if (!checkFileValidate(tmp_file)) {
+                Log.e(TAG, "file check invalided!");
+                return;
+            }
             if (file != null && tmp_file.getAbsolutePath().equals(file.getAbsolutePath()) && !isFileCancled) {
                 if (new_file != null) {
                     int allBytes = (int) new_file.length();
@@ -613,6 +625,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             mSendFileFragment.destroyProgressBar();
 
             Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
+//            Log.e(TAG, "filename: " + file.getName());
+            if (file.getName() == getString(R.string.I_name)) {
+                MarkBitApplication.i_synced = true;
+            } else if (file.getName() == getString(R.string.R_name)) {
+                MarkBitApplication.r_synced = true;
+            }
+
+            updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
+
             isFileStartSend = false;
             isFileFinished = false;
             isPackageSendSuccessed = false;
@@ -625,6 +646,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private void readProcessRx(byte[] recBytes) {
         int length = recBytes[1] & 0xff;
+        if (length > recBytes.length) {
+            Log.e(TAG, "received bytes: " + bytesToHexString(recBytes) + " invalid!");
+            return;
+        }
         if (recBytes[0] == (byte) 0xA5 && recBytes[length - 2] == (byte) 0x0D && recBytes[length - 1] == (byte) 0x5A) {
             // receive succeed.
             byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, recBytes[3], recBytes[4], (byte) 0x0D, (byte) 0x5A};
@@ -771,4 +796,62 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     public void updateIndexMark(int num) {
         mMarkItemFragment.updateMark(num);
     }
+
+    @Override
+    public void updateAllMark(int num) {
+        mMarkItemFragment.updateAllMark(num);
+    }
+
+    private void updateSelfNotification(boolean i_synced, boolean r_synced) {
+        if (i_synced && r_synced) {
+            synced_notification.setVisibility(View.INVISIBLE);
+        } else if (i_synced && !r_synced) {
+            String notification = String.format(getString(R.string.not_synced), getString(R.string.R_name));
+            synced_notification.setText(notification);
+            synced_notification.setVisibility(View.VISIBLE);
+        } else if (!i_synced && r_synced) {
+            String notification = String.format(getString(R.string.not_synced), getString(R.string.I_name));
+            synced_notification.setText(notification);
+            synced_notification.setVisibility(View.VISIBLE);
+        } else if (!i_synced && !r_synced) {
+            String notification = String.format(getString(R.string.i_r_not_synced), getString(R.string.I_name), getString(R.string.R_name));
+            synced_notification.setText(notification);
+            synced_notification.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void updateNotification(boolean i_synced, boolean r_synced) {
+        updateSelfNotification(i_synced, r_synced);
+    }
+
+    private boolean checkFileValidate(File file) {
+        byte device_type = FileIO.getByte(file, FileIO.DEVICE_NAME_ADDR);
+        byte[] factory_name = new byte[FileIO.FACTORY_NAME_LEN];
+        FileIO.getBytes(file, factory_name, FileIO.FACTORY_NAME_ADDR, FileIO.FACTORY_NAME_LEN);
+
+        String device_name = "";
+        if (device_type == 0x49) {
+            device_name = getString(R.string.I_device_name);
+        } else if (device_type == 0x52) {
+            device_name = getString(R.string.R_device_name);
+        }
+
+        String str_factory_name = null;
+        try {
+            str_factory_name = new String(factory_name, "UTF-8");
+            Toast.makeText(this, "factory name: " + str_factory_name + "; device_name: " + device_name , Toast.LENGTH_LONG).show();
+            String tmp = getString(R.string.factory_name);
+            if (str_factory_name.equals(getString(R.string.factory_name))) {
+                return true;
+            } else {
+                Toast.makeText(this, "file is not valid", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "file is not valid", Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
 }
+

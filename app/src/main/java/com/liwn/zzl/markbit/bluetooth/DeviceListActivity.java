@@ -66,7 +66,7 @@ public class DeviceListActivity extends Activity {
     private boolean mScanning = false;
     private Handler mHandler;
     // Stops scanning after 10 seconds.
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = 5000;
     private static final int REQUEST_ENABLE_BT = 10;
     private ListView newDevicesListView;
     private Button mScanButton;
