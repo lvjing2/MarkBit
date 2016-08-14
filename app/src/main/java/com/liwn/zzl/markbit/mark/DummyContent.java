@@ -37,10 +37,10 @@ public class DummyContent {
             return;
         }
 
-        COUNT = FileIO.getByte(MarkBitApplication.i_file, 0x11);
-        ALL_COUNT = FileIO.getByte(MarkBitApplication.i_file, 0x10);
+        COUNT = FileIO.getByte(MarkBitApplication.i_file, FileIO.A_SAMPLE_NUM_ADDR);
+        ALL_COUNT = FileIO.getByte(MarkBitApplication.i_file, FileIO.ALL_SAMPLE_NUM_ADDR);
         byte[] commonMarkIndex = new byte[COUNT];
-        FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, 0x20, COUNT);
+        FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, FileIO.A_INDEX_LIB_ADDR, COUNT);
         Log.d(TAG, "count: " + COUNT);
 
 
@@ -65,7 +65,7 @@ public class DummyContent {
 
         } else if (num > size) {
             byte[] commonMarkIndex = new byte[num];
-            FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, 0x20, num);
+            FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, FileIO.A_INDEX_LIB_ADDR, num);
             for (int i = size; i < num; i++) {
                 int index = commonMarkIndex[i] & 0xff;
 
@@ -89,8 +89,8 @@ public class DummyContent {
         ITEM_MAP.remove(old_id);
         ITEM_MAP.put(old_id, dummyItem);
 
-        int i_offset = (0x20 & 0xff) + old_id;
-        int r_offset = (0x40 & 0xff) + old_id;
+        int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
+        int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
 
         int set_num = 1;
         byte[] value = new byte[set_num];

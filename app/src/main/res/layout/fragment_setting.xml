@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:text="@string/A_samples_num"
+                    android:text="@string/index_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <TextView
@@ -85,34 +85,34 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <LinearLayout
-            android:weightSum="10"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:weightSum="10"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/setListHeight"-->
+            <!--android:orientation="horizontal">-->
 
-            <LinearLayout
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="@string/B_samples_num"
-                    android:layout_width="@dimen/itemWidth"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:id="@+id/B_samples_num_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_weight="2"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
+                <!--<TextView-->
+                    <!--android:text="@string/B_samples_num"-->
+                    <!--android:layout_width="@dimen/itemWidth"-->
+                    <!--android:layout_height="wrap_content" />-->
+                <!--<TextView-->
+                    <!--android:id="@+id/B_samples_num_show"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+            <!--</LinearLayout>-->
 
-            <SeekBar
-                style="@style/Widget.AppCompat.SeekBar"
-                android:id="@+id/B_samples_num"
-                android:layout_weight="8"
-                android:max="32"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+            <!--<SeekBar-->
+                <!--style="@style/Widget.AppCompat.SeekBar"-->
+                <!--android:id="@+id/B_samples_num"-->
+                <!--android:layout_weight="8"-->
+                <!--android:max="32"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</LinearLayout>-->
 
         <LinearLayout
             android:weightSum="10"

@@ -64,6 +64,28 @@ public abstract class FileIO {
     private static final String DEFAULT_FILENAME_TIME_FORMAT = "yyyy-MM-dd-hhmmss";
     private static final String ENDING = ".png";
 
+    public static final byte VERSION_ADDR          = 0x00;
+    public static final int  VERSION_LEN           = 4;
+    public static final byte DEVICE_NAME_ADDR      = 0x07;
+    public static final byte FACTORY_NAME_ADDR     = 0x08;
+    public static final int  DEVICE_NAME_LEN       = 8;
+    public static final byte ALL_SAMPLE_NUM_ADDR   = 0x10;
+    public static final byte A_SAMPLE_NUM_ADDR     = 0x11;
+    public static final byte B_SAMPLE_NUM_ADDR     = 0x12;
+    public static final byte BRIGHTNESS_ADDR       = 0x13;
+    public static final byte A_SHOW_TIME_ADDR      = 0x14;
+    public static final byte A_HIDE_TIME_ADDR      = 0x15;
+    public static final byte B_SHOW_TIME_ADDR      = 0x16;
+    public static final byte B_HIDE_TIME_ADDR      = 0x17;
+    public static final byte BATTERY_TYPE_ADDR     = 0x18;
+    public static final byte IS_MAGNET_ADDR        = 0x19;
+    public static final byte IS_LOW_VOLTAGE_ADDR   = 0x1A;
+    public static final byte IS_DUMP_ADDR          = 0x1B;
+    public static final byte PASSWORD_ADDR         = 0x1C;
+    public static final int  PASSWORD_LEN          = 4;
+    public static final byte A_INDEX_LIB_ADDR      = 0x20;
+    public static final byte B_INDEX_LIB_ADDR      = 0x40;
+
     private FileIO() {
     }
 
@@ -508,15 +530,6 @@ public abstract class FileIO {
         try {
             RandomAccessFile ra_file = new RandomAccessFile(file, "rw");
             if (ra_file != null) {
-
-//                int read_byte_num = 1;
-//                        byte[] brightness = new byte[read_byte_num];
-//                        ra_file.seek(0x13);
-//                        if (read_byte_num == ra_file.read(brightness, 0, read_byte_num)) {
-//                            Log.d(TAG, "brightness is: " + (brightness[0] & 0xff));
-//                        }
-
-//                Log.d(TAG, "new brightness is: " + (value[0] & 0xff));
                 ra_file.seek(offset);
                 ra_file.write(value, 0, length);
                 res = length;
