@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.liwn.zzl.markbit.FileIO;
 import com.liwn.zzl.markbit.MarkBitApplication;
+import com.liwn.zzl.markbit.R;
 
 import java.io.File;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class DummyContent {
     public DummyContent() {
         File file = FileIO.getIconFile();
         if (file == null) {
-            Toast.makeText(MarkBitApplication.applicationContext, "please import 2 bins file.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -43,16 +44,16 @@ public class DummyContent {
         FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, FileIO.A_INDEX_LIB_ADDR, COUNT);
         Log.d(TAG, "count: " + COUNT);
 
-
+        GetBitmap getBitmap = new GetBitmap();
         for (int i = 0; i < ALL_COUNT; i++) {
-            Bitmap bitmap = new GetBitmap().getBitmap(i);
+            Bitmap bitmap = getBitmap.getBitmap(i);
             DummyItem dummyItem = newDummyContentItem(i, i, i, false, false, "v0.0", bitmap, FileIO.default_file_name);
             ALL_ITEM_MAP.put(dummyItem.position, dummyItem);
         }
 
         for (int i = 0; i < COUNT; i++) {
             int index = commonMarkIndex[i] & 0xff;
-            Bitmap bitmap = new GetBitmap().getBitmap(index);
+            Bitmap bitmap = getBitmap.getBitmap(index);
             DummyItem dummyItem = newDummyContentItem(i, index, index, false, false, "v0.0", bitmap, FileIO.default_file_name);
             ITEM_MAP.put(i, dummyItem);
         }
@@ -66,10 +67,11 @@ public class DummyContent {
         } else if (num > size) {
             byte[] commonMarkIndex = new byte[num];
             FileIO.getBytes(MarkBitApplication.i_file, commonMarkIndex, FileIO.A_INDEX_LIB_ADDR, num);
+            GetBitmap getBitmap = new GetBitmap();
             for (int i = size; i < num; i++) {
                 int index = commonMarkIndex[i] & 0xff;
 
-                Bitmap bitmap = new GetBitmap().getBitmap(index);
+                Bitmap bitmap = getBitmap.getBitmap(index);
                 DummyItem dummyItem = newDummyContentItem(i, index, index, false, false, "v0.0", bitmap, FileIO.default_file_name);
                 ITEM_MAP.put(i, dummyItem);
             }
@@ -85,8 +87,9 @@ public class DummyContent {
         if (num == size) {
 
         } else if (num > size) {
+            GetBitmap getBitmap = new GetBitmap();
             for (int i = size; i < num; i++) {
-                Bitmap bitmap = new GetBitmap().getBitmap(i);
+                Bitmap bitmap = getBitmap.getBitmap(i);
                 DummyItem dummyItem = newDummyContentItem(i, i, i, false, false, "v0.0", bitmap, FileIO.default_file_name);
                 ALL_ITEM_MAP.put(i, dummyItem);
             }

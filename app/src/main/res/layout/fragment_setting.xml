@@ -15,81 +15,142 @@
             android:gravity="right"
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/version_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/hint_textSize"
                 android:text="@string/version"/>
             <TextView
                 android:id="@+id/version_num"
+                android:textColor="@color/color_gray"
+                android:textSize="@dimen/hint_textSize"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:weightSum="5"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setListHeight"
-            android:orientation="horizontal">
-
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal">
                 <TextView
-                    android:text="@string/all_samples_num"
+                    android:gravity="left"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/all_samples_num"/>
                 <TextView
                     android:id="@+id/all_samples_num_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="right" />
             </LinearLayout>
-            <SeekBar
-                style="@style/Widget.AppCompat.SeekBar"
-                android:id="@+id/all_samples_num"
-                android:layout_weight="8"
-                android:max="128"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_weight="3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <SeekBar
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:id="@+id/all_samples_num"
+                    android:max="128"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:weightSum="2"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setListHeight"
-            android:orientation="horizontal">
-
+            android:orientation="vertical">
             <LinearLayout
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal">
                 <TextView
-                    android:text="@string/index_num"
+                    android:gravity="left"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/A_samples_num"/>
                 <TextView
                     android:id="@+id/A_samples_num_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="right" />
             </LinearLayout>
-
-            <SeekBar
-                style="@style/Widget.AppCompat.SeekBar"
-                android:id="@+id/A_samples_num"
-                android:layout_weight="8"
-                android:max="32"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <SeekBar
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:id="@+id/A_samples_num"
+                    android:max="32"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
         </LinearLayout>
 
         <!--<LinearLayout-->
             <!--android:weightSum="10"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="@dimen/setListHeight"-->
-            <!--android:orientation="horizontal">-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_gravity="center_vertical">-->
 
             <!--<LinearLayout-->
                 <!--android:layout_weight="2"-->
@@ -98,11 +159,13 @@
                 <!--<TextView-->
                     <!--android:text="@string/B_samples_num"-->
                     <!--android:layout_width="@dimen/itemWidth"-->
-                    <!--android:layout_height="wrap_content" />-->
+                    <!--android:layout_height="wrap_content" -->
+                    <!--android:layout_gravity="center_vertical"/>-->
                 <!--<TextView-->
                     <!--android:id="@+id/B_samples_num_show"-->
                     <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content" />-->
+                    <!--android:layout_height="wrap_content" -->
+                    <!--android:layout_gravity="center_vertical"/>-->
             <!--</LinearLayout>-->
 
             <!--<SeekBar-->
@@ -111,159 +174,319 @@
                 <!--android:layout_weight="8"-->
                 <!--android:max="32"-->
                 <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content" />-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"/>-->
         <!--</LinearLayout>-->
 
         <LinearLayout
-            android:weightSum="10"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:orientation="vertical">
             <LinearLayout
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal">
                 <TextView
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/ic_brightness_black"/>
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/brightness"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left" />
                 <TextView
                     android:id="@+id/brightness_num_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="right"/>
             </LinearLayout>
-            <SeekBar
-                style="@style/Widget.AppCompat.SeekBar"
-                android:id="@+id/brightness_adjust"
-                android:layout_weight="8"
-                android:max="20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <SeekBar
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:id="@+id/brightness_adjust"
+                    android:layout_weight="8"
+                    android:max="20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="10"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:orientation="vertical">
             <LinearLayout
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal">
                 <TextView
-                    android:text="@string/A_show_time"
+                    android:gravity="left"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/A_show_time"/>
                 <TextView
                     android:id="@+id/A_show_time_num_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="right"/>
             </LinearLayout>
-
-            <SeekBar
-                style="@style/Widget.AppCompat.SeekBar"
-                android:id="@+id/A_show_time"
-                android:layout_weight="8"
-                android:max="255"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <SeekBar
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:id="@+id/A_show_time"
+                    android:max="255"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="10"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:orientation="vertical">
             <LinearLayout
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
                 <TextView
-                    android:text="@string/B_show_time"
+                    android:gravity="left"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/B_show_time"/>
                 <TextView
                     android:id="@+id/B_show_time_num_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/textSize"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:gravity="right"
+                    android:layout_gravity="center_vertical"/>
             </LinearLayout>
-            <SeekBar
-                style="@style/Widget.AppCompat.SeekBar"
-                android:id="@+id/B_show_time"
-                android:layout_weight="8"
-                android:max="255"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <SeekBar
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:id="@+id/B_show_time"
+                    android:max="255"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:text="@string/battery_type"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
+
+            <!--<Switch-->
+                <!--android:id="@+id/battery_type"-->
+                <!--android:layout_weight="5"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textOn="@string/battery_types_on"-->
+                <!--android:textOff="@string/battery_types_off"-->
+                <!--android:layout_gravity="center_vertical"/>-->
             <Spinner
                 android:id="@+id/battery_type"
-                android:layout_weight="5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></Spinner>
+                android:layout_weight="8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"></Spinner>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:layout_gravity="center_vertical">
             <TextView
                 android:text="@string/magnetic_switch"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
 
             <Switch
                 android:id="@+id/magnetic_switch"
-                android:layout_weight="5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:layout_gravity="center_vertical">
             <TextView
                 android:text="@string/low_voltage_switch"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
 
             <Switch
                 android:id="@+id/low_voltage_switch"
-                android:layout_weight="5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setListHeight">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="1">
+            <View
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height= "@dimen/hrBorderHeight"
+                android:background="@color/color_gray" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setListHeight"
+            android:layout_gravity="center_vertical">
             <TextView
                 android:text="@string/dump_switch"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
             <Switch
                 android:id="@+id/dump_switch"
-                android:layout_weight="5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_vertical"/>
         </LinearLayout>
-
-
-
     </LinearLayout>
 
 </ScrollView>

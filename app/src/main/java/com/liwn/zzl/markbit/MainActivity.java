@@ -1,29 +1,37 @@
 package com.liwn.zzl.markbit;
 
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,8 +39,6 @@ import android.widget.Toast;
 import com.liwn.zzl.markbit.bluetooth.BluetoothLeService;
 import com.liwn.zzl.markbit.bluetooth.DeviceListActivity;
 import com.liwn.zzl.markbit.mark.DummyContent;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,7 +48,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,7 +56,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
+    private static final int REQUSET_CODE_WRITE_EXTERNAL_STORAGE = 3;
     private static final String PREFERENCE = "PREFERENCE";
+    private static final String I_SYNCED = "I_SYNCED";
+    private static final String R_SYNCED = "R_SYNCED";
 
     private Context mContext;
     /**
@@ -83,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private Button[] mTabs;
 
     private TextView synced_notification;
+    private boolean dbClickExit = false;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -198,13 +207,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     public void onTabClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_send_file:
+            case R.id.btn_mark_management:
                 clickedIndex = 0;
                 break;
-            case R.id.btn_mark_management:
+            case R.id.btn_draw_mark:
                 clickedIndex = 1;
                 break;
-            case R.id.btn_draw_mark:
+            case R.id.btn_send_file:
                 clickedIndex = 2;
                 break;
         }
@@ -226,15 +235,15 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private void initView() {
         mTabs = new Button[3];
-        mTabs[0] = (Button) findViewById(R.id.btn_send_file);
-        mTabs[1] = (Button) findViewById(R.id.btn_mark_management);
-        mTabs[2] = (Button) findViewById(R.id.btn_draw_mark);
+        mTabs[0] = (Button) findViewById(R.id.btn_mark_management);
+        mTabs[1] = (Button) findViewById(R.id.btn_draw_mark);
+        mTabs[2] = (Button) findViewById(R.id.btn_send_file);
         mTabs[0].setSelected(true);
 
         mSendFileFragment = new SendFileFragment();
         mMarkItemFragment = new MarkItemFragment();
         mSettingFragment = new SettingFragment();
-        mFragments = new Fragment [] {mSendFileFragment, mMarkItemFragment, mSettingFragment};
+        mFragments = new Fragment [] {mMarkItemFragment, mSettingFragment, mSendFileFragment};
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.hide(mFragments[currentIndex]);
@@ -289,6 +298,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         if (getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true)) {
             getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean("isFirstRun", false).commit();
         }
+
+        getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).commit();
+        getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).commit();
     }
 
     @Override
@@ -315,37 +327,152 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     @Override
+    public void onBackPressed() {
+        getSupportFragmentManager();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else if (!dbClickExit) {
+            dbClickExit = true;
+            Toast.makeText(this, getString(R.string.dbClick_Exit), Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dbClickExit = false;
+                }
+            }, 2000);
+        } else {
+            getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).commit();
+            getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).commit();
+            super.onBackPressed();
+            return;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUSET_CODE_WRITE_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //授权成功，直接操作
+                    Log.e(TAG, "SD permission granted succeed!");
+                    copyBinsFromAsset2External();
+
+                    MarkBitApplication.i_file = FileIO.getIconFile();
+                    MarkBitApplication.r_file = FileIO.getRconFile();
+
+                    MarkBitApplication.i_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(I_SYNCED, true);
+                    MarkBitApplication.r_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(R_SYNCED, true);
+                    updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
+                    if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
+                        Log.d(TAG, "NO BINS FILE!");
+                        Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_LONG).show();
+//			return;
+                    } else {
+                        MarkBitApplication.dummyContent = new DummyContent();
+                    }
+                } else {
+                    //禁止授权
+                    Toast.makeText(MainActivity.this, "external storage permission is denied.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "SD permission granted failed!");
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-
-        boolean isFirstRun = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true);
-        if (isFirstRun) {
-//            copyBitmapsFromAsset2External();
-            copyBinsFromAsset2External();
-        }
-
-        MarkBitApplication.i_file = FileIO.getIconFile();
-        MarkBitApplication.r_file = FileIO.getRconFile();
-
-        if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
-            Log.d(TAG, "NO BINS FILE!");
-            Toast.makeText(MarkBitApplication.applicationContext, "please import 2 bins file and then restart app.", Toast.LENGTH_LONG).show();
-//			return;
-        } else {
-            MarkBitApplication.dummyContent = new DummyContent();
-        }
-
-
-        mContext = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
+        initView();
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.e(TAG, "no storage permission");
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Log.i(TAG,
+                        "Displaying storage permission rationale to provide additional context.");
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Storage permission confirm")
+//                        .setMessage("Are you sure you want to delete this entry?")
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // continue with delete
+//                            }
+//                        })
+//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // do nothing
+//                            }
+//                        })
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUSET_CODE_WRITE_EXTERNAL_STORAGE);
+
+
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUSET_CODE_WRITE_EXTERNAL_STORAGE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+        boolean isFirstRun = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true);
+        if (isFirstRun) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//            copyBitmapsFromAsset2External();
+                copyBinsFromAsset2External();
+            } else {
+//                Toast.makeText(MainActivity.this, "external storage permission is denied.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            MarkBitApplication.i_file = FileIO.getIconFile();
+            MarkBitApplication.r_file = FileIO.getRconFile();
+
+            MarkBitApplication.i_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(I_SYNCED, true);
+            MarkBitApplication.r_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(R_SYNCED, true);
+            updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
+            if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
+                Log.d(TAG, "NO BINS FILE!");
+                Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_LONG).show();
+//			return;
+            } else {
+                MarkBitApplication.dummyContent = new DummyContent();
+            }
+        }
+
+        mContext = this;
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-
-        initView();
 
         bluetoothStatus = (ImageButton) findViewById(R.id.icon_bluetooth_status);
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -371,6 +498,27 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
             }
         });
+
+//        HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
+//        horizontalScrollView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clickedIndex = 2;
+//                if (currentIndex != clickedIndex) {
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.hide(mFragments[currentIndex]);
+//                    if (!mFragments[clickedIndex].isAdded()) {
+//                        ft.add(R.id.fragment_container, mFragments[clickedIndex]);
+//                    }
+//                    ft.show(mFragments[clickedIndex]).commit();
+//                }
+//
+//                mTabs[currentIndex].setSelected(false);
+//                // 把当前tab设为选中状态
+//                mTabs[clickedIndex].setSelected(true);
+//                currentIndex = clickedIndex;
+//            }
+//        });
     }
 
     @Override
@@ -533,6 +681,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                         int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
                         int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
                         mMarkItemFragment.replaceMark(old_position_id, new_position_id);
+
+                        MarkBitApplication.i_synced = false;
+                        MarkBitApplication.r_synced = false;
+                        updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                     }
                 }
         }
@@ -804,7 +956,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private void updateSelfNotification(boolean i_synced, boolean r_synced) {
         if (i_synced && r_synced) {
-            synced_notification.setVisibility(View.INVISIBLE);
+            synced_notification.setVisibility(View.GONE);
         } else if (i_synced && !r_synced) {
             String notification = String.format(getString(R.string.not_synced), getString(R.string.R_name));
             synced_notification.setText(notification);

@@ -66,8 +66,8 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
         public void onClick(View v) {
             Log.d(TAG, "clicked on id: " + mItem.control_id);
             new AlertDialog.Builder(mView.getContext())
-                    .setTitle("Replace with this mark")
-                    .setMessage("Are you sure you want to Replace this mark?")
+                    .setTitle(mView.getResources().getString(R.string.mark_replace_title))
+                    .setMessage(mView.getResources().getString(R.string.mark_replace_message))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // continue with delete

@@ -95,13 +95,14 @@ public class SendFileFragment extends Fragment {
 
                 if (isBTConnected) {
                     Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                    i.setDataAndType(Uri.fromFile(FileIO.getMediaFile()), "file/bin");
+                    i.setType("file/*.bin");
+//                    i.setDataAndType(Uri.fromFile(FileIO.getMediaFile()), "file/bin");
                     i.addCategory(Intent.CATEGORY_OPENABLE);
 
                     try {
                         startActivityForResult(i, REQUEST_CODE_CHOOSE_FILE);
                     } catch (android.content.ActivityNotFoundException e) {
-                        Toast.makeText(activityContext, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activityContext, getString(R.string.cannot_access_file_system_hint), Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 } else {

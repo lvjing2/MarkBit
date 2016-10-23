@@ -20,7 +20,11 @@
             android:id="@+id/bt_file_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/choose_and_send"/>
+            android:textColor="@color/color_white"
+            android:text="@string/choose_and_send"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/sendfile_button_selector" />
     </LinearLayout>
 
 </FrameLayout>

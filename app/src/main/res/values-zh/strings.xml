@@ -8,6 +8,8 @@
 
   <string name="add_new_mark_by_this">更换图标</string>
   <string name="send_file">发送图标文件</string>
+  <string name="cannot_access_file_system_hint">无法访问文件系统,请安装一个文件管理器.</string>
+  <string name="bins_not_import">请将系统文件导入到文件夹中.</string>
 
   <!-- TODO: Remove or change this placeholder text -->
   <string name="choose_and_send">选择文件并发送</string>
@@ -21,7 +23,7 @@
   <string name="select_device">选择连接的设备</string>
   <string name="title_other_devices">其他设备</string>
   <string name="button_scan">扫描新设备</string>
-  <string name="bt_not_enabled_leaving">蓝牙为启动,退出程序.</string>
+  <string name="bt_not_enabled_leaving">蓝牙未启动,退出程序.</string>
   <string name="parameter_setting">设备参数设置</string>
 
   <string name="cancle">取消</string>
@@ -31,17 +33,25 @@
   <string name="index_num">常用索引数: </string>
   <string name="A_samples_num">A库索引数: </string>
   <string name="B_samples_num">B库索引数: </string>
-  <string name="A_show_time">A库显示时间(s): </string>
-  <string name="B_show_time">B库显示时间(s): </string>
+  <string name="A_show_time">A库显示时间: </string>
+  <string name="B_show_time">B库显示时间: </string>
+  <string name="time_unit">秒</string>
+  <string name="brightness">亮度: </string>
   <string name="battery_type">电池类型: </string>
   <string name="magnetic_switch">磁检测: </string>
   <string name="low_voltage_switch">低电压检测: </string>
   <string name="dump_switch">倾斜检测: </string>
 
+  <string name="not_synced">请将%1$s发送至设备!</string>
+  <string name="i_r_not_synced">请将%1$s和%2$s发送至相应的设备!</string>
+
   <string-array name="battery_types">
     <item>三元电池</item>
     <item>锂电池</item>
   </string-array>
+
+  <string name="battery_types_on">三元电池</string>
+  <string name="battery_types_off">锂电池</string>
 
 
   <string name="I_name">icon100.bin</string>
@@ -49,4 +59,8 @@
   <string name="I_device_name">2C_LEDBOARD</string>
   <string name="R_device_name">2C_TELECTRL</string>
   <string name="factory_name">ZhongChe</string>
+
+  <string name="mark_replace_title">替换</string>
+  <string name="mark_replace_message">确定使用这个图标替换吗?</string>
+  <string name="dbClick_Exit">再按一次退出</string>
 </resources>

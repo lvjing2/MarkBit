@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.liwn.zzl.markbit.FileIO;
 import com.liwn.zzl.markbit.MarkBitApplication;
+import com.liwn.zzl.markbit.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +17,66 @@ import java.io.RandomAccessFile;
  */
 public class GetBitmap {
     private final static int preSize = 576;
+    private final static int outer_circle_width = 72;
+    private final static int outer_circle_height = 73;
+    private final static int inner_circle_width = 53;
+    private final static int inner_circle_height = 53;
     private final static int width = MarkBitApplication.BIT_LCD_WIDTH;
     private final static int height = MarkBitApplication.BIT_LCD_HEIGHT;
     private final static int imgIconSize = width * height * 2 / 8;
     private final static int imgColor = 2;
+//    private final static String mark_yellow = "#FFD700";
+    private final static int mark_yellow = Color.parseColor("#F0AD4E");
+    private final static int mark_red = Color.parseColor("#E2231A");
+    private final Bitmap mark_background;
+
+    public GetBitmap() {
+        super();
+        mark_background = Bitmap.createBitmap(outer_circle_width, outer_circle_height, Bitmap.Config.ARGB_8888);
+        mark_background.eraseColor(Color.TRANSPARENT);
+        int outer_radis = (int) Math.floor(outer_circle_width / 2);
+        int inner_radis = (int) Math.floor(inner_circle_width / 2);
+        for (int i = 0; i < outer_circle_height; ++i) {
+            int outer_left = -1, outer_right = -1, inner_left = -1, inner_right = -1;
+            Double temp = Math.sqrt(outer_radis * outer_radis - (i - outer_radis) * (i - outer_radis));
+            int deta = (int) Math.ceil(temp);
+            outer_left = outer_radis - deta;
+            outer_right = outer_radis + deta;
+            if (outer_left < 0) {
+                outer_left = 0;
+            }
+            if (outer_right > outer_circle_width) {
+                outer_right = outer_circle_width;
+            }
+
+            // no inner junction
+            if (i < outer_radis - inner_radis || i > outer_radis + inner_radis) {
+                for (int j = outer_left; j < outer_right; ++j) {
+                    mark_background.setPixel(i, j, mark_red);
+                }
+            } else {
+                temp = Math.sqrt(inner_radis * inner_radis - (i - outer_radis) * (i - outer_radis));
+                deta = (int) Math.ceil(temp);
+                inner_left = outer_radis - deta;
+                inner_right = outer_radis + deta;
+                if (inner_left < outer_radis - inner_radis) {
+                    inner_left = outer_radis - inner_radis;
+                }
+                if (inner_right > outer_radis + inner_radis) {
+                    inner_right = outer_radis + inner_radis;
+                }
+
+                for (int j = outer_left; j <= inner_left; ++j) {
+                    mark_background.setPixel(i, j, mark_red);
+                }
+                for (int j = inner_right; j <= outer_right; ++j) {
+                    mark_background.setPixel(i, j, mark_red);
+                }
+            }
+
+        }
+    }
+
 
     public Bitmap getBitmap(int index) {
         return getOriBitmap(index);
@@ -55,7 +112,7 @@ public class GetBitmap {
                 }
 
                 if (img[i][j] ==  true) {
-                    bitmap.setPixel(j, i, Color.RED);
+                    bitmap.setPixel(j, i, mark_red);
                 }
             }
         }
@@ -73,7 +130,7 @@ public class GetBitmap {
                 }
 
                 if (img[i][j] ==  true) {
-                    bitmap.setPixel(j, i, Color.YELLOW);
+                    bitmap.setPixel(j, i, mark_yellow);
                 }
             }
         }
@@ -92,7 +149,7 @@ public class GetBitmap {
         try {
             File file = FileIO.getIconFile();
             if (file == null) {
-                Toast.makeText(MarkBitApplication.applicationContext, "please import 2 bins file.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
                 return null;
             }
 

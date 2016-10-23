@@ -90,8 +90,11 @@ public abstract class FileIO {
     }
 
     public static void deleteAllFiles() {
-        for (File file : getFiles()) {
-            file.delete();
+        File[] files = getFiles();
+        if (files != null) {
+            for (File file : files) {
+                file.delete();
+            }
         }
     }
 

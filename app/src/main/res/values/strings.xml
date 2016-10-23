@@ -4,21 +4,23 @@
 
     <string name="menu_connect_device">Connect a device</string>
 
-    <string name="index_setting">index</string>
+    <string name="index_setting">Index</string>
 
-    <string name="add_new_mark_by_this">replace this mark</string>
-    <string name="send_file">send file</string>
+    <string name="add_new_mark_by_this">Replace this mark</string>
+    <string name="send_file">Send file</string>
+    <string name="cannot_access_file_system_hint">Please install a File Manager.</string>
+    <string name="bins_not_import">please import 2 bins file and then restart app.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="choose_and_send">choose file and send</string>
-    <string name="send_file_result_succeed">send file result succeed!</string>
-    <string name="file_sending_title">file sending...</string>
-    <string name="file_sending_msg">file send progress...</string>
+    <string name="choose_and_send">Choose file and send</string>
+    <string name="send_file_result_succeed">Send file result succeed!</string>
+    <string name="file_sending_title">File sending...</string>
+    <string name="file_sending_msg">File send progress...</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="bluetooth_not_available">Bluetooth is not available!</string>
-    <string name="unknown_device">unknown device</string>
-    <string name="scanning">scanning for devices...</string>
-    <string name="select_device">select a device to connect</string>
+    <string name="unknown_device">Unknown device</string>
+    <string name="scanning">Scanning for devices...</string>
+    <string name="select_device">Select a device to connect</string>
     <string name="title_other_devices">Other Available Devices</string>
     <string name="button_scan">Scan for devices</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving MarkBit.</string>
@@ -26,30 +28,38 @@
 
     <string name="cancle">Cancle</string>
 
-    <string name="version">version: </string>
-    <string name="all_samples_num">all samples num: </string>
-    <string name="index_num">index num: </string>
+    <string name="version">Version: </string>
+    <string name="all_samples_num">All samples num: </string>
+    <string name="index_num">Index num: </string>
     <string name="A_samples_num">A samples num: </string>
     <string name="B_samples_num">B samples num: </string>
-    <string name="A_show_time">A show time(s): </string>
-    <string name="B_show_time">B show time(s): </string>
-    <string name="battery_type">battery type: </string>
-    <string name="magnetic_switch">magnetic switch: </string>
-    <string name="low_voltage_switch">low voltage switch: </string>
-    <string name="dump_switch">dump switch: </string>
+    <string name="A_show_time">A show time: </string>
+    <string name="B_show_time">B show time: </string>
+    <string name="time_unit">s</string>
+    <string name="brightness">Brightness: </string>
+    <string name="battery_type">Battery type: </string>
+    <string name="magnetic_switch">Magnetic switch: </string>
+    <string name="low_voltage_switch">Low voltage switch: </string>
+    <string name="dump_switch">Dump switch: </string>
 
     <string name="not_synced">%1$s not synchronized!</string>
     <string name="i_r_not_synced">%1$s and %2$s not synchronized!</string>
 
     <string-array name="battery_types">
         <item>Three cell battery</item>
-        <item>lithium battery</item>
+        <item>Lithium battery</item>
     </string-array>
 
+    <string name="battery_types_on">Three cell battery</string>
+    <string name="battery_types_off">Lithium battery</string>
 
     <string name="I_name">icon100.bin</string>
     <string name="R_name">rcon100.bin</string>
     <string name="I_device_name">2C_LEDBOARD</string>
     <string name="R_device_name">2C_TELECTRL</string>
     <string name="factory_name">ZhongChe</string>
+
+    <string name="mark_replace_title">Replace with this mark</string>
+    <string name="mark_replace_message">Are you sure you want to Replace this mark?</string>
+    <string name="dbClick_Exit">Click BACK again to exit.</string>
 </resources>

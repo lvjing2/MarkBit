@@ -1,10 +1,8 @@
 package com.liwn.zzl.markbit;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +13,6 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * Created by zzl on 16/7/4.
@@ -96,7 +86,9 @@ public class SettingFragment extends Fragment {
         sb_brightness = (SeekBar) view.findViewById(R.id.brightness_adjust);
         sb_A_show_time= (SeekBar) view.findViewById(R.id.A_show_time);
         sb_B_show_time = (SeekBar) view.findViewById(R.id.B_show_time);
+
         sp_battery_types = (Spinner) view.findViewById(R.id.battery_type);
+
         tv_brightness_show = (TextView) view.findViewById(R.id.brightness_num_show);
         tv_A_show_time_num_show = (TextView) view.findViewById(R.id.A_show_time_num_show);
         tv_B_show_time_num_show = (TextView) view.findViewById(R.id.B_show_time_num_show);
@@ -110,8 +102,8 @@ public class SettingFragment extends Fragment {
         sb_B_show_time.setProgress(B_show_time);
         sp_battery_types.setSelection(battery_types);
         tv_brightness_show.setText(String.valueOf(brightness));
-        tv_A_show_time_num_show.setText(String.valueOf(((float) A_show_time / 10)));
-        tv_B_show_time_num_show.setText(String.valueOf(((float) B_show_time / 10)));
+        tv_A_show_time_num_show.setText(String.valueOf((float) A_show_time / 10) + getString(R.string.time_unit));
+        tv_B_show_time_num_show.setText(String.valueOf((float) B_show_time / 10) + getString(R.string.time_unit));
 
         st_magnetic = (Switch) view.findViewById(R.id.magnetic_switch);
         st_low_voltage = (Switch) view.findViewById(R.id.low_voltage_switch);
@@ -167,7 +159,13 @@ public class SettingFragment extends Fragment {
         sb_A_samples_num.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv_A_samples_num_show.setText(String.valueOf(progress));
+//                tv_A_samples_num_show.setText(String.valueOf(progress));
+                if (progress < 1) {
+                    seekBar.setProgress(1);
+                    tv_A_samples_num_show.setText(String.valueOf(1));
+                } else {
+                    tv_A_samples_num_show.setText(String.valueOf(progress));
+                }
             }
 
             @Override
@@ -221,7 +219,13 @@ public class SettingFragment extends Fragment {
         sb_brightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv_brightness_show.setText(String.valueOf(progress));
+//                tv_brightness_show.setText(String.valueOf(progress));
+                if (progress < 1) {
+                    seekBar.setProgress(1);
+                    tv_brightness_show.setText(String.valueOf(1));
+                } else {
+                    tv_brightness_show.setText(String.valueOf(progress));
+                }
             }
 
             @Override
@@ -246,7 +250,13 @@ public class SettingFragment extends Fragment {
         sb_A_show_time.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv_A_show_time_num_show.setText(String.valueOf(((float) progress / 10)));
+//                tv_A_show_time_num_show.setText(String.valueOf((float) progress / 10) + getString(R.string.time_unit));
+                if (progress < 1) {
+                    seekBar.setProgress(1);
+                    tv_A_show_time_num_show.setText(String.valueOf(0.1) + getString(R.string.time_unit));
+                } else {
+                    tv_A_show_time_num_show.setText(String.valueOf((float) progress / 10) + getString(R.string.time_unit));
+                }
             }
 
             @Override
@@ -273,7 +283,13 @@ public class SettingFragment extends Fragment {
         sb_B_show_time.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv_B_show_time_num_show.setText(String.valueOf((((float) progress / 10))));
+//                tv_B_show_time_num_show.setText(String.valueOf(((float) progress / 10)) + getString(R.string.time_unit));
+                if (progress < 1) {
+                    seekBar.setProgress(1);
+                    tv_B_show_time_num_show.setText(String.valueOf(0.1) + getString(R.string.time_unit));
+                } else {
+                    tv_B_show_time_num_show.setText(String.valueOf((float) progress / 10) + getString(R.string.time_unit));
+                }
             }
 
             @Override
@@ -289,8 +305,8 @@ public class SettingFragment extends Fragment {
                 showTime[0] = (byte) seekBar.getProgress();
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.B_SHOW_TIME_ADDR, read_byte_num, showTime);
                 FileIO.setBytes(MarkBitApplication.r_file, FileIO.B_SHOW_TIME_ADDR, read_byte_num, showTime);
-                FileIO.setBytes(MarkBitApplication.i_file, FileIO.A_SHOW_TIME_ADDR, read_byte_num, showTime);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_SHOW_TIME_ADDR, read_byte_num, showTime);
+                FileIO.setBytes(MarkBitApplication.i_file, FileIO.A_HIDE_TIME_ADDR, read_byte_num, showTime);
+                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_HIDE_TIME_ADDR, read_byte_num, showTime);
 
                 MarkBitApplication.i_synced = false;
                 MarkBitApplication.r_synced = false;
@@ -298,11 +314,14 @@ public class SettingFragment extends Fragment {
             }
         });
 
+        ArrayAdapter<String> a = new ArrayAdapter<String>(this.getContext(), R.layout.spinner_battery_dropdown_item, getResources().getStringArray(R.array.battery_types));
+        a.setDropDownViewResource(R.layout.spinner_battery_dropdown_item);
+        sp_battery_types.setAdapter(a);
 
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(), R.array.battery_types, android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        sp_battery_types.setAdapter(adapter);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(), R.array.battery_types, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_battery_types.setAdapter(adapter);
         byte battery_type = FileIO.getByte(MarkBitApplication.i_file, FileIO.BATTERY_TYPE_ADDR);
         sp_battery_types.setSelection(battery_type & 0xff, true);
         sp_battery_types.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

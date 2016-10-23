@@ -71,8 +71,8 @@ public class MarkBitApplication extends Application {
 	public static String default_bins_dir_name = "bins";
 	public static String i_name;
 	public static String r_name;
-	public static boolean i_synced = true;
-	public static boolean r_synced = true;
+	public static boolean i_synced;
+	public static boolean r_synced;
 
 	public static Context applicationContext;
 //	public static DrawingSurface drawingSurface;
