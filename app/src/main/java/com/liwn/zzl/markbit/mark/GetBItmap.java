@@ -17,17 +17,20 @@ import java.io.RandomAccessFile;
  */
 public class GetBitmap {
     private final static int preSize = 576;
-    private final static int outer_circle_width = 72;
-    private final static int outer_circle_height = 73;
-    private final static int inner_circle_width = 53;
-    private final static int inner_circle_height = 53;
+    private final static int outer_circle_width = 77;
+    private final static int outer_circle_height = 77;
+    private final static int inner_circle_width = 60;
+    private final static int inner_circle_height = 60;
     private final static int width = MarkBitApplication.BIT_LCD_WIDTH;
     private final static int height = MarkBitApplication.BIT_LCD_HEIGHT;
     private final static int imgIconSize = width * height * 2 / 8;
     private final static int imgColor = 2;
-//    private final static String mark_yellow = "#FFD700";
-    private final static int mark_yellow = Color.parseColor("#F0AD4E");
-    private final static int mark_red = Color.parseColor("#E2231A");
+    private final static int mark_yellow = Color.parseColor("#EE9A49");
+//    private final static int mark_yellow = Color.parseColor("#F0AD4E");
+//    private final static int mark_yellow = Color.parseColor("#eec900");
+//    private final static int mark_circle_red = Color.parseColor("#E2A0A0");
+    private final static int mark_circle_red = Color.parseColor("#FF4500");
+    private final static int mark_red = Color.parseColor("#FF4500");
     private final Bitmap mark_background;
 
     public GetBitmap() {
@@ -52,7 +55,7 @@ public class GetBitmap {
             // no inner junction
             if (i < outer_radis - inner_radis || i > outer_radis + inner_radis) {
                 for (int j = outer_left; j < outer_right; ++j) {
-                    mark_background.setPixel(i, j, mark_red);
+                    mark_background.setPixel(i, j, mark_circle_red);
                 }
             } else {
                 temp = Math.sqrt(inner_radis * inner_radis - (i - outer_radis) * (i - outer_radis));
@@ -67,10 +70,10 @@ public class GetBitmap {
                 }
 
                 for (int j = outer_left; j <= inner_left; ++j) {
-                    mark_background.setPixel(i, j, mark_red);
+                    mark_background.setPixel(i, j, mark_circle_red);
                 }
                 for (int j = inner_right; j <= outer_right; ++j) {
-                    mark_background.setPixel(i, j, mark_red);
+                    mark_background.setPixel(i, j, mark_circle_red);
                 }
             }
 
@@ -95,8 +98,11 @@ public class GetBitmap {
         int height = mat0.length;
         int bytes_per_line = width / 8;
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.TRANSPARENT);
+//        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//        bitmap.eraseColor(Color.TRANSPARENT);
+        Bitmap bitmap = mark_background.copy(Bitmap.Config.ARGB_8888, true);
+        int start_width = (outer_circle_width - width) / 2;
+        int start_height = (outer_circle_height - height) / 2;
 
         boolean[][] img = new boolean[height][width];
         for (int i = 0; i < height; i++) {
@@ -112,7 +118,7 @@ public class GetBitmap {
                 }
 
                 if (img[i][j] ==  true) {
-                    bitmap.setPixel(j, i, mark_red);
+                    bitmap.setPixel(j + start_width, i + start_height, mark_red);
                 }
             }
         }
@@ -130,7 +136,7 @@ public class GetBitmap {
                 }
 
                 if (img[i][j] ==  true) {
-                    bitmap.setPixel(j, i, mark_yellow);
+                    bitmap.setPixel(j + start_width, i + start_height, mark_yellow);
                 }
             }
         }

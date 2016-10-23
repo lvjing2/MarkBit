@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
     private static final int REQUSET_CODE_WRITE_EXTERNAL_STORAGE = 3;
+    private static final int REQUSET_CODE_ACCESS_COARSE_LOCATION = 4;
     private static final String PREFERENCE = "PREFERENCE";
     private static final String I_SYNCED = "I_SYNCED";
     private static final String R_SYNCED = "R_SYNCED";
@@ -379,6 +380,18 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
                 return;
             }
+            case REQUSET_CODE_ACCESS_COARSE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //授权成功，直接操作
+                    Log.e(TAG, "BLE permission granted succeed!");
+
+                } else {
+                    //禁止授权
+                    Toast.makeText(MainActivity.this, "ble permission is denied.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "BLE permission granted failed!");
+                }
+                return;
+            }
         }
     }
 
@@ -437,6 +450,57 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUSET_CODE_WRITE_EXTERNAL_STORAGE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.e(TAG, "no ble permission");
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Log.i(TAG,
+                        "Displaying ble permission rationale to provide additional context.");
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Storage permission confirm")
+//                        .setMessage("Are you sure you want to delete this entry?")
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // continue with delete
+//                            }
+//                        })
+//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // do nothing
+//                            }
+//                        })
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUSET_CODE_ACCESS_COARSE_LOCATION);
+
+
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUSET_CODE_ACCESS_COARSE_LOCATION);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
