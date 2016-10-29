@@ -57,6 +57,7 @@ public class MarkBitApplication extends Application {
 	public static final int MESSAGE_DEVICE_SELECTED = 6;
 
 	public static final int MARK_STORAGE_NUM = 128;
+	public static final int MARK_SETTING_SIZE = 576;
 	public static StringBuilder markStorageMask = new StringBuilder(MARK_STORAGE_NUM);
 //	public static ArrayList<MarkItem> markItemList = new ArrayList<MarkItem>();
 	public static DummyContent dummyContent;

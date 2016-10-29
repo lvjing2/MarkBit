@@ -180,10 +180,12 @@ public class SettingFragment extends Fragment {
                 byte[] A_samples = new byte[read_byte_num];
                 A_samples[0] = (byte) seekBar.getProgress();
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.A_SAMPLE_NUM_ADDR, read_byte_num, A_samples);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_SAMPLE_NUM_ADDR, read_byte_num, A_samples);
+                FileIO.setBytes(MarkBitApplication.i_file, FileIO.B_SAMPLE_NUM_ADDR, read_byte_num, A_samples);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_SAMPLE_NUM_ADDR, read_byte_num, A_samples);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.B_SAMPLE_NUM_ADDR, read_byte_num, A_samples);
 
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                 mListener.updateIndexMark(seekBar.getProgress());
             }

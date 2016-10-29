@@ -1,22 +1,22 @@
 package com.liwn.zzl.markbit;
 
 import android.Manifest;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -24,14 +24,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,8 +54,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
-    private static final int REQUSET_CODE_WRITE_EXTERNAL_STORAGE = 3;
-    private static final int REQUSET_CODE_ACCESS_COARSE_LOCATION = 4;
+    private static final int REQUEST_CODE_TWO_PERMISSION = 3;
     private static final String PREFERENCE = "PREFERENCE";
     private static final String I_SYNCED = "I_SYNCED";
     private static final String R_SYNCED = "R_SYNCED";
@@ -256,23 +253,23 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         synced_notification = (TextView) findViewById(R.id.synced_notification);
     }
 
-    private void copyBitmapsFromAsset2External() {
-        FileIO.deleteAllFiles();
-
-        AssetManager assetManager = getAssets();
-        InputStream is;
-        try {
-            String[] files = assetManager.list(marksFolderName);
-            if (files != null) {
-                for (String filename : files) {
-                    is = assetManager.open(marksFolderName + "/" + filename);
-                    FileIO.copyStream(this, is, filename);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void copyBitmapsFromAsset2External() {
+//        FileIO.deleteAllFiles();
+//
+//        AssetManager assetManager = getAssets();
+//        InputStream is;
+//        try {
+//            String[] files = assetManager.list(marksFolderName);
+//            if (files != null) {
+//                for (String filename : files) {
+//                    is = assetManager.open(marksFolderName + "/" + filename);
+//                    FileIO.copyStream(this, is, filename);
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void copyBinsFromAsset2External() {
         FileIO.deleteAllFiles();
@@ -296,12 +293,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // if first run
-        if (getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true)) {
-            getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean("isFirstRun", false).commit();
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)) {
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("isFirstRun", false).apply();
         }
 
-        getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).commit();
-        getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).commit();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).apply();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).apply();
     }
 
     @Override
@@ -343,8 +341,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
             }, 2000);
         } else {
-            getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).commit();
-            getSharedPreferences(PREFERENCE, MODE_PRIVATE).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).commit();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).apply();
             super.onBackPressed();
             return;
         }
@@ -354,17 +352,17 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case REQUSET_CODE_WRITE_EXTERNAL_STORAGE: {
+            case REQUEST_CODE_TWO_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //授权成功，直接操作
-                    Log.e(TAG, "SD permission granted succeed!");
+                    Log.e(TAG, "SD and BLE permission granted succeed!");
                     copyBinsFromAsset2External();
 
                     MarkBitApplication.i_file = FileIO.getIconFile();
                     MarkBitApplication.r_file = FileIO.getRconFile();
 
-                    MarkBitApplication.i_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(I_SYNCED, true);
-                    MarkBitApplication.r_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(R_SYNCED, true);
+                    MarkBitApplication.i_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(I_SYNCED, true);
+                    MarkBitApplication.r_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(R_SYNCED, true);
                     updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                     if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
                         Log.d(TAG, "NO BINS FILE!");
@@ -375,20 +373,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     }
                 } else {
                     //禁止授权
-                    Toast.makeText(MainActivity.this, "external storage permission is denied.", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "SD permission granted failed!");
-                }
-                return;
-            }
-            case REQUSET_CODE_ACCESS_COARSE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //授权成功，直接操作
-                    Log.e(TAG, "BLE permission granted succeed!");
-
-                } else {
-                    //禁止授权
-                    Toast.makeText(MainActivity.this, "ble permission is denied.", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "BLE permission granted failed!");
+                    Toast.makeText(MainActivity.this, "SD or BLE permission is denied.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "SD or BLE permission granted failed!");
                 }
                 return;
             }
@@ -408,110 +394,18 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Log.e(TAG, "no storage permission");
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                Log.i(TAG,
-                        "Displaying storage permission rationale to provide additional context.");
-//                new AlertDialog.Builder(this)
-//                        .setTitle("Storage permission confirm")
-//                        .setMessage("Are you sure you want to delete this entry?")
-//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                // continue with delete
-//                            }
-//                        })
-//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                // do nothing
-//                            }
-//                        })
-//                        .setIcon(android.R.drawable.ic_dialog_alert)
-//                        .show();
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUSET_CODE_WRITE_EXTERNAL_STORAGE);
-
-
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUSET_CODE_WRITE_EXTERNAL_STORAGE);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_CODE_TWO_PERMISSION);
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.e(TAG, "no ble permission");
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
-
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                Log.i(TAG,
-                        "Displaying ble permission rationale to provide additional context.");
-//                new AlertDialog.Builder(this)
-//                        .setTitle("Storage permission confirm")
-//                        .setMessage("Are you sure you want to delete this entry?")
-//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                // continue with delete
-//                            }
-//                        })
-//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                // do nothing
-//                            }
-//                        })
-//                        .setIcon(android.R.drawable.ic_dialog_alert)
-//                        .show();
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUSET_CODE_ACCESS_COARSE_LOCATION);
-
-
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUSET_CODE_ACCESS_COARSE_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
-        boolean isFirstRun = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean("isFirstRun", true);
+        boolean isFirstRun = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true);
         if (isFirstRun) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//            copyBitmapsFromAsset2External();
                 copyBinsFromAsset2External();
             } else {
 //                Toast.makeText(MainActivity.this, "external storage permission is denied.", Toast.LENGTH_SHORT).show();
@@ -522,8 +416,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             MarkBitApplication.i_file = FileIO.getIconFile();
             MarkBitApplication.r_file = FileIO.getRconFile();
 
-            MarkBitApplication.i_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(I_SYNCED, true);
-            MarkBitApplication.r_synced = getSharedPreferences(PREFERENCE, MODE_PRIVATE).getBoolean(R_SYNCED, true);
+            MarkBitApplication.i_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(I_SYNCED, true);
+            MarkBitApplication.r_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(R_SYNCED, true);
             updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
                 Log.d(TAG, "NO BINS FILE!");
@@ -739,18 +633,34 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     finish();
                 }
                 break;
-            case MarkItemFragment.REQUEST_CHOOSE_NEW_MARK:
+            case MarkItemFragment.REQUEST_CHOOSE_NEW_MARK_A:
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
                         int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
                         int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
-                        mMarkItemFragment.replaceMark(old_position_id, new_position_id);
+                        Log.e(TAG, "A");
+                        mMarkItemFragment.replaceMark(true, old_position_id, new_position_id);
 
                         MarkBitApplication.i_synced = false;
+//                        MarkBitApplication.r_synced = false;
+                        updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
+                    }
+                }
+                break;
+            case MarkItemFragment.REQUEST_CHOOSE_NEW_MARK_B:
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
+                        int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
+                        Log.e(TAG, "B");
+                        mMarkItemFragment.replaceMark(false, old_position_id, new_position_id);
+
+//                        MarkBitApplication.i_synced = false;
                         MarkBitApplication.r_synced = false;
                         updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                     }
                 }
+                break;
         }
 
     }
@@ -990,6 +900,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         return true;
     }
 
+    @NonNull
     public static String bytesToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {

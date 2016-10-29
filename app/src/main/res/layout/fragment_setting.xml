@@ -120,7 +120,7 @@
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/textSize"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:text="@string/A_samples_num"/>
+                    android:text="@string/samples_num"/>
                 <TextView
                     android:id="@+id/A_samples_num_show"
                     android:layout_width="match_parent"

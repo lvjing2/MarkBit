@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liwn.zzl.markbit.AllMarkItemActivity;
@@ -113,7 +113,12 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
                 Intent i = new Intent(mParentContext, AllMarkItemActivity.class);
                 i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
 
-                ((Activity)mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_NEW_MARK);
+                Log.e("Adapter", String.valueOf(mItem.type));
+                if (mItem.type == true) {
+                    ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_NEW_MARK_A);
+                } else if (mItem.type == false) {
+                    ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_NEW_MARK_B);
+                }
                 return false;
             }
         };

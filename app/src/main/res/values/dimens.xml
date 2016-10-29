@@ -5,7 +5,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="text_margin">16dp</dimen>
-    <dimen name="toolBarSize">52dp</dimen>
+    <dimen name="topToolBarSize">40dp</dimen>
+    <dimen name="bottomToolBarSize">52dp</dimen>
     <dimen name="setListHeight">65dp</dimen>
     <dimen name="spinnerHeight">20dp</dimen>
     <dimen name="allItemWidth">80dp</dimen>
@@ -17,4 +18,5 @@
     <dimen name="hrBorderHeight">1dp</dimen>
     <dimen name="textSize">16sp</dimen>
     <dimen name="hint_textSize">14sp</dimen>
+    <dimen name="margin_medium">5dp</dimen>
 </resources>

@@ -31,8 +31,11 @@
     <string name="version">Version: </string>
     <string name="all_samples_num">All samples num: </string>
     <string name="index_num">Index num: </string>
+    <string name="samples_num">Samples num: </string>
     <string name="A_samples_num">A samples num: </string>
     <string name="B_samples_num">B samples num: </string>
+    <string name="A_index_title">A</string>
+    <string name="B_index_title">B</string>
     <string name="A_show_time">A show time: </string>
     <string name="B_show_time">B show time: </string>
     <string name="time_unit">s</string>

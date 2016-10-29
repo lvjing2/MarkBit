@@ -31,8 +31,11 @@
   <string name="version">版本号: </string>
   <string name="all_samples_num">总库图标数: </string>
   <string name="index_num">常用索引数: </string>
+  <string name="samples_num">常用索引数: </string>
   <string name="A_samples_num">A库索引数: </string>
   <string name="B_samples_num">B库索引数: </string>
+  <string name="A_index_title">A库常用索引</string>
+  <string name="B_index_title">B库常用索引</string>
   <string name="A_show_time">A库显示时间: </string>
   <string name="B_show_time">B库显示时间: </string>
   <string name="time_unit">秒</string>
