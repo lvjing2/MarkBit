@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private boolean isFileFinished = false;
     private boolean isFileCancled = false;
     private String marksFolderName = FileIO.default_prefix;
+    private String isUpdateType;
 
     @Override
     protected void onResume() {
@@ -253,24 +254,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         synced_notification = (TextView) findViewById(R.id.synced_notification);
     }
 
-//    private void copyBitmapsFromAsset2External() {
-//        FileIO.deleteAllFiles();
-//
-//        AssetManager assetManager = getAssets();
-//        InputStream is;
-//        try {
-//            String[] files = assetManager.list(marksFolderName);
-//            if (files != null) {
-//                for (String filename : files) {
-//                    is = assetManager.open(marksFolderName + "/" + filename);
-//                    FileIO.copyStream(this, is, filename);
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     private void copyBinsFromAsset2External() {
         FileIO.deleteAllFiles();
 
@@ -370,6 +353,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //			return;
                     } else {
                         MarkBitApplication.dummyContent = new DummyContent();
+                        mMarkItemFragment.recyclerView_A.getAdapter().notifyDataSetChanged();
+                        mMarkItemFragment.recyclerView_B.getAdapter().notifyDataSetChanged();
                     }
                 } else {
                     //禁止授权
@@ -405,6 +390,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
         boolean isFirstRun = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true);
         if (isFirstRun) {
+            MarkBitApplication.i_synced = true;
+            MarkBitApplication.r_synced = true;
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).apply();
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 copyBinsFromAsset2External();
             } else {
@@ -543,7 +532,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     @Override
-    public void sendFileFromUriByBT(Uri uri) {
+    public void sendFileFromUriByBT(Uri uri, String type) {
+        isUpdateType = type;
 
         if (uri == null || uri.toString().length() < 1) {
             Log.e(TAG, "BAD URI: cannot load file");
@@ -563,7 +553,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             if (file != null && tmp_file.getAbsolutePath().equals(file.getAbsolutePath()) && !isFileCancled) {
                 if (new_file != null) {
                     int allBytes = (int) new_file.length();
-                    mSendFileFragment.initProgressBar(allBytes);
+
+                    if (type == MarkBitApplication.UPDATE_TYPE_SETTING) {
+                        mSendFileFragment.initProgressBar(MarkBitApplication.MARK_SETTING_SIZE);
+                    } else if (type == MarkBitApplication.UPDATE_TYPE_LIBRARY) {
+                        mSendFileFragment.initProgressBar(allBytes);
+                    }
+//                    mSendFileFragment.initProgressBar(allBytes);
                     isFileFinished = false;
                     isFileStartSend = true;
                     isPackageSendSuccessed = false;
@@ -577,7 +573,12 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             } else {
                 if (new_file != null) {
                     int allBytes = (int)new_file.length();
-                    mSendFileFragment.initProgressBar(allBytes);
+                    if (type == MarkBitApplication.UPDATE_TYPE_SETTING) {
+                        mSendFileFragment.initProgressBar(MarkBitApplication.MARK_SETTING_SIZE);
+                    } else if (type == MarkBitApplication.UPDATE_TYPE_LIBRARY) {
+                        mSendFileFragment.initProgressBar(allBytes);
+                    }
+//                    mSendFileFragment.initProgressBar(allBytes);
 
                     isFileFinished = false;
                     isFileStartSend = true;
@@ -733,6 +734,14 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+
+            if (isUpdateType == MarkBitApplication.UPDATE_TYPE_LIBRARY) {
+
+            } else if (isUpdateType == MarkBitApplication.UPDATE_TYPE_SETTING) {
+                if (address > MarkBitApplication.MARK_SETTING_SIZE / diff) {
+                    isFileFinished = true;
+                }
             }
 
             sendBytes[sendLen - 3] = getCheckSum(tmp, 0, diff);
@@ -930,20 +939,27 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     private void updateSelfNotification(boolean i_synced, boolean r_synced) {
-        if (i_synced && r_synced) {
+//        if (i_synced && r_synced) {
+//            synced_notification.setVisibility(View.GONE);
+//        } else if (i_synced && !r_synced) {
+//            String notification = String.format(getString(R.string.not_synced), getString(R.string.R_name));
+//            synced_notification.setText(notification);
+//            synced_notification.setVisibility(View.VISIBLE);
+//        } else if (!i_synced && r_synced) {
+//            String notification = String.format(getString(R.string.not_synced), getString(R.string.I_name));
+//            synced_notification.setText(notification);
+//            synced_notification.setVisibility(View.VISIBLE);
+//        } else if (!i_synced && !r_synced) {
+//            String notification = String.format(getString(R.string.i_r_not_synced), getString(R.string.I_name), getString(R.string.R_name));
+//            synced_notification.setText(notification);
+//            synced_notification.setVisibility(View.VISIBLE);
+//        }
+
+        if (!i_synced || !r_synced) {
+            synced_notification.setVisibility(View.VISIBLE);
+            synced_notification.setText(getString(R.string.please_synced));
+        } else {
             synced_notification.setVisibility(View.GONE);
-        } else if (i_synced && !r_synced) {
-            String notification = String.format(getString(R.string.not_synced), getString(R.string.R_name));
-            synced_notification.setText(notification);
-            synced_notification.setVisibility(View.VISIBLE);
-        } else if (!i_synced && r_synced) {
-            String notification = String.format(getString(R.string.not_synced), getString(R.string.I_name));
-            synced_notification.setText(notification);
-            synced_notification.setVisibility(View.VISIBLE);
-        } else if (!i_synced && !r_synced) {
-            String notification = String.format(getString(R.string.i_r_not_synced), getString(R.string.I_name), getString(R.string.R_name));
-            synced_notification.setText(notification);
-            synced_notification.setVisibility(View.VISIBLE);
         }
     }
 

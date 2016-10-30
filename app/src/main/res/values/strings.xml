@@ -13,6 +13,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="choose_and_send">Choose file and send</string>
+    <string name="send_library">Update Marks Library</string>
+    <string name="send_setting">Update Setting</string>
     <string name="send_file_result_succeed">Send file result succeed!</string>
     <string name="file_sending_title">File sending...</string>
     <string name="file_sending_msg">File send progress...</string>
@@ -47,6 +49,7 @@
 
     <string name="not_synced">%1$s not synchronized!</string>
     <string name="i_r_not_synced">%1$s and %2$s not synchronized!</string>
+    <string name="please_synced">Please update setting by bluetooth.</string>
 
     <string-array name="battery_types">
         <item>Three cell battery</item>

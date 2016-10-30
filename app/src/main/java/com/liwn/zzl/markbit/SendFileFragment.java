@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -31,7 +33,7 @@ public class SendFileFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_COLUMN_COUNT = "column-count";
-    private static final int REQUEST_CODE_CHOOSE_FILE = 1;
+    private static final int REQUEST_CODE_CHOOSE_FILE = 11;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -44,6 +46,7 @@ public class SendFileFragment extends Fragment {
     private ProgressDialog dialog;
 
     private Button btFileSend;
+    private Button btUpdateSetting;
     private boolean isBTConnected;
 
     public void enableBT() {
@@ -89,6 +92,8 @@ public class SendFileFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_sendfile, container, false);
 
         btFileSend = (Button) mView.findViewById(R.id.bt_file_send);
+        btUpdateSetting = (Button) mView.findViewById(R.id.bt_setting_send);
+
         btFileSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +113,25 @@ public class SendFileFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        btUpdateSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isBTConnected) {
+                    File file = FileIO.getIconFile();
+                    if (file != null) {
+                        Uri setUri = Uri.fromFile(file);
+                        mListener.sendFileFromUriByBT(setUri, MarkBitApplication.UPDATE_TYPE_SETTING);
+                    } else {
+                        Toast.makeText(activityContext, "Library files is not existed.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+                }
+
+
+
             }
         });
         return mView;
@@ -133,7 +157,19 @@ public class SendFileFragment extends Fragment {
             switch (requestCode) {
                 case REQUEST_CODE_CHOOSE_FILE:
                     Uri uri = data.getData();
-                    mListener.sendFileFromUriByBT(uri);
+                    File src = new File(uri.getPath());
+                    String filename = uri.getLastPathSegment();
+                    File dst = new File(FileIO.getMediaFolderName() + filename);
+                    try {
+                        FileIO.copyFile(src, dst);
+                        Uri sendUri = Uri.fromFile(dst);
+                        mListener.sendFileFromUriByBT(sendUri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    // TODO: generate two bins into one big bin for icon and rcon to update both.
+
+                    mListener.sendFileFromUriByBT(uri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
                     break;
             }
         }
@@ -208,7 +244,7 @@ public class SendFileFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void sendFileFromUriByBT(Uri uri);
+        void sendFileFromUriByBT(Uri uri, String type);
         void cancleFileSend();
     }
 

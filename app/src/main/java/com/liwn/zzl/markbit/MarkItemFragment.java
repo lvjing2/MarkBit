@@ -43,8 +43,8 @@ public class MarkItemFragment extends Fragment {
     public static final int REQUEST_CHOOSE_NEW_MARK_A = 6;
     public static final int REQUEST_CHOOSE_NEW_MARK_B = 7;
 
-    private RecyclerView recyclerView_A;
-    private RecyclerView recyclerView_B;
+    public RecyclerView recyclerView_A;
+    public RecyclerView recyclerView_B;
     private Button switcher_A;
     private Button switcher_B;
 

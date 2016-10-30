@@ -7,12 +7,14 @@
   <string name="index_setting">常用索引设置</string>
 
   <string name="add_new_mark_by_this">更换图标</string>
-  <string name="send_file">发送图标文件</string>
+  <string name="send_file">更新图标文件</string>
   <string name="cannot_access_file_system_hint">无法访问文件系统,请安装一个文件管理器.</string>
   <string name="bins_not_import">请将系统文件导入到文件夹中.</string>
 
   <!-- TODO: Remove or change this placeholder text -->
   <string name="choose_and_send">选择文件并发送</string>
+  <string name="send_library">导入及更新图库</string>
+  <string name="send_setting">更新设备参数</string>
   <string name="send_file_result_succeed">文件成功发送!</string>
   <string name="file_sending_title">文件发送中...</string>
   <string name="file_sending_msg">文件发送进度...</string>
@@ -47,6 +49,7 @@
 
   <string name="not_synced">请将%1$s发送至设备!</string>
   <string name="i_r_not_synced">请将%1$s和%2$s发送至相应的设备!</string>
+  <string name="please_synced">请通过蓝牙将更新的设置发送至设备</string>
 
   <string-array name="battery_types">
     <item>三元电池</item>

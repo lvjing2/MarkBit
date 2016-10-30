@@ -16,14 +16,27 @@
         <!--style="@android:style/Widget.ProgressBar.Horizontal"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content" />-->
+
+        <Button
+            android:id="@+id/bt_setting_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_white"
+            android:text="@string/send_setting"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/sendfile_button_selector" />
+
         <Button
             android:id="@+id/bt_file_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/color_white"
-            android:text="@string/choose_and_send"
+            android:text="@string/send_library"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/sendfile_button_selector" />
     </LinearLayout>
 
