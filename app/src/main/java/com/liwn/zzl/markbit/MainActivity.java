@@ -175,7 +175,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
 
-                breakAndCheck();
+//                breakAndCheck();
+                if (sendBytes != null) {
+                    sendMessage(sendBytes);
+                }
                 Log.d(TAG, "in action services discovered");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 Log.d(TAG, "in action data available");
@@ -550,7 +553,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Log.e(TAG, "file check invalided!");
                 return;
             }
-            if (file != null && tmp_file.getAbsolutePath().equals(file.getAbsolutePath()) && !isFileCancled) {
+            if (file != null && tmp_file.getAbsolutePath().equals(file.getAbsolutePath()) && isFileCancled) {
                 if (new_file != null) {
                     int allBytes = (int) new_file.length();
 
@@ -560,15 +563,16 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                         mSendFileFragment.initProgressBar(allBytes);
                     }
 //                    mSendFileFragment.initProgressBar(allBytes);
-                    isFileFinished = false;
                     isFileStartSend = true;
-                    isPackageSendSuccessed = false;
-                    isFileCancled = false;
 
 //                    initSendBytes();
                     breakAndCheck();
                     initDataTimer();
                     keepScreenON();
+
+                    isPackageSendSuccessed = false;
+                    isFileCancled = false;
+                    isFileFinished = false;
                 }
             } else {
                 if (new_file != null) {
@@ -656,8 +660,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                         Log.e(TAG, "B");
                         mMarkItemFragment.replaceMark(false, old_position_id, new_position_id);
 
-//                        MarkBitApplication.i_synced = false;
-                        MarkBitApplication.r_synced = false;
+                        MarkBitApplication.i_synced = false;
+//                        MarkBitApplication.r_synced = false;
                         updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                     }
                 }
@@ -761,16 +765,16 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
             Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
 //            Log.e(TAG, "filename: " + file.getName());
-            if (file.getName() == getString(R.string.I_name)) {
+            if (getString(R.string.I_name).equals(file.getName())) {
                 MarkBitApplication.i_synced = true;
-            } else if (file.getName() == getString(R.string.R_name)) {
+            } else if (getString(R.string.R_name).equals(file.getName())) {
                 MarkBitApplication.r_synced = true;
             }
 
             updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
 
             isFileStartSend = false;
-            isFileFinished = false;
+            isFileFinished = true;
             isPackageSendSuccessed = false;
             isFileCancled = false;
 
@@ -802,7 +806,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 // add the address
                 byte cc = getCheckSum(recBytes, 5, diff);
                 if (cc == recBytes[length - 3]) {
-                    address = (recBytes[3] & 0xff) * 255 + (recBytes[4] & 0xff);
+                    address = (recBytes[3] & 0xff) * 256 + (recBytes[4] & 0xff);
                     address += 1;
                     feedbackInstruct[3] = (byte) ((address & 0xff00) >> 8);
                     feedbackInstruct[4] = (byte) (address & 0xff);
@@ -860,7 +864,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     private void breakAndCheck() {
-        if(isFileStartSend && !isFileFinished && !isPackageSendSuccessed && !isFileCancled) {
+        if(isFileStartSend && !isFileFinished && isFileCancled) {
 //            byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, sendBytes[3], sendBytes[4], (byte) 0x0D, (byte) 0x5A};
 //            readProcess(feedbackInstruct);
 //            if (!isTimerStart) {
@@ -869,6 +873,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //                initTimer();
 //            }
             sendMessage(sendBytes);
+        } else {
+            if (sendBytes != null) {
+                byte[] send_init = {(byte) 0xA5, (byte) 0x07, (byte) 0x0A, (byte) 0xC0, (byte) 0x0C, (byte) 0x0D, (byte) 0x5A};
+                for (int i = 0; i < send_init.length; ++i) {
+                    sendBytes[i] = send_init[i];
+                }
+            }
         }
     }
 

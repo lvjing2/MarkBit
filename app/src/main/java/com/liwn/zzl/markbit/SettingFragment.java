@@ -147,10 +147,10 @@ public class SettingFragment extends Fragment {
                 byte[] all_samples = new byte[read_byte_num];
                 all_samples[0] = (byte) seekBar.getProgress();
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.ALL_SAMPLE_NUM_ADDR, read_byte_num, all_samples);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.ALL_SAMPLE_NUM_ADDR, read_byte_num, all_samples);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.ALL_SAMPLE_NUM_ADDR, read_byte_num, all_samples);
 
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                 mListener.updateAllMark(seekBar.getProgress());
             }
@@ -242,9 +242,9 @@ public class SettingFragment extends Fragment {
                 byte[] new_brightness = new byte[read_byte_num];
                 new_brightness[0] = (byte) seekBar.getProgress();
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.BRIGHTNESS_ADDR, read_byte_num, new_brightness);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.BRIGHTNESS_ADDR, read_byte_num, new_brightness);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.BRIGHTNESS_ADDR, read_byte_num, new_brightness);
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
         });
@@ -273,11 +273,11 @@ public class SettingFragment extends Fragment {
                 byte[] showTime = new byte[read_byte_num];
                 showTime[0] = (byte) seekBar.getProgress();
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.A_SHOW_TIME_ADDR, read_byte_num, showTime);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_SHOW_TIME_ADDR, read_byte_num, showTime);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_SHOW_TIME_ADDR, read_byte_num, showTime);
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.B_HIDE_TIME_ADDR, read_byte_num, showTime);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.B_HIDE_TIME_ADDR, read_byte_num, showTime);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.B_HIDE_TIME_ADDR, read_byte_num, showTime);
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
         });
@@ -306,12 +306,12 @@ public class SettingFragment extends Fragment {
                 byte[] showTime = new byte[read_byte_num];
                 showTime[0] = (byte) seekBar.getProgress();
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.B_SHOW_TIME_ADDR, read_byte_num, showTime);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.B_SHOW_TIME_ADDR, read_byte_num, showTime);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.B_SHOW_TIME_ADDR, read_byte_num, showTime);
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.A_HIDE_TIME_ADDR, read_byte_num, showTime);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_HIDE_TIME_ADDR, read_byte_num, showTime);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.A_HIDE_TIME_ADDR, read_byte_num, showTime);
 
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
         });
@@ -337,9 +337,9 @@ public class SettingFragment extends Fragment {
                 byte[] type = new byte[read_byte_num];
                 type[0] = (byte) position;
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.BATTERY_TYPE_ADDR, read_byte_num, type);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.BATTERY_TYPE_ADDR, read_byte_num, type);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.BATTERY_TYPE_ADDR, read_byte_num, type);
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
 
@@ -363,9 +363,9 @@ public class SettingFragment extends Fragment {
                 byte[] set = new byte[read_byte_num];
                 set[0] = (byte) flag;
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.IS_MAGNET_ADDR, read_byte_num, set);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.IS_MAGNET_ADDR, read_byte_num, set);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.IS_MAGNET_ADDR, read_byte_num, set);
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
         });
@@ -384,9 +384,9 @@ public class SettingFragment extends Fragment {
                 byte[] set = new byte[read_byte_num];
                 set[0] = (byte) flag;
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.IS_LOW_VOLTAGE_ADDR, read_byte_num, set);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.IS_LOW_VOLTAGE_ADDR, read_byte_num, set);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.IS_LOW_VOLTAGE_ADDR, read_byte_num, set);
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
         });
@@ -405,9 +405,9 @@ public class SettingFragment extends Fragment {
                 byte[] set = new byte[read_byte_num];
                 set[0] = (byte) flag;
                 FileIO.setBytes(MarkBitApplication.i_file, FileIO.IS_DUMP_ADDR, read_byte_num, set);
-                FileIO.setBytes(MarkBitApplication.r_file, FileIO.IS_DUMP_ADDR, read_byte_num, set);
+//                FileIO.setBytes(MarkBitApplication.r_file, FileIO.IS_DUMP_ADDR, read_byte_num, set);
                 MarkBitApplication.i_synced = false;
-                MarkBitApplication.r_synced = false;
+//                MarkBitApplication.r_synced = false;
                 mListener.updateNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
             }
         });

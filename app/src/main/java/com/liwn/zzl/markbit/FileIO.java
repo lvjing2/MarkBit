@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -751,5 +752,25 @@ public abstract class FileIO {
             }
         }
         return false;
+    }
+
+    public static boolean isSameFile(@NonNull File f1, @NonNull File f2) {
+        try {
+            String p1 = f1.getCanonicalPath();
+            String p2 = f2.getCanonicalPath();
+            p1 = p1.replaceFirst("/storage/emulated/legacy", "/storage/emulated/0");
+            p2 = p2.replaceFirst("/storage/emulated/legacy", "/storage/emulated/0");
+            p1 = p1.replaceFirst("/storage/sdcard0", "/storage/emulated/0");
+            p2 = p2.replaceFirst("/storage/sdcard0", "/storage/emulated/0");
+            if (p1.equals(p2)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "isSameFile Exception");
+            e.printStackTrace();
+            return false;
+        }
     }
 }

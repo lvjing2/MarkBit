@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,18 +159,49 @@ public class SendFileFragment extends Fragment {
                 case REQUEST_CODE_CHOOSE_FILE:
                     Uri uri = data.getData();
                     File src = new File(uri.getPath());
-                    String filename = uri.getLastPathSegment();
-                    File dst = new File(FileIO.getMediaFolderName() + filename);
-                    try {
-                        FileIO.copyFile(src, dst);
-                        Uri sendUri = Uri.fromFile(dst);
-                        mListener.sendFileFromUriByBT(sendUri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    // TODO: generate two bins into one big bin for icon and rcon to update both.
+                    String filename = src.getName();
+                    // TODO: validate file name
+                    // 1. is validation
+                    // 2. is R file or I file
+                    if (filename.equals(MarkBitApplication.i_name) || filename.equals(MarkBitApplication.r_name)) {
+                        File dst = new File(FileIO.getMediaFolderName() + "/" + filename);
 
-                    mListener.sendFileFromUriByBT(uri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
+                        try {
+                            Log.e("src path: ", src.getPath());
+                            Log.e("dst path: ", dst.getPath());
+                            Log.e("src absolute path: ", src.getAbsolutePath());
+                            Log.e("dst absolute path: ", dst.getAbsolutePath());
+                            Log.e("src canonical path: ", src.getCanonicalPath());
+                            Log.e("dst canonical path: ", dst.getCanonicalPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!FileIO.isSameFile(src, dst)) {
+
+                            byte[] setting_backup = new byte[MarkBitApplication.MARK_SETTING_SIZE];
+                            boolean isDstExisted = false;
+                            if (dst.exists()) {
+                                isDstExisted = true;
+                                FileIO.getBytes(dst, setting_backup, 0, MarkBitApplication.MARK_SETTING_SIZE);
+                                dst.delete();
+                            }
+                            try {
+                                FileIO.copyFile(src, dst);
+                                if (isDstExisted) {
+                                    FileIO.setBytes(dst, 0, MarkBitApplication.MARK_SETTING_SIZE, setting_backup);
+                                }
+                                Uri sendUri = Uri.fromFile(dst);
+                                mListener.sendFileFromUriByBT(sendUri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            mListener.sendFileFromUriByBT(uri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
+                        }
+                    } else {
+                        Toast.makeText(activityContext, "Please import " + MarkBitApplication.i_name + " or " + MarkBitApplication.r_name, Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         }
