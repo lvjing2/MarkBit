@@ -31,9 +31,7 @@ public class MarkItemFragment extends Fragment {
     public static final int MENU1 = 1;
     public static final int MENU2 = 2;
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
 
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
@@ -55,7 +53,6 @@ public class MarkItemFragment extends Fragment {
     public MarkItemFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static MarkItemFragment newInstance(int columnCount) {
         MarkItemFragment fragment = new MarkItemFragment();
@@ -175,7 +172,6 @@ public class MarkItemFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onMarkItemFragmentInteraction(DummyItem item);
     }
 
@@ -193,7 +189,6 @@ public class MarkItemFragment extends Fragment {
 
     public void updateMark(int num) {
         DummyContent.updateItem(num);
-        // TODO: change index num
 //        recyclerView_A.getAdapter().notifyDataSetChanged();
 //        recyclerView_B.getAdapter().notifyDataSetChanged();
     }

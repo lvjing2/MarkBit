@@ -434,7 +434,6 @@ public class SettingFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void updateIndexMark(int num);
         void updateAllMark(int num);
         void updateNotification(boolean i_synced, boolean r_synced);

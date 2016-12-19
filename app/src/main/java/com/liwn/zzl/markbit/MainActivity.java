@@ -479,8 +479,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if (mBluetoothLeService == null) {
-            // TODO init mBluetoothServer
-//            setupChat();
         }
     }
 
@@ -676,7 +674,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             mConnectedDeviceName = data.getExtras().getString(MarkBitApplication.DEVICE_NAME);
             mDeviceAddress = data.getExtras().getString(MarkBitApplication.DEVICE_ADDRESS);
             Log.d(TAG, mConnectedDeviceName + ": " + mDeviceAddress);
-            // TODO to connect devices
             mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
         }
     }
@@ -820,14 +817,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                         e.printStackTrace();
                     }
                 } else {
-                    // TODO RX received error package.
-
                 }
             }
 
             sendMessage(feedbackInstruct);
         } else {
-            // TODO RX received error package.
         }
     }
 
@@ -849,7 +843,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     private void keepScreenON() {
-        // TODO: start to control screen always on
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 //        params.screenBrightness = 0;

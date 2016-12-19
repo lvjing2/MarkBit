@@ -11,7 +11,6 @@
   <string name="cannot_access_file_system_hint">无法访问文件系统,请安装一个文件管理器.</string>
   <string name="bins_not_import">请将系统文件导入到文件夹中.</string>
 
-  <!-- TODO: Remove or change this placeholder text -->
   <string name="choose_and_send">选择文件并发送</string>
   <string name="send_library">导入及更新图库</string>
   <string name="send_setting">更新设备参数</string>

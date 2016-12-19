@@ -11,7 +11,6 @@
     <string name="cannot_access_file_system_hint">Please install a File Manager.</string>
     <string name="bins_not_import">please import 2 bins file and then restart app.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="choose_and_send">Choose file and send</string>
     <string name="send_library">Update Marks Library</string>
     <string name="send_setting">Update Setting</string>

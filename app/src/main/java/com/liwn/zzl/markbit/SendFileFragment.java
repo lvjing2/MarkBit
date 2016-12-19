@@ -31,12 +31,10 @@ import java.io.IOException;
  * create an instance of this fragment.
  */
 public class SendFileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_COLUMN_COUNT = "column-count";
     private static final int REQUEST_CODE_CHOOSE_FILE = 11;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private View mView;
 
@@ -69,7 +67,6 @@ public class SendFileFragment extends Fragment {
      * @param columnCount Parameter 1.
      * @return A new instance of fragment SendFileFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static SendFileFragment newInstance(int columnCount) {
         SendFileFragment fragment = new SendFileFragment();
         Bundle args = new Bundle();
@@ -98,19 +95,9 @@ public class SendFileFragment extends Fragment {
         btFileSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (isBTConnected) {
-                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                    i.setType("file/*.bin");
-//                    i.setDataAndType(Uri.fromFile(FileIO.getMediaFile()), "file/bin");
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-
-                    try {
-                        startActivityForResult(i, REQUEST_CODE_CHOOSE_FILE);
-                    } catch (android.content.ActivityNotFoundException e) {
-                        Toast.makeText(activityContext, getString(R.string.cannot_access_file_system_hint), Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
+                    // TODO: add file send
+                    // get bluetooth name
                 } else {
                     Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
                 }
@@ -275,7 +262,6 @@ public class SendFileFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void sendFileFromUriByBT(Uri uri, String type);
         void cancleFileSend();
     }

@@ -300,23 +300,6 @@ public abstract class FileIO {
 
     public static Bitmap getBitmapFromUri(Uri bitmapUri) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-
-//		TODO: special treatment necessary?
-//		if (MarkBitApplication.openedFromCatroid) {
-//			try {
-//				InputStream inputStream = MarkBitApplication.applicationContext
-//						.getContentResolver().openInputStream(bitmapUri);
-//				Bitmap immutableBitmap = BitmapFactory
-//						.decodeStream(inputStream);
-//				inputStream.close();
-//				return immutableBitmap.copy(Bitmap.Config.ARGB_8888, true);
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-
         options.inJustDecodeBounds = true;
 
         try {
@@ -661,8 +644,6 @@ public abstract class FileIO {
                 if ("primary".equalsIgnoreCase(type)) {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
-
-                // TODO handle non-primary volumes
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
