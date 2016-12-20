@@ -61,8 +61,8 @@
 
   <string name="I_name">icon100.bin</string>
   <string name="R_name">rcon100.bin</string>
-  <string name="I_device_name">2C_LEDBOARD</string>
-  <string name="R_device_name">2C_TELECTRL</string>
+  <string name="I_device_name">ZC_LEDBOARD</string>
+  <string name="R_device_name">ZC_TELECTRL</string>
   <string name="factory_name">ZhongChe</string>
 
   <string name="mark_replace_title">替换</string>

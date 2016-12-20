@@ -40,7 +40,7 @@ import com.liwn.zzl.markbit.mark.DummyContent;
 import java.io.File;
 
 public class MarkBitApplication extends Application {
-	public static final String TAG = "PAINTROID";
+	public static final String TAG = MarkBitApplication.class.getSimpleName();
 	public static final int BIT_LCD_WIDTH = 48;
 	public static final int BIT_LCD_HEIGHT = 48;
 	public static final int ALL_LCD_WIDTH = 87;
@@ -78,10 +78,6 @@ public class MarkBitApplication extends Application {
 	public static boolean r_synced;
 
 	public static Context applicationContext;
-//	public static DrawingSurface drawingSurface;
-//	public static CommandManager commandManager;
-//	public static Tool currentTool;
-//	public static Perspective perspective;
 	public static boolean openedFromCatroid = false;
 	public static String catroidPicturePath;
 	public static boolean isPlainImage = true;
@@ -95,6 +91,8 @@ public class MarkBitApplication extends Application {
 	public static ImageView previewImageView;
 	public static File i_file;
 	public static File r_file;
+
+	public static String connectedDeviceName;
 
 	@Override
 	public void onCreate() {

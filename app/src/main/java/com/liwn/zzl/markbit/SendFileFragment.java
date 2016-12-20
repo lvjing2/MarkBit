@@ -96,8 +96,26 @@ public class SendFileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isBTConnected) {
-                    // TODO: add file send
+                    // TODO: need test
                     // get bluetooth name
+                    File file;
+                    if (MarkBitApplication.connectedDeviceName == getString(R.string.I_device_name)) {
+                        file = FileIO.getIconFile();
+                    } else if (MarkBitApplication.connectedDeviceName == getString(R.string.R_device_name)) {
+                        file = FileIO.getRconFile();
+                    } else {
+                        Toast.makeText(activityContext, "Device name is not " +
+                                getString(R.string.I_device_name) + " or " + getString(R.string.R_device_name), Toast.LENGTH_SHORT).show();
+                        file = null;
+                        return;
+                    }
+
+                    if (file != null) {
+                        Uri updateUri = Uri.fromFile(file);
+                        mListener.sendFileFromUriByBT(updateUri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
+                    } else {
+                        Toast.makeText(activityContext, "Library files is not existed, please import bin files in MarkBit/", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
                 }
@@ -152,17 +170,6 @@ public class SendFileFragment extends Fragment {
                     // 2. is R file or I file
                     if (filename.equals(MarkBitApplication.i_name) || filename.equals(MarkBitApplication.r_name)) {
                         File dst = new File(FileIO.getMediaFolderName() + "/" + filename);
-
-                        try {
-                            Log.e("src path: ", src.getPath());
-                            Log.e("dst path: ", dst.getPath());
-                            Log.e("src absolute path: ", src.getAbsolutePath());
-                            Log.e("dst absolute path: ", dst.getAbsolutePath());
-                            Log.e("src canonical path: ", src.getCanonicalPath());
-                            Log.e("dst canonical path: ", dst.getCanonicalPath());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
 
                         if (!FileIO.isSameFile(src, dst)) {
 

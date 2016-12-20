@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private ImageButton bluetoothStatus = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothLeService mBluetoothLeService = null;
+
     private String mConnectedDeviceName = null;
     private String mDeviceAddress;
     private boolean isDataTimerStart = false;
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 bluetoothStatus.setImageResource(R.drawable.ic_bluetooth_connected);
                 mSendFileFragment.enableBT();
 
+                MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
                 Log.d(TAG, "broadcastReceiver connected " + mConnectedDeviceName);
                 Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
@@ -675,6 +677,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             mDeviceAddress = data.getExtras().getString(MarkBitApplication.DEVICE_ADDRESS);
             Log.d(TAG, mConnectedDeviceName + ": " + mDeviceAddress);
             mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+            MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
         }
     }
 
@@ -833,8 +836,12 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 case (byte) 0x8A:
                     readProcessTx(recBytes);
                     break;
-                case (byte) 0x0A:
-                    readProcessRx(recBytes);
+//                case (byte) 0x0A:
+//                    readProcessRx(recBytes);
+//                    break;
+                default:
+                    Log.e(TAG, "received msg is invalid!");
+                    Toast.makeText(this, "received msg is invalid!", Toast.LENGTH_SHORT).show();
                     break;
             }
         } else {
