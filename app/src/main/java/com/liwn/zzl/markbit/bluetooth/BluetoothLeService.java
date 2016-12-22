@@ -265,21 +265,21 @@ public class BluetoothLeService extends Service {
 
 
 //         Previously connected device.  Try to reconnect.
-        if (isDisconnected) {
-            isDisconnected = false;
+//        if (isDisconnected) {
+//            isDisconnected = false;
             if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
                     && mBluetoothGatt != null) {
                 Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
                 if (mBluetoothGatt.connect()) {
                     mConnectionState = STATE_CONNECTING;
-                    Log.e(TAG, "====== connect true =====");
+                    Log.e(TAG, "====== recovery connect true =====");
                     return true;
                 } else {
-                    Log.e(TAG, "====== connect false =====");
+                    Log.e(TAG, "====== recovery connect false =====");
                     return false;
                 }
             }
-        }
+//        }
 
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         if (device == null) {
@@ -317,12 +317,13 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt.disconnect();
 
         // to ensure the disconnect trigger the onConnectionStateChange callback
+        // TODO: test disconnect
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        mBluetoothGatt.close();
+        close();
         isDisconnected = true;
     }
 

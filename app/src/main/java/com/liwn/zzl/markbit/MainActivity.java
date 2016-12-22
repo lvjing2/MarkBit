@@ -137,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     protected void onResume() {
         super.onResume();
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        if (mBluetoothLeService != null) {
-            final boolean result = mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
-            Log.d(TAG, "Connect request result=" + result);
-        }
+//        if (mBluetoothLeService != null) {
+//            final boolean result = mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+//            Log.d(TAG, "Connect request result=" + result);
+//        }
     }
 
     // Handles various events fired by the Service.
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 isBluetoothConnected = false;
                 bluetoothStatus.setImageResource(R.drawable.ic_bluetooth_disconnected);
-                mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+//                mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
                 mSendFileFragment.disableBT();
 
                 isPackageSendSuccessed = false;
@@ -620,9 +620,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             case REQUEST_CONNECT_DEVICE_SECURE:
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
-                        Log.d(TAG, mConnectedDeviceName + " & " + mDeviceAddress);
+                        mConnectedDeviceName = data.getExtras().getString(MarkBitApplication.DEVICE_NAME);
+                        mDeviceAddress = data.getExtras().getString(MarkBitApplication.DEVICE_ADDRESS);
+                        Log.d(TAG, "connecting...: " + mConnectedDeviceName + ": " + mDeviceAddress);
                         mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
-                        connectDevice(data);
+                        MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
                     }
                 }
                 break;
@@ -669,18 +671,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         }
 
     }
-
-    private void connectDevice(Intent data) {
-        Log.d(TAG, "connecting...");
-        if (data != null) {
-            mConnectedDeviceName = data.getExtras().getString(MarkBitApplication.DEVICE_NAME);
-            mDeviceAddress = data.getExtras().getString(MarkBitApplication.DEVICE_ADDRESS);
-            Log.d(TAG, mConnectedDeviceName + ": " + mDeviceAddress);
-            mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
-            MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
-        }
-    }
-
 
     private byte getCheckSum(byte[] bytes, int offset, int length) {
 
@@ -909,7 +899,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 byte[] subMes = Arrays.copyOfRange(message, i * perLen, (i+1) * perLen);
                 mBluetoothLeService.WriteValue(subMes);
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(25);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
