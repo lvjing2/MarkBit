@@ -729,7 +729,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //                    break;
                 default:
                     Log.e(TAG, "received msg is invalid!");
-                    Toast.makeText(this, "received msg is invalid!", Toast.LENGTH_SHORT).show();
                     break;
             }
         } else {
