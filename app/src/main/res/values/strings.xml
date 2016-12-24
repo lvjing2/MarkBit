@@ -67,4 +67,24 @@
     <string name="mark_replace_title">Replace with this mark</string>
     <string name="mark_replace_message">Are you sure you want to Replace this mark?</string>
     <string name="dbClick_Exit">Click BACK again to exit.</string>
+
+
+    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_changePass">Change password</string>
+
+    <!-- Strings related to login -->
+    <string name="logout">Logout</string>
+    <string name="prompt_username">Username</string>
+    <string name="defaule_username">ADMIN</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_oldpassword">Old password</string>
+    <string name="prompt_newpassword">New password</string>
+    <string name="prompt_renewpassword">New password again</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="change_password">Change Password</string>
+    <string name="action_renew_password">Change Password</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_new_password">New password should be 8 digits.</string>
+    <string name="error_invalid_renew_password">Confirm password is different with new password.</string>
 </resources>

@@ -26,13 +26,21 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
+                <!--<ImageButton-->
+                    <!--android:id="@+id/logout"-->
+                    <!--android:layout_gravity="right"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="36dp"-->
+                    <!--android:background="@color/color_transparent"-->
+                    <!--android:src="@mipmap/ic_power_settings_new_white_36dp"/>-->
+
                 <ImageButton
                     android:id="@+id/icon_bluetooth_status"
                     android:layout_gravity="right"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:background="@color/color_transparent"
-                    android:src="@drawable/ic_bluetooth_disconnected"/>
+                    android:src="@mipmap/ic_bluetooth_disabled_white_36dp"/>
 
             </android.support.v7.widget.Toolbar>
 

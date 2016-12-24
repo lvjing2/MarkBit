@@ -1,6 +1,5 @@
 package com.liwn.zzl.markbit;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -9,20 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +36,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
@@ -56,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 2;
     private static final int REQUEST_CODE_TWO_PERMISSION = 3;
     private static final String PREFERENCE = "PREFERENCE";
-    private static final String I_SYNCED = "I_SYNCED";
-    private static final String R_SYNCED = "R_SYNCED";
 
     private Context mContext;
     /**
@@ -70,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
      */
 
     private ImageButton bluetoothStatus = null;
+    private ImageButton logout = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothLeService mBluetoothLeService = null;
 
@@ -156,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 isBluetoothConnected = true;
                 mConnectedDeviceName = intent.getStringExtra(MarkBitApplication.DEVICE_NAME);
-                bluetoothStatus.setImageResource(R.drawable.ic_bluetooth_connected);
+                bluetoothStatus.setImageResource(R.mipmap.ic_bluetooth_connected_white_36dp);
                 mSendFileFragment.enableBT();
 
                 MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
@@ -164,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 isBluetoothConnected = false;
-                bluetoothStatus.setImageResource(R.drawable.ic_bluetooth_disconnected);
+                bluetoothStatus.setImageResource(R.mipmap.ic_bluetooth_disabled_white_36dp);
 //                mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
                 mSendFileFragment.disableBT();
 
@@ -186,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Log.d(TAG, "in action data available");
                 String recString = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 Log.d(TAG, "receive bytes: " + recString);
-                final byte[] recBytes = hexStringToByteArray(recString);
+                final byte[] recBytes = FileIO.hexStringToByteArray(recString);
 
                 readProcess(recBytes);
             }
@@ -259,35 +251,16 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         synced_notification = (TextView) findViewById(R.id.synced_notification);
     }
 
-    private void copyBinsFromAsset2External() {
-        FileIO.deleteAllFiles();
-
-        AssetManager assetManager = getAssets();
-        InputStream is;
-        try {
-            String[] files = assetManager.list(MarkBitApplication.default_bins_dir_name);
-            if (files != null) {
-                for (String filename : files) {
-                    is = assetManager.open(MarkBitApplication.default_bins_dir_name + "/" + filename);
-                    FileIO.copyStream(this, is, filename);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // if first run
+//        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)) {
+//            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("isFirstRun", false).apply();
+//        }
 
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)) {
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("isFirstRun", false).apply();
-        }
-
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).apply();
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).apply();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(MarkBitApplication.I_SYNCED, MarkBitApplication.i_synced).apply();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(MarkBitApplication.R_SYNCED, MarkBitApplication.r_synced).apply();
     }
 
     @Override
@@ -329,45 +302,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
             }, 2000);
         } else {
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).apply();
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(MarkBitApplication.I_SYNCED, MarkBitApplication.i_synced).apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(MarkBitApplication.R_SYNCED, MarkBitApplication.r_synced).apply();
             super.onBackPressed();
             return;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_TWO_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //授权成功，直接操作
-                    Log.e(TAG, "SD and BLE permission granted succeed!");
-                    copyBinsFromAsset2External();
-
-                    MarkBitApplication.i_file = FileIO.getIconFile();
-                    MarkBitApplication.r_file = FileIO.getRconFile();
-
-                    MarkBitApplication.i_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(I_SYNCED, true);
-                    MarkBitApplication.r_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(R_SYNCED, true);
-                    updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
-                    if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
-                        Log.d(TAG, "NO BINS FILE!");
-                        Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_LONG).show();
-//			return;
-                    } else {
-                        MarkBitApplication.dummyContent = new DummyContent();
-                        mMarkItemFragment.recyclerView_A.getAdapter().notifyDataSetChanged();
-                        mMarkItemFragment.recyclerView_B.getAdapter().notifyDataSetChanged();
-                    }
-                } else {
-                    //禁止授权
-                    Toast.makeText(MainActivity.this, "SD or BLE permission is denied.", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "SD or BLE permission granted failed!");
-                }
-                return;
-            }
         }
     }
 
@@ -381,46 +319,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         initView();
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            Log.e(TAG, "no storage permission");
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_CODE_TWO_PERMISSION);
-        }
-
-        boolean isFirstRun = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true);
-        if (isFirstRun) {
-            MarkBitApplication.i_synced = true;
-            MarkBitApplication.r_synced = true;
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(I_SYNCED, MarkBitApplication.i_synced).apply();
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(R_SYNCED, MarkBitApplication.r_synced).apply();
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                copyBinsFromAsset2External();
-            } else {
-//                Toast.makeText(MainActivity.this, "external storage permission is denied.", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            MarkBitApplication.i_file = FileIO.getIconFile();
-            MarkBitApplication.r_file = FileIO.getRconFile();
-
-            MarkBitApplication.i_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(I_SYNCED, true);
-            MarkBitApplication.r_synced = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(R_SYNCED, true);
-            updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
-            if (!MarkBitApplication.i_file.exists() || !MarkBitApplication.r_file.exists()) {
-                Log.d(TAG, "NO BINS FILE!");
-                Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_LONG).show();
-//			return;
-            } else {
-                MarkBitApplication.dummyContent = new DummyContent();
-            }
-        }
 
         mContext = this;
         // Create the adapter that will return a fragment for each of the three
@@ -776,7 +674,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private void readProcessRx(byte[] recBytes) {
         int length = recBytes[1] & 0xff;
         if (length > recBytes.length) {
-            Log.e(TAG, "received bytes: " + bytesToHexString(recBytes) + " invalid!");
+            Log.e(TAG, "received bytes: " + FileIO.bytesToHexString(recBytes) + " invalid!");
             return;
         }
         if (recBytes[0] == (byte) 0xA5 && recBytes[length - 2] == (byte) 0x0D && recBytes[length - 1] == (byte) 0x5A) {
@@ -890,7 +788,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         if (message.length > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
 //            mBluetoothServer.write(message);
-            Log.d(TAG, "sended message: " + bytesToHexString(message));
+            Log.d(TAG, "sended message: " + FileIO.bytesToHexString(message));
 
             int perLen = 20;
             int num = (message.length - 1) / perLen + 1;
@@ -908,25 +806,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         }
 
         return true;
-    }
-
-    @NonNull
-    public static String bytesToHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x ", b & 0xff));
-        }
-        return sb.toString().toUpperCase();
-    }
-
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
-        }
-        return data;
     }
 
     @Override

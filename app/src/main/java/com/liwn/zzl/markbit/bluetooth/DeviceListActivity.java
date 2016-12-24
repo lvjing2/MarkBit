@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -39,7 +38,6 @@ import com.liwn.zzl.markbit.MarkBitApplication;
 import com.liwn.zzl.markbit.R;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -187,7 +185,7 @@ public class DeviceListActivity extends Activity {
         Log.d(TAG, "doDiscovery()");
 
         // Turn on sub-title for new devices
-        findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
+        findViewById(R.id.scanning).setVisibility(View.VISIBLE);
 
         Log.d(TAG, "do discovery: " + enable);
         if (enable) {

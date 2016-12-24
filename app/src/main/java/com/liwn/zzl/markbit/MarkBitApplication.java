@@ -91,6 +91,8 @@ public class MarkBitApplication extends Application {
 	public static ImageView previewImageView;
 	public static File i_file;
 	public static File r_file;
+	public static final String I_SYNCED = "I_SYNCED";
+	public static final String R_SYNCED = "R_SYNCED";
 
 	public static String connectedDeviceName;
 

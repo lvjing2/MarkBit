@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,7 @@ public class SendFileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_COLUMN_COUNT = "column-count";
     private static final int REQUEST_CODE_CHOOSE_FILE = 11;
+    private static final String ISLOGIN = "isLogin";
 
     private String mParam1;
     private View mView;
@@ -46,6 +48,7 @@ public class SendFileFragment extends Fragment {
 
     private Button btFileSend;
     private Button btUpdateSetting;
+    private Button btLogout;
     private boolean isBTConnected;
 
     public void enableBT() {
@@ -91,6 +94,7 @@ public class SendFileFragment extends Fragment {
 
         btFileSend = (Button) mView.findViewById(R.id.bt_file_send);
         btUpdateSetting = (Button) mView.findViewById(R.id.bt_setting_send);
+        btLogout = (Button) mView.findViewById(R.id.bt_logout);
 
         btFileSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,9 +139,15 @@ public class SendFileFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
                 }
-
-
-
+            }
+        });
+        btLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(ISLOGIN, false).apply();
+                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                        startActivity(loginIntent);
+                        getActivity().finish();
             }
         });
         return mView;
@@ -227,7 +237,7 @@ public class SendFileFragment extends Fragment {
     public void initProgressBar(int max) {
         dialog = new ProgressDialog(activityContext);
         dialog.setTitle(R.string.file_sending_title);
-        dialog.setMessage(getString(R.string.file_sending_msg));
+//        dialog.setMessage(getString(R.string.file_sending_msg));
         dialog.setProgress(0);
         dialog.setMax(max);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
