@@ -81,7 +81,6 @@
     <string name="prompt_newpassword">New password</string>
     <string name="prompt_renewpassword">New password again</string>
     <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
     <string name="change_password">Change Password</string>
     <string name="action_renew_password">Change Password</string>
     <string name="error_incorrect_password">This password is incorrect</string>
