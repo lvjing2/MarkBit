@@ -103,9 +103,9 @@ public class SendFileFragment extends Fragment {
                     // TODO: need test
                     // get bluetooth name
                     File file;
-                    if (MarkBitApplication.connectedDeviceName == getString(R.string.I_device_name)) {
+                    if (MarkBitApplication.connectedDeviceName.equals(getString(R.string.I_device_name))) {
                         file = FileIO.getIconFile();
-                    } else if (MarkBitApplication.connectedDeviceName == getString(R.string.R_device_name)) {
+                    } else if (MarkBitApplication.connectedDeviceName.equals(getString(R.string.R_device_name))) {
                         file = FileIO.getRconFile();
                     } else {
                         Toast.makeText(activityContext, "Device name is not " +

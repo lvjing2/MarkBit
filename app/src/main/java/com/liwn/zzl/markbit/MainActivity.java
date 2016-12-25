@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
@@ -33,8 +32,6 @@ import com.liwn.zzl.markbit.bluetooth.DeviceListActivity;
 import com.liwn.zzl.markbit.mark.DummyContent;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -61,17 +58,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
      */
 
     private ImageButton bluetoothStatus = null;
-    private ImageButton logout = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothLeService mBluetoothLeService = null;
 
-    private String mConnectedDeviceName = null;
-    private String mDeviceAddress;
-    private boolean isDataTimerStart = false;
     private Timer dataTimer;
     private TimerTask dataTimerTask;
-    private boolean isPackageSendSuccessed;
-//    private int isResendCount = 0;
 
     private int clickedIndex;
     private int currentIndex;
@@ -112,17 +103,18 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         }
     };
 
+    private String mConnectedDeviceName = null;
+    private String mDeviceAddress;
+    private boolean isPackageSendSuccessed;
     private boolean isBluetoothConnected;
     private int address;
     private File file;
     private RandomAccessFile randomAccessFile;
-    private OutputStream outputStream;
     private final int diff = 32;
     private byte[] sendBytes;
     private boolean isFileStartSend = false;
     private boolean isFileFinished = false;
     private boolean isFileCancled = false;
-    private String marksFolderName = FileIO.default_prefix;
     private String isUpdateType;
 
     @Override
@@ -254,10 +246,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // if first run
-//        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)) {
-//            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("isFirstRun", false).apply();
-//        }
 
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(MarkBitApplication.I_SYNCED, MarkBitApplication.i_synced).apply();
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(MarkBitApplication.R_SYNCED, MarkBitApplication.r_synced).apply();
@@ -349,26 +337,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             }
         });
 
-//        HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
-//        horizontalScrollView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                clickedIndex = 2;
-//                if (currentIndex != clickedIndex) {
-//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//                    ft.hide(mFragments[currentIndex]);
-//                    if (!mFragments[clickedIndex].isAdded()) {
-//                        ft.add(R.id.fragment_container, mFragments[clickedIndex]);
-//                    }
-//                    ft.show(mFragments[clickedIndex]).commit();
-//                }
-//
-//                mTabs[currentIndex].setSelected(false);
-//                // 把当前tab设为选中状态
-//                mTabs[clickedIndex].setSelected(true);
-//                currentIndex = clickedIndex;
-//            }
-//        });
+        updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
     }
 
     @Override
@@ -668,51 +637,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
             recoveryScreenStatus();
             dataTimer.cancel();
-        }
-    }
-
-    private void readProcessRx(byte[] recBytes) {
-        int length = recBytes[1] & 0xff;
-        if (length > recBytes.length) {
-            Log.e(TAG, "received bytes: " + FileIO.bytesToHexString(recBytes) + " invalid!");
-            return;
-        }
-        if (recBytes[0] == (byte) 0xA5 && recBytes[length - 2] == (byte) 0x0D && recBytes[length - 1] == (byte) 0x5A) {
-            // receive succeed.
-            byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, recBytes[3], recBytes[4], (byte) 0x0D, (byte) 0x5A};
-            if (recBytes[1] == (byte) 0x07) {
-                // init, create receive file
-                try {
-                    File file = FileIO.createNewEmptyPictureFile(this, "received_file");
-                    if (file != null) {
-                        outputStream = new FileOutputStream(file);
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            } else if (recBytes[1] == (byte) ((diff + 8) & 0xff)) {
-                // add the address
-                byte cc = getCheckSum(recBytes, 5, diff);
-                if (cc == recBytes[length - 3]) {
-                    address = (recBytes[3] & 0xff) * 256 + (recBytes[4] & 0xff);
-                    address += 1;
-                    feedbackInstruct[3] = (byte) ((address & 0xff00) >> 8);
-                    feedbackInstruct[4] = (byte) (address & 0xff);
-
-                    // storage
-                    try {
-                        if (outputStream != null) {
-                            outputStream.write(recBytes, 5, diff);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                }
-            }
-
-            sendMessage(feedbackInstruct);
-        } else {
         }
     }
 
