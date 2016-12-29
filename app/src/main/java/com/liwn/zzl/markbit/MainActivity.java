@@ -31,6 +31,8 @@ import com.liwn.zzl.markbit.bluetooth.BluetoothLeService;
 import com.liwn.zzl.markbit.bluetooth.DeviceListActivity;
 import com.liwn.zzl.markbit.mark.DummyContent;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
 
-    private ImageButton bluetoothStatus = null;
+    private Button bluetoothStatus = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothLeService mBluetoothLeService = null;
 
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private boolean isFileFinished = false;
     private boolean isFileCancled = false;
     private String isUpdateType;
+    private boolean isClickedDisConnected = false;
 
     @Override
     protected void onResume() {
@@ -140,7 +143,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 isBluetoothConnected = true;
                 mConnectedDeviceName = intent.getStringExtra(MarkBitApplication.DEVICE_NAME);
-                bluetoothStatus.setImageResource(R.mipmap.ic_bluetooth_connected_white_36dp);
+                bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_bluetooth_connected_white_36dp, 0);
+                bluetoothStatus.setText(mConnectedDeviceName);
                 mSendFileFragment.enableBT();
 
                 MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
@@ -148,8 +152,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 isBluetoothConnected = false;
-                bluetoothStatus.setImageResource(R.mipmap.ic_bluetooth_disabled_white_36dp);
-//                mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+                bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_bluetooth_disabled_white_36dp, 0);
+                bluetoothStatus.setText(R.string.display_disconnected);
+                if (!isClickedDisConnected) {
+                    mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+                } else {
+                    isClickedDisConnected = false;
+                }
                 mSendFileFragment.disableBT();
 
                 isPackageSendSuccessed = false;
@@ -267,7 +276,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //                        isTimerStart = true;
 //                        initTimer();
 //                    }
-                    sendMessage(sendBytes);
+                    if (mBluetoothLeService.getConnectionState() == BluetoothLeService.STATE_CONNECTED) {
+                        sendMessage(sendBytes);
+                    }
                 }
             }
         };
@@ -312,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
 
-        bluetoothStatus = (ImageButton) findViewById(R.id.icon_bluetooth_status);
+        bluetoothStatus = (Button) findViewById(R.id.icon_bluetooth_status);
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
@@ -327,13 +338,14 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         bluetoothStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "is connected:" + isBluetoothConnected + ", " + mBluetoothLeService.getConnectionState());
-                if (isBluetoothConnected) {
-                    mBluetoothLeService.disconnect();
-                } else {
+                Log.e(TAG, "is connected: " + (mBluetoothLeService.getConnectionState() == BluetoothLeService.STATE_CONNECTED));
+//                if (isBluetoothConnected) {
+//                    mBluetoothLeService.disconnect();
+//                    isClickedDisConnected = true;
+//                } else {
                     Intent serverIntent = new Intent(mContext, DeviceListActivity.class);
                     startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-                }
+//                }
             }
         });
 
@@ -720,7 +732,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 byte[] subMes = Arrays.copyOfRange(message, i * perLen, (i+1) * perLen);
                 mBluetoothLeService.WriteValue(subMes);
                 try {
-                    Thread.sleep(25);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -86,7 +86,7 @@ public class BluetoothLeService extends Service {
             String intentAction;
 //            setState(newState);
 
-            Log.e(TAG, "onConnectionStateChange" + newState);
+            Log.e(TAG, "onConnectionStateChange" + newState + "; name: " + mBluetoothDeviceName);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
