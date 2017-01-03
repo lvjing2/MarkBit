@@ -14,7 +14,7 @@
     <string name="choose_and_send">Choose file and send</string>
     <string name="send_library">Update Marks Library</string>
     <string name="send_setting">Update Setting</string>
-    <string name="send_file_result_succeed">Send file result succeed!</string>
+    <string name="send_file_result_succeed">Update library succeed!</string>
     <string name="update_setting_result_succeed">Update setting succeed!</string>
     <string name="file_sending_title">File sending...</string>
     <string name="file_sending_msg">File send progress...</string>
