@@ -29,6 +29,7 @@
   <string name="display_disconnected">未连接设备</string>
   <string name="bt_not_enabled_leaving">蓝牙未启动,退出程序.</string>
   <string name="parameter_setting">设备参数设置</string>
+  <string name="connected_to">成功连接到设备: </string>
 
   <string name="cancle">取消</string>
 
@@ -90,4 +91,13 @@
   <string name="error_incorrect_password">输入密码不正确</string>
   <string name="error_invalid_new_password">新密码需为8位数字</string>
   <string name="error_invalid_renew_password">确认密码与新密码不一致</string>
+  <string name="change_pass_succeed">成功修改密码</string>
+
+  <string name="premission_denied">未获得SD or BLE权限,程序部分功能无法使用.</string>
+  <string name="file_invalid">文件格式不正确.</string>
+  <string name="factory_name_title">标识名:</string>
+  <string name="device_name_title">设备名:</string>
+  <string name="file_not_found">文件未找到.</string>
+  <string name="allowed_ble_device_name">请将蓝牙连接至: </string>
+  <string name="lib_not_found">图库文件不存在.</string>
 </resources>

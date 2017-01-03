@@ -29,6 +29,7 @@
     <string name="display_disconnected">Not connected</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving MarkBit.</string>
     <string name="parameter_setting">setting</string>
+    <string name="connected_to">Connected to: </string>
 
     <string name="cancle">Cancle</string>
 
@@ -89,4 +90,14 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_invalid_new_password">New password should be 8 digits.</string>
     <string name="error_invalid_renew_password">Confirm password is different with new password.</string>
+    <string name="change_pass_succeed">Change password succeed.</string>
+
+    <string name="premission_denied">SD or BLE permission is denied.</string>
+    <string name="file_invalid">File is not valid.</string>
+    <string name="factory_name_title">Factory name: </string>
+    <string name="device_name_title">Device name: </string>
+    <string name="file_not_found">File not found.</string>
+    <string name="or">or</string>
+    <string name="allowed_ble_device_name">Please connect to: </string>
+    <string name="lib_not_found">Library is not existed.</string>
 </resources>

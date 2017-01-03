@@ -66,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private Timer dataTimer;
     private TimerTask dataTimerTask;
 
-    private Timer btTimer;
-    private TimerTask btTimerTask;
-
     private int clickedIndex;
     private int currentIndex;
     private SendFileFragment mSendFileFragment;
@@ -153,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
                 MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
                 Log.d(TAG, "broadcastReceiver connected " + mConnectedDeviceName);
-                Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.connected_to) + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 isBluetoothConnected = false;
                 bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_bluetooth_disabled_white_36dp, 0);
@@ -287,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //                        isTimerStart = true;
 //                        initTimer();
 //                    }
+                    Log.e(TAG, "data timer is running");
                     if (mBluetoothLeService.getConnectionState() == BluetoothLeService.STATE_CONNECTED) {
                         sendMessage(sendBytes);
                     }
@@ -497,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             }
 
         } catch (IOException e) {
-            Toast.makeText(this, "file not found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.file_not_found, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
@@ -641,7 +639,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             }
         } else if (isFileStartSend && isFileFinished){
 
-//            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).destroyProgressBar();
             mSendFileFragment.destroyProgressBar();
 
             if (isUpdateType[0].equals(MarkBitApplication.UPDATE_TYPE_SETTING)) {
@@ -664,6 +661,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             isFileCancled = false;
 
             recoveryScreenStatus();
+            Log.e(TAG, "file send succeed, and cancel data timer");
             dataTimer.cancel();
         }
     }
@@ -814,17 +812,18 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
         String str_factory_name = null;
         try {
             str_factory_name = new String(factory_name, "UTF-8");
-            Toast.makeText(this, "factory name: " + str_factory_name + "; device_name: " + device_name , Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.factory_name_title) + str_factory_name + "\n"
+                    + getString(R.string.device_name_title) + device_name , Toast.LENGTH_LONG).show();
             String tmp = getString(R.string.factory_name);
             if (str_factory_name.equals(getString(R.string.factory_name))) {
                 return true;
             } else {
-                Toast.makeText(this, "file is not valid", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.file_invalid, Toast.LENGTH_LONG).show();
                 return false;
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            Toast.makeText(this, "file is not valid", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.file_invalid, Toast.LENGTH_LONG).show();
             return false;
         }
     }

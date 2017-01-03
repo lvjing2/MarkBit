@@ -217,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } else {
                     //禁止授权
-                    Toast.makeText(this, "SD or BLE permission is denied.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.premission_denied, Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "SD or BLE permission granted failed!");
                 }
                 return;

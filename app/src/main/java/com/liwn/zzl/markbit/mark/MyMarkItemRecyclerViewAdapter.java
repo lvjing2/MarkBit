@@ -98,7 +98,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
                 return false;
             }
         };
@@ -106,7 +106,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         private final MenuItem.OnMenuItemClickListener mOnMenu2ClickListener = new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.position, Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(mParentContext, AllMarkItemActivity.class);
                 i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
 

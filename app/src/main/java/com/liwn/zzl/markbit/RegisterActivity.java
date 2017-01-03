@@ -89,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         byte[] byteNewPass = FileIO.hexStringToByteArray(newPass);
         FileIO.setBytes(MarkBitApplication.i_file, FileIO.PASSWORD_ADDR, FileIO.PASSWORD_LEN, byteNewPass);
-        Toast.makeText(this, "change password successed!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.change_pass_succeed, Toast.LENGTH_SHORT).show();
         finish();
     }
 

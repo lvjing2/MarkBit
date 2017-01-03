@@ -34,10 +34,8 @@ import java.io.IOException;
 public class SendFileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_COLUMN_COUNT = "column-count";
-    private static final int REQUEST_CODE_CHOOSE_FILE = 11;
     private static final String ISLOGIN = "isLogin";
 
-    private String mParam1;
     private View mView;
 
     private OnFragmentInteractionListener mListener;
@@ -81,9 +79,6 @@ public class SendFileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = String.valueOf(getArguments().getInt(ARG_COLUMN_COUNT));
-        }
     }
 
     @Override
@@ -107,8 +102,9 @@ public class SendFileFragment extends Fragment {
                     } else if (MarkBitApplication.connectedDeviceName.equals(getString(R.string.R_device_name))) {
                         file = FileIO.getRconFile();
                     } else {
-                        Toast.makeText(activityContext, "Device name is not " +
-                                getString(R.string.I_device_name) + " or " + getString(R.string.R_device_name), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activityContext, getString(R.string.allowed_ble_device_name) + " " +
+                                getString(R.string.I_device_name) + " " + getString(R.string.or) + " " + getString(R.string.R_device_name),
+                                Toast.LENGTH_SHORT).show();
                         file = null;
                         return;
                     }
@@ -117,7 +113,7 @@ public class SendFileFragment extends Fragment {
                         Uri updateUri = Uri.fromFile(file);
                         mListener.sendFileFromUriByBT(updateUri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
                     } else {
-                        Toast.makeText(activityContext, "Library files is not existed, please import bin files in MarkBit/", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "file is null");
                     }
                 } else {
                     Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -133,7 +129,7 @@ public class SendFileFragment extends Fragment {
                         Uri setUri = Uri.fromFile(file);
                         mListener.sendFileFromUriByBT(setUri, MarkBitApplication.UPDATE_TYPE_SETTING);
                     } else {
-                        Toast.makeText(activityContext, "Library files is not existed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activityContext, R.string.lib_not_found, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -162,52 +158,6 @@ public class SendFileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE_CHOOSE_FILE:
-                    Uri uri = data.getData();
-                    File src = new File(uri.getPath());
-                    String filename = src.getName();
-                    // TODO: delete this code
-                    // 1. is validation
-                    // 2. is R file or I file
-                    if (filename.equals(MarkBitApplication.i_name) || filename.equals(MarkBitApplication.r_name)) {
-                        File dst = new File(FileIO.getMediaFolderName() + "/" + filename);
-
-                        if (!FileIO.isSameFile(src, dst)) {
-
-                            byte[] setting_backup = new byte[MarkBitApplication.MARK_SETTING_SIZE];
-                            boolean isDstExisted = false;
-                            if (dst.exists()) {
-                                isDstExisted = true;
-                                FileIO.getBytes(dst, setting_backup, 0, MarkBitApplication.MARK_SETTING_SIZE);
-                                dst.delete();
-                            }
-                            try {
-                                FileIO.copyFile(src, dst);
-                                if (isDstExisted) {
-                                    FileIO.setBytes(dst, 0, MarkBitApplication.MARK_SETTING_SIZE, setting_backup);
-                                }
-                                Uri sendUri = Uri.fromFile(dst);
-                                mListener.sendFileFromUriByBT(sendUri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            mListener.sendFileFromUriByBT(uri, MarkBitApplication.UPDATE_TYPE_LIBRARY);
-                        }
-                    } else {
-                        Toast.makeText(activityContext, "Please import " + MarkBitApplication.i_name + " or " + MarkBitApplication.r_name, Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }
     }
 
     @Override
