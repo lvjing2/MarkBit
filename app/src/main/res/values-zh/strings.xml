@@ -15,6 +15,7 @@
   <string name="send_library">更新系统图库</string>
   <string name="send_setting">更新设备参数</string>
   <string name="send_file_result_succeed">文件成功发送!</string>
+  <string name="update_setting_result_succeed">设备设置更改成功!</string>
   <string name="file_sending_title">文件发送中...</string>
   <string name="file_sending_msg">文件发送进度...</string>
   <string name="not_connected">未连接任何设备</string>

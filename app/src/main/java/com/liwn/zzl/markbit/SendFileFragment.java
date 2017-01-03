@@ -100,7 +100,6 @@ public class SendFileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isBTConnected) {
-                    // TODO: need test
                     // get bluetooth name
                     File file;
                     if (MarkBitApplication.connectedDeviceName.equals(getString(R.string.I_device_name))) {
@@ -175,7 +174,7 @@ public class SendFileFragment extends Fragment {
                     Uri uri = data.getData();
                     File src = new File(uri.getPath());
                     String filename = src.getName();
-                    // TODO: validate file name
+                    // TODO: delete this code
                     // 1. is validation
                     // 2. is R file or I file
                     if (filename.equals(MarkBitApplication.i_name) || filename.equals(MarkBitApplication.r_name)) {

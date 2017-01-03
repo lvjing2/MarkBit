@@ -117,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private boolean isFileStartSend = false;
     private boolean isFileFinished = false;
     private boolean isFileCancled = false;
-    private String isUpdateType;
+    // refresh setting or update mark libs, isUpdateType[0] is the newest type.
+    private String[] isUpdateType = new String[2];
     private boolean isClickedDisConnected = false;
 
     @Override
@@ -154,11 +155,12 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 isBluetoothConnected = false;
                 bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_bluetooth_disabled_white_36dp, 0);
                 bluetoothStatus.setText(R.string.display_disconnected);
-                if (!isClickedDisConnected) {
-                    mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
-                } else {
-                    isClickedDisConnected = false;
-                }
+                // TODO: 1.reconnection speed up 2. add new web page 3. fixed the reconnection loss
+//                if (!isClickedDisConnected) {
+//                    mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+//                } else {
+//                    isClickedDisConnected = false;
+//                }
                 mSendFileFragment.disableBT();
 
                 isPackageSendSuccessed = false;
@@ -166,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Log.d(TAG, "broadcastReceiver disconnected");
                 Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             } else if (BluetoothLeService.ACTION_GATT_CONNECTING.equals(action)) {
-                Log.d(TAG, "broadcastReceiver connecting");
+                Log.d(TAG, "connecting");
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
 
@@ -176,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 }
                 Log.d(TAG, "in action services discovered");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                Log.d(TAG, "in action data available");
                 String recString = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 Log.d(TAG, "receive bytes: " + recString);
                 final byte[] recBytes = FileIO.hexStringToByteArray(recString);
@@ -415,7 +416,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 
     @Override
     public void sendFileFromUriByBT(Uri uri, String type) {
-        isUpdateType = type;
+        isUpdateType[1] = isUpdateType[0];
+        isUpdateType[0] = type;
 
         if (uri == null || uri.toString().length() < 1) {
             Log.e(TAG, "BAD URI: cannot load file");
@@ -501,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     if (data != null) {
                         mConnectedDeviceName = data.getExtras().getString(MarkBitApplication.DEVICE_NAME);
                         mDeviceAddress = data.getExtras().getString(MarkBitApplication.DEVICE_ADDRESS);
-                        Log.d(TAG, "connecting...: " + mConnectedDeviceName + ": " + mDeviceAddress);
+                        Log.d(TAG, "choose: : " + mConnectedDeviceName + ": " + mDeviceAddress);
                         mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
                         MarkBitApplication.connectedDeviceName = mConnectedDeviceName;
                     }
@@ -609,9 +611,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 e.printStackTrace();
             }
 
-            if (isUpdateType == MarkBitApplication.UPDATE_TYPE_LIBRARY) {
+            if (isUpdateType[0].equals(MarkBitApplication.UPDATE_TYPE_LIBRARY)) {
 
-            } else if (isUpdateType == MarkBitApplication.UPDATE_TYPE_SETTING) {
+            } else if (isUpdateType[0].equals(MarkBitApplication.UPDATE_TYPE_SETTING)) {
                 if (address > MarkBitApplication.MARK_SETTING_SIZE / diff) {
                     isFileFinished = true;
                 }
@@ -632,7 +634,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).destroyProgressBar();
             mSendFileFragment.destroyProgressBar();
 
-            Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
+            if (isUpdateType.equals(MarkBitApplication.UPDATE_TYPE_SETTING)) {
+                Toast.makeText(this, getString(R.string.update_setting_result_succeed), Toast.LENGTH_SHORT).show();
+            } else if (isUpdateType.equals(MarkBitApplication.UPDATE_TYPE_LIBRARY)) {
+                Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
+            }
 //            Log.e(TAG, "filename: " + file.getName());
             if (getString(R.string.I_name).equals(file.getName())) {
                 MarkBitApplication.i_synced = true;
@@ -687,7 +693,8 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     private void breakAndCheck() {
-        if(isFileStartSend && !isFileFinished && isFileCancled) {
+        if(isFileStartSend && !isFileFinished && isFileCancled &&
+                (isUpdateType[0] != null && isUpdateType[0].equals(isUpdateType[1]))) {
 //            byte[] feedbackInstruct = {(byte) 0xA5, (byte) 0x07, (byte) 0x8A, sendBytes[3], sendBytes[4], (byte) 0x0D, (byte) 0x5A};
 //            readProcess(feedbackInstruct);
 //            if (!isTimerStart) {
