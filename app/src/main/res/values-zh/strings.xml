@@ -6,6 +6,7 @@
 
   <string name="index_setting">常用索引设置</string>
 
+  <string name="all_mark_title">所有的图标</string>
   <string name="add_new_mark_by_this">更换图标</string>
   <string name="send_file">更新图标文件</string>
   <string name="cannot_access_file_system_hint">无法访问文件系统,请安装一个文件管理器.</string>

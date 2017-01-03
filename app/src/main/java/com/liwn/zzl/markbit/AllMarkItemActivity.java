@@ -34,8 +34,9 @@ public class AllMarkItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_all_mark_item);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setTitle(R.string.all_mark_title);
 
         DisplayMetrics displayMetrics = MarkBitApplication.applicationContext.getResources().getDisplayMetrics();
         mColumnCount =  (int) (displayMetrics.widthPixels / getResources().getDimension(R.dimen.allItemWidth));
