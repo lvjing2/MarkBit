@@ -634,9 +634,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
 //            ((SendFileFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(0)).destroyProgressBar();
             mSendFileFragment.destroyProgressBar();
 
-            if (isUpdateType.equals(MarkBitApplication.UPDATE_TYPE_SETTING)) {
+            if (isUpdateType[0].equals(MarkBitApplication.UPDATE_TYPE_SETTING)) {
                 Toast.makeText(this, getString(R.string.update_setting_result_succeed), Toast.LENGTH_SHORT).show();
-            } else if (isUpdateType.equals(MarkBitApplication.UPDATE_TYPE_LIBRARY)) {
+            } else if (isUpdateType[0].equals(MarkBitApplication.UPDATE_TYPE_LIBRARY)) {
                 Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
             }
 //            Log.e(TAG, "filename: " + file.getName());
