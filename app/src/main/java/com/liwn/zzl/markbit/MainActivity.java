@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     private Timer dataTimer;
     private TimerTask dataTimerTask;
 
+    private Timer btTimer;
+    private TimerTask btTimerTask;
+
     private int clickedIndex;
     private int currentIndex;
     private SendFileFragment mSendFileFragment;
@@ -155,6 +158,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 isBluetoothConnected = false;
                 bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_bluetooth_disabled_white_36dp, 0);
                 bluetoothStatus.setText(R.string.display_disconnected);
+                // if connected, then break the for loop
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
+                    }
+                }, 3000);
                 // TODO: 1.reconnection speed up 2. add new web page 3. fixed the reconnection loss
 //                if (!isClickedDisConnected) {
 //                    mBluetoothLeService.connect(mConnectedDeviceName, mDeviceAddress);
@@ -173,9 +183,9 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 // Show all the supported services and characteristics on the user interface.
 
 //                breakAndCheck();
-                if (sendBytes != null) {
-                    sendMessage(sendBytes);
-                }
+//                if (sendBytes != null) {
+//                    sendMessage(sendBytes);
+//                }
                 Log.d(TAG, "in action services discovered");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 String recString = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);

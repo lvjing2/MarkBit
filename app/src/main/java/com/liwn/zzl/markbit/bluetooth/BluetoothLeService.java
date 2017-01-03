@@ -265,20 +265,17 @@ public class BluetoothLeService extends Service {
 
 
 //         Previously connected device.  Try to reconnect.
-//        if (isDisconnected) {
-//            isDisconnected = false;
-            if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
-                    && mBluetoothGatt != null) {
-                Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
-                if (mBluetoothGatt.connect()) {
-                    mConnectionState = STATE_CONNECTING;
-                    Log.e(TAG, "====== recovery connect true =====");
-                    return true;
-                } else {
-                    Log.e(TAG, "====== recovery connect false =====");
-                    return false;
-                }
-            }
+//        if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
+//                && mBluetoothGatt != null) {
+//            Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
+//            if (mBluetoothGatt.connect()) {
+//                mConnectionState = STATE_CONNECTING;
+//                Log.e(TAG, "====== recovery connect true =====");
+//                return true;
+//            } else {
+//                Log.e(TAG, "====== recovery connect false =====");
+//                return false;
+//            }
 //        }
 
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
@@ -294,7 +291,7 @@ public class BluetoothLeService extends Service {
         }
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
-        mBluetoothGatt = device.connectGatt(this, true, mGattCallback);
+        mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mBluetoothDeviceName = name;
