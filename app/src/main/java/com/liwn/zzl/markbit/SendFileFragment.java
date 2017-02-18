@@ -81,6 +81,14 @@ public class SendFileFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private boolean compareDeviceName(String s1, String s2) {
+        s1 = s1.replaceAll("-", "");
+        s1 = s1.replaceAll("_", "");
+        s2 = s2.replaceAll("-", "");
+        s2 = s2.replaceAll("_", "");
+        return s1.equals(s2);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,9 +105,9 @@ public class SendFileFragment extends Fragment {
                 if (isBTConnected) {
                     // get bluetooth name
                     File file;
-                    if (MarkBitApplication.connectedDeviceName.equals(getString(R.string.I_device_name))) {
+                    if (compareDeviceName(MarkBitApplication.connectedDeviceName, getString(R.string.I_device_name))) {
                         file = FileIO.getIconFile();
-                    } else if (MarkBitApplication.connectedDeviceName.equals(getString(R.string.R_device_name))) {
+                    } else if (compareDeviceName(MarkBitApplication.connectedDeviceName, getString(R.string.R_device_name))) {
                         file = FileIO.getRconFile();
                     } else {
                         Toast.makeText(activityContext, getString(R.string.allowed_ble_device_name) + " " +
