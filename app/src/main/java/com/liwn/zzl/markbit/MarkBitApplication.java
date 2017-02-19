@@ -93,6 +93,9 @@ public class MarkBitApplication extends Application {
 	public static File r_file;
 	public static final String I_SYNCED = "I_SYNCED";
 	public static final String R_SYNCED = "R_SYNCED";
+	public static final String WEB_INDEX = "http://www.ahzhongche.com";
+	public static final String DOWNLOAD_INDEX = "http://www.ahzhongche.com/index.php?case=archive&act=list&catid=25";
+	public static final String DOWNLOAD_URI = "http://www.ahzhongche.com/upload/files/201702/14870593634742.zip";
 
 	public static String connectedDeviceName;
 

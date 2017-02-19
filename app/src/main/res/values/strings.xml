@@ -13,8 +13,9 @@
     <string name="bins_not_import">please import 2 bins file and then restart app.</string>
 
     <string name="choose_and_send">Choose file and send</string>
-    <string name="send_library">Update Marks Library</string>
+    <string name="send_library">Update Marks Library To Device</string>
     <string name="send_setting">Update Setting</string>
+    <string name="send_download">Download Marks Library From Cloud</string>
     <string name="send_file_result_succeed">Update library succeed!</string>
     <string name="update_setting_result_succeed">Update setting succeed!</string>
     <string name="file_sending_title">File sending...</string>
@@ -100,4 +101,9 @@
     <string name="or">or</string>
     <string name="allowed_ble_device_name">Please connect to: </string>
     <string name="lib_not_found">Library is not existed.</string>
+
+    <string name="downloading">Downloading library...</string>
+    <string name="net_hit">Please connect the network firstly.</string>
+    <string name="downlaod_success">Download Successfully!</string>
+    <string name="download_failed">Download Failed!</string>
 </resources>

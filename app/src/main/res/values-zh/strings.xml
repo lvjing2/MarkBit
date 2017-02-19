@@ -13,7 +13,8 @@
   <string name="bins_not_import">请将系统文件导入到文件夹中.</string>
 
   <string name="choose_and_send">选择文件并发送</string>
-  <string name="send_library">更新系统图库</string>
+  <string name="send_library">更新系统图库到设备</string>
+  <string name="send_download">云端下载最新图库到手机</string>
   <string name="send_setting">更新设备参数</string>
   <string name="send_file_result_succeed">图库更改成功!</string>
   <string name="update_setting_result_succeed">设备设置更改成功!</string>
@@ -97,7 +98,13 @@
   <string name="file_invalid">文件格式不正确.</string>
   <string name="factory_name_title">标识名:</string>
   <string name="device_name_title">设备名:</string>
+  <string name="or">或</string>
   <string name="file_not_found">文件未找到.</string>
   <string name="allowed_ble_device_name">请将蓝牙连接至: </string>
   <string name="lib_not_found">图库文件不存在.</string>
+
+  <string name="downloading">正在下载最新图库...</string>
+  <string name="net_hit">请先连通网络.</string>
+  <string name="downlaod_success">下载成功!</string>
+  <string name="download_failed">下载失败!</string>
 </resources>

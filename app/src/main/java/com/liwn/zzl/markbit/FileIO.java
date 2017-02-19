@@ -57,6 +57,7 @@ public abstract class FileIO {
 
     private static final String TAG = FileIO.class.getSimpleName();
     private static File MEDIA_FILE = null;
+    private static File MEDIA_TMP_FILE = null;
     private static final int BUFFER_SIZE = 1024;
     public static final String default_prefix = "mark";
     public static final String default_num = "-1";
@@ -102,7 +103,7 @@ public abstract class FileIO {
 
     public static File getMediaFile() {
         if(MEDIA_FILE == null){
-            if(initialisePaintroidMediaDirectory() == true) {
+            if(initialiseMediaDirectory()) {
                 return MEDIA_FILE;
             } else {
                 return null;
@@ -113,13 +114,24 @@ public abstract class FileIO {
 
     public static String getMediaFolderName() {
         if(MEDIA_FILE == null){
-            if(initialisePaintroidMediaDirectory() == true) {
+            if(initialiseMediaDirectory()) {
                 return MEDIA_FILE.getAbsolutePath();
             } else {
                 return null;
             }
         }
         return MEDIA_FILE.getAbsolutePath();
+    }
+
+    public static String getMediaTmpFolderName() {
+        if(MEDIA_TMP_FILE == null){
+            if(initialiseMediaTmpDirectory()) {
+                return MEDIA_TMP_FILE.getAbsolutePath();
+            } else {
+                return null;
+            }
+        }
+        return MEDIA_TMP_FILE.getAbsolutePath();
     }
 
     public static File getIconFile() {
@@ -141,7 +153,7 @@ public abstract class FileIO {
     }
 
     public static boolean saveBitmap(Context context, Bitmap bitmap, String path) {
-        if (initialisePaintroidMediaDirectory() == false) {
+        if (initialiseMediaDirectory() == false) {
             return false;
         }
 
@@ -233,7 +245,7 @@ public abstract class FileIO {
 
     public static File createNewEmptyPictureFile(Context context,
                                                  String filename) {
-        if (initialisePaintroidMediaDirectory() == true) {
+        if (initialiseMediaDirectory() == true) {
             if (!filename.toLowerCase().endsWith(ENDING.toLowerCase())) {
                 filename += ENDING;
             }
@@ -245,7 +257,7 @@ public abstract class FileIO {
 
     public static File createNewEmptyBinFile(Context context,
                                                  String filename) {
-        if (initialisePaintroidMediaDirectory() == true) {
+        if (initialiseMediaDirectory() == true) {
             return new File(MEDIA_FILE, filename);
         } else {
             return null;
@@ -278,7 +290,7 @@ public abstract class FileIO {
         return path;
     }
 
-    private static boolean initialisePaintroidMediaDirectory() {
+    private static boolean initialiseMediaDirectory() {
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
             MEDIA_FILE = new File(
@@ -296,6 +308,19 @@ public abstract class FileIO {
             return false;
         }
         return true;
+    }
+
+    private static boolean initialiseMediaTmpDirectory() {
+        MEDIA_TMP_FILE = new File(getMediaFolderName() + "/tmp");
+        if (MEDIA_TMP_FILE != null) {
+            if (MEDIA_TMP_FILE.isDirectory() == false) {
+                return MEDIA_TMP_FILE.mkdirs();
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 
     public static Bitmap getBitmapFromUri(Uri bitmapUri) {
@@ -695,7 +720,7 @@ public abstract class FileIO {
     }
 
     public static File[] getFiles() {
-        if (initialisePaintroidMediaDirectory() == true) {
+        if (initialiseMediaDirectory() == true) {
 
             FilenameFilter filenameFilter = new FilenameFilter() {
                 @Override
