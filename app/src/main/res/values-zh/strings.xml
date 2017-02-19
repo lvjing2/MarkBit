@@ -66,8 +66,8 @@
 
   <string name="I_name">icon100.bin</string>
   <string name="R_name">rcon100.bin</string>
-  <string name="I_device_name">ZC_LEDBOARD</string>
-  <string name="R_device_name">ZC_TELECTRL</string>
+  <string name="I_device_name">ZC-LEDBOARD</string>
+  <string name="R_device_name">ZC-TELECTRL</string>
   <string name="factory_name">ZhongChe</string>
 
   <string name="mark_replace_title">替换</string>
@@ -100,6 +100,7 @@
   <string name="device_name_title">设备名:</string>
   <string name="or">或</string>
   <string name="file_not_found">文件未找到.</string>
+  <string name="or">或</string>
   <string name="allowed_ble_device_name">请将蓝牙连接至: </string>
   <string name="lib_not_found">图库文件不存在.</string>
 
