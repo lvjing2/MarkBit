@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.liwn.zzl.markbit.AllMarkItemActivity;
+import com.liwn.zzl.markbit.DrawActivity;
 import com.liwn.zzl.markbit.MarkBitApplication;
 import com.liwn.zzl.markbit.MarkItemFragment;
 import com.liwn.zzl.markbit.MarkItemFragment.OnListFragmentInteractionListener;
@@ -90,20 +91,12 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.delete_mark).setOnMenuItemClickListener(mOnMenu1ClickListener);
-            menu.add(Menu.NONE, MarkItemFragment.MENU2, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu2ClickListener);
+            menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu1ClickListener);
+            menu.add(Menu.NONE, MarkItemFragment.MENU2, 1, R.string.add_new_yellow_mark).setOnMenuItemClickListener(mOnMenu2ClickListener);
+            menu.add(Menu.NONE, MarkItemFragment.MENU3, 1, R.string.add_new_red_mark).setOnMenuItemClickListener(mOnMenu3ClickListener);
         }
 
         private final MenuItem.OnMenuItemClickListener mOnMenu1ClickListener = new MenuItem.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-//                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        };
-
-        private final MenuItem.OnMenuItemClickListener mOnMenu2ClickListener = new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 //                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.position, Toast.LENGTH_SHORT).show();
@@ -111,11 +104,34 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
                 i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
 
                 Log.e("Adapter", String.valueOf(mItem.type));
-                if (mItem.type == true) {
+                if (mItem.type) {
                     ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_NEW_MARK_A);
-                } else if (mItem.type == false) {
+                } else if (!mItem.type) {
                     ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_NEW_MARK_B);
                 }
+                return false;
+            }
+        };
+
+        private final MenuItem.OnMenuItemClickListener mOnMenu2ClickListener = new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent i = new Intent(mParentContext, DrawActivity.class);
+                i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
+                Log.e("Adapter modify mark", String.valueOf(mItem.type));
+
+                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
+                ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK);
+                return false;
+            }
+        };
+
+        private final MenuItem.OnMenuItemClickListener mOnMenu3ClickListener = new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
                 return false;
             }
         };

@@ -26,9 +26,6 @@ public class GetBitmap {
     private final static int imgIconSize = width * height * 2 / 8;
     private final static int imgColor = 2;
     private final static int mark_yellow = Color.parseColor("#EE9A49");
-//    private final static int mark_yellow = Color.parseColor("#F0AD4E");
-//    private final static int mark_yellow = Color.parseColor("#eec900");
-//    private final static int mark_circle_red = Color.parseColor("#E2A0A0");
     private final static int mark_circle_red = Color.parseColor("#FF4500");
     private final static int mark_red = Color.parseColor("#FF4500");
     private final Bitmap mark_background;
@@ -117,7 +114,7 @@ public class GetBitmap {
                     img[i][j] = mat0[j][width + height/2 - i - 1];
                 }
 
-                if (img[i][j] ==  true) {
+                if (img[i][j]) {
                     bitmap.setPixel(j + start_width, i + start_height, mark_red);
                 }
             }
@@ -135,8 +132,44 @@ public class GetBitmap {
                     img[i][j] = mat1[j][width + height/2 - i - 1];
                 }
 
-                if (img[i][j] ==  true) {
+                if (img[i][j]) {
                     bitmap.setPixel(j + start_width, i + start_height, mark_yellow);
+                }
+            }
+        }
+
+        return bitmap;
+    }
+
+    public Bitmap getBitmap(boolean[][] mat, boolean color) {
+
+        if (mat == null) {
+            Bitmap img = Bitmap.createBitmap(2*MarkBitApplication.BIT_LCD_WIDTH, 2*MarkBitApplication.BIT_LCD_HEIGHT, Bitmap.Config.ARGB_8888);
+            img.eraseColor(Color.TRANSPARENT);
+            return img;
+        }
+        int width = mat[0].length;
+        int height = mat.length;
+        int bytes_per_line = width / 8;
+
+        Bitmap bitmap = mark_background.copy(Bitmap.Config.ARGB_8888, true);
+        int start_width = (outer_circle_width - width) / 2;
+        int start_height = (outer_circle_height - height) / 2;
+
+        if (color) {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    if (mat[i][j]) {
+                        bitmap.setPixel(j + start_width, i + start_height, mark_red);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    if (mat[i][j]) {
+                        bitmap.setPixel(j + start_width, i + start_height, mark_yellow);
+                    }
                 }
             }
         }

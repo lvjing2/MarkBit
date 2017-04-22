@@ -30,6 +30,9 @@ public class MarkItemFragment extends Fragment {
 
     public static final int MENU1 = 1;
     public static final int MENU2 = 2;
+    public static final int MENU3 = 3;
+    public static final int MENU4 = 4;
+    public static final int MENU5 = 5;
 
     private static final String ARG_COLUMN_COUNT = "column-count";
 
@@ -40,6 +43,7 @@ public class MarkItemFragment extends Fragment {
     public static final String NEW_POS_ID = "NEW MARK ID";
     public static final int REQUEST_CHOOSE_NEW_MARK_A = 6;
     public static final int REQUEST_CHOOSE_NEW_MARK_B = 7;
+    public static final int REQUEST_CHOOSE_MODIFY_MARK = 8;
 
     public RecyclerView recyclerView_A;
     public RecyclerView recyclerView_B;

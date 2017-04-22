@@ -17,4 +17,6 @@
     <color name="color_transparent">#00000000</color>
     <color name="color_yellow">#eec900</color>
     <color name="main_botton_text_color">#ffffff</color>
+    <color name="mark_color_red">#FF4500</color>
+    <color name="mark_color_yellow">#EE9A49</color>
 </resources>

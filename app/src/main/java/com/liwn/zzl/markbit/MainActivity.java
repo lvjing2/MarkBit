@@ -557,6 +557,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     }
                 }
                 break;
+            case MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK:
+                if (resultCode == RESULT_OK) {
+                    Log.e(TAG, "modify mark return: true");
+                }
         }
 
     }
