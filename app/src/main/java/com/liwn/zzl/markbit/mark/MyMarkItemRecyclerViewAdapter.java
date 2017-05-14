@@ -92,8 +92,9 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu1ClickListener);
-            menu.add(Menu.NONE, MarkItemFragment.MENU2, 1, R.string.add_new_yellow_mark).setOnMenuItemClickListener(mOnMenu2ClickListener);
-            menu.add(Menu.NONE, MarkItemFragment.MENU3, 1, R.string.add_new_red_mark).setOnMenuItemClickListener(mOnMenu3ClickListener);
+            if (mItem.control_id < 5) {
+                menu.add(Menu.NONE, MarkItemFragment.MENU2, 1, R.string.modify_mark).setOnMenuItemClickListener(mOnMenu2ClickListener);
+            }
         }
 
         private final MenuItem.OnMenuItemClickListener mOnMenu1ClickListener = new MenuItem.OnMenuItemClickListener() {
@@ -102,6 +103,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
 //                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.position, Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(mParentContext, AllMarkItemActivity.class);
                 i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
+                i.putExtra(MarkItemFragment.OLD_CTL_ID, mItem.control_id);
 
                 Log.e("Adapter", String.valueOf(mItem.type));
                 if (mItem.type) {
@@ -119,19 +121,15 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
             public boolean onMenuItemClick(MenuItem item) {
                 Intent i = new Intent(mParentContext, DrawActivity.class);
                 i.putExtra(MarkItemFragment.OLD_POS_ID, mItem.position);
+                i.putExtra(MarkItemFragment.OLD_CTL_ID, mItem.control_id);
                 Log.e("Adapter modify mark", String.valueOf(mItem.type));
 
                 Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
-                ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK);
-                return false;
-            }
-        };
-
-        private final MenuItem.OnMenuItemClickListener mOnMenu3ClickListener = new MenuItem.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(MarkBitApplication.applicationContext, "" +  mItem.control_id, Toast.LENGTH_SHORT).show();
+                if (mItem.type) {
+                    ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK_A);
+                } else {
+                    ((Activity) mParentContext).startActivityForResult(i, MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK_B);
+                }
                 return false;
             }
         };

@@ -6,10 +6,10 @@
 
     <string name="index_setting">Index</string>
 
+    <string name="modify_mark_title">Edit Mark</string>
     <string name="all_mark_title">All Mark</string>
     <string name="add_new_mark_by_this">Replace this mark</string>
-    <string name="add_new_yellow_mark">Change to yellow mark</string>
-    <string name="add_new_red_mark">Change to yellow mark</string>
+    <string name="modify_mark">Modify mark</string>
     <string name="send_file">Send file</string>
     <string name="cannot_access_file_system_hint">Please install a File Manager.</string>
     <string name="bins_not_import">please import 2 bins file and then restart app.</string>
@@ -34,7 +34,10 @@
     <string name="parameter_setting">setting</string>
     <string name="connected_to">Connected to: </string>
 
+    <string name="back_to_save">Back to save</string>
+    <string name="drop_the_edit">Drop the modification</string>
     <string name="save">Save</string>
+    <string name="preview">Preview</string>
     <string name="cancle">Cancle</string>
 
     <string name="version">Version: </string>
@@ -113,4 +116,6 @@
     <string name="yellow">yellow</string>
     <string name="red">red</string>
     <string name="modify_mark_text_hint">two numbers, one or four chinese characters</string>
+    <string name="blank">  </string>
+    <string name="modify_save_successfully">save successfully</string>
 </resources>

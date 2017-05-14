@@ -39,11 +39,15 @@ public class MarkItemFragment extends Fragment {
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
     public Context mContext;
+
     public static final String OLD_POS_ID = "OLD_POS_ID";
-    public static final String NEW_POS_ID = "NEW MARK ID";
+    public static final String OLD_CTL_ID = "OLD_CTL_ID";
+    public static final String NEW_POS_ID = "NEW_POS_ID";
+    public static final String NEW_CTL_ID = "NEW_CTL_ID";
     public static final int REQUEST_CHOOSE_NEW_MARK_A = 6;
     public static final int REQUEST_CHOOSE_NEW_MARK_B = 7;
-    public static final int REQUEST_CHOOSE_MODIFY_MARK = 8;
+    public static final int REQUEST_CHOOSE_MODIFY_MARK_A = 8;
+    public static final int REQUEST_CHOOSE_MODIFY_MARK_B = 9;
 
     public RecyclerView recyclerView_A;
     public RecyclerView recyclerView_B;
@@ -179,8 +183,19 @@ public class MarkItemFragment extends Fragment {
         void onMarkItemFragmentInteraction(DummyItem item);
     }
 
-    public void replaceMark(boolean type, int old_id, int new_id) {
-        DummyContent.replaceItem(type, old_id, new_id);
+    public void replaceMarkContent(boolean type, int old_position_id, int old_control_id, int new_position_id, int new_control_id) {
+        DummyContent.replaceItemContent(type, old_position_id, old_control_id, new_position_id, new_control_id);
+        if (type) {
+            Log.e(TAG, "notify A");
+            recyclerView_A.getAdapter().notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "notify B");
+            recyclerView_B.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    public void replaceMark(boolean type, int old_position_id, int old_control_id, int new_position_id, int new_control_id) {
+        DummyContent.replaceItem(type, old_position_id, old_control_id, new_position_id, new_control_id);
 
         if (type) {
             Log.e(TAG, "notify A");

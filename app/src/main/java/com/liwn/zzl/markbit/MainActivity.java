@@ -533,9 +533,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
                         int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
+                        int old_control_id = data.getExtras().getInt(MarkItemFragment.OLD_CTL_ID);
                         int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
+                        int new_control_id = data.getExtras().getInt(MarkItemFragment.NEW_CTL_ID);
                         Log.e(TAG, "A");
-                        mMarkItemFragment.replaceMark(true, old_position_id, new_position_id);
+                        mMarkItemFragment.replaceMark(true, old_position_id, old_control_id, new_position_id, new_control_id);
 
                         MarkBitApplication.i_synced = false;
 //                        MarkBitApplication.r_synced = false;
@@ -547,9 +549,11 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
                         int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
+                        int old_control_id = data.getExtras().getInt(MarkItemFragment.OLD_CTL_ID);
                         int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
+                        int new_control_id = data.getExtras().getInt(MarkItemFragment.NEW_CTL_ID);
                         Log.e(TAG, "B");
-                        mMarkItemFragment.replaceMark(false, old_position_id, new_position_id);
+                        mMarkItemFragment.replaceMark(false, old_position_id, old_control_id, new_position_id, new_control_id);
 
                         MarkBitApplication.i_synced = false;
 //                        MarkBitApplication.r_synced = false;
@@ -557,9 +561,36 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                     }
                 }
                 break;
-            case MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK:
+            case MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK_A:
                 if (resultCode == RESULT_OK) {
-                    Log.e(TAG, "modify mark return: true");
+                    if (data != null) {
+                        int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
+                        int old_control_id = data.getExtras().getInt(MarkItemFragment.OLD_CTL_ID);
+                        int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
+                        int new_control_id = data.getExtras().getInt(MarkItemFragment.NEW_CTL_ID);
+                        mMarkItemFragment.replaceMarkContent(true, old_position_id, old_control_id, new_position_id, new_control_id);
+
+                        MarkBitApplication.i_synced = false;
+                        MarkBitApplication.r_synced = false;
+                        updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
+                        Log.e(TAG, "modify mark return: true");
+                    }
+                }
+                break;
+            case MarkItemFragment.REQUEST_CHOOSE_MODIFY_MARK_B:
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        int old_position_id = data.getExtras().getInt(MarkItemFragment.OLD_POS_ID);
+                        int old_control_id = data.getExtras().getInt(MarkItemFragment.OLD_CTL_ID);
+                        int new_position_id = data.getExtras().getInt(MarkItemFragment.NEW_POS_ID);
+                        int new_control_id = data.getExtras().getInt(MarkItemFragment.NEW_CTL_ID);
+                        mMarkItemFragment.replaceMarkContent(false, old_position_id, old_control_id, new_position_id, new_control_id);
+
+                        MarkBitApplication.i_synced = false;
+                        MarkBitApplication.r_synced = false;
+                        updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
+                        Log.e(TAG, "modify mark return: true");
+                    }
                 }
         }
 

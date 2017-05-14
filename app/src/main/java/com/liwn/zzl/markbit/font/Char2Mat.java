@@ -52,7 +52,7 @@ public class Char2Mat {
 			int t1 = (incode[0] & 0xff);
 			int t2 = (incode[1] & 0xff);
 			// TODO: need to calculate the offset carefully
-			int offset = (45 * 94 + 49) * offset_step;
+			int offset = ((t1 - 0xb0) * 94 + (t2 - 0xa1)) * offset_step;
 
 			// calculate offset for different size font
 //			if (t1 > 0xa0) {
@@ -89,7 +89,7 @@ public class Char2Mat {
 					int flag = (cbuf[index / size_step] & key[index % size_step]);
 					mat[i][j] = flag > 0 ? true : false;
 				}
-			} 
+			}
 		} else if (font_size == 40 || font_size == 48) {
 			// mat = new byte[offset_step];
 			mat = new boolean[font_height][font_width];
@@ -109,7 +109,7 @@ public class Char2Mat {
 	public void printMat() {
 		for (int i = 0; i < font_size; i++) {
 			for (int j = 0; j < font_size; j++) {
-				System.out.print(mat[i][j] ? "��" : "��");
+				System.out.print(mat[i][j] ? "+" : "o");
 			}
 			System.out.println();
 		}
@@ -121,7 +121,7 @@ public class Char2Mat {
 				for (int j = 0; j < font_width; j++) {
 					int index = i * font_width + j;
 					int flag = cbuf[index / size_step] & key[index % size_step];
-					System.out.print(flag > 0 ? "��" : "��");
+					System.out.print(flag > 0 ? "+" : "o");
 				}
 				System.out.println();
 			}
@@ -130,7 +130,7 @@ public class Char2Mat {
 				for (int j = 0; j < font_size; j++) {
 					int index = j * font_width + i;
 					int flag = cbuf[index / size_step] & key[index % size_step];
-					System.out.print(flag > 0 ? "��" : "��");
+					System.out.print(flag > 0 ? "+" : "o");
 				}
 				System.out.println();
 			}

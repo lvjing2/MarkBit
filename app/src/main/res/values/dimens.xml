@@ -19,4 +19,5 @@
     <dimen name="textSize">16sp</dimen>
     <dimen name="hint_textSize">14sp</dimen>
     <dimen name="margin_medium">5dp</dimen>
+    <dimen name="switch_length">25dp</dimen>
 </resources>

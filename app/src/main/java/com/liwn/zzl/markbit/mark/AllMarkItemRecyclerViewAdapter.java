@@ -27,9 +27,11 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
 
     private final Map<Integer, DummyItem> mValues;
     private int old_position_id;
-    public AllMarkItemRecyclerViewAdapter(int old_mark_id, Map<Integer, DummyItem> items) {
+    private int old_control_id;
+    public AllMarkItemRecyclerViewAdapter(int old_position_id, int old_control_id, Map<Integer, DummyItem> items) {
         mValues = items;
-        this.old_position_id = old_mark_id;
+        this.old_position_id = old_position_id;
+        this.old_control_id = old_control_id;
     }
 
     @Override
@@ -44,6 +46,7 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
         holder.mItem = mValues.get(position);
         holder.mImgView.setImageBitmap(mValues.get(position).img);
         holder.old_position_id = old_position_id;
+        holder.old_control_id = old_control_id;
 //        holder.mIdView.setText(String.valueOf(mValues.get(position).position));
 //        holder.mNameView.setText(mValues.get(position).filePath);
     }
@@ -72,7 +75,9 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
                             // continue with delete
                             Intent i = new Intent();
                             i.putExtra(MarkItemFragment.OLD_POS_ID, old_position_id);
-                            i.putExtra(MarkItemFragment.NEW_POS_ID, mItem.position);
+                            i.putExtra(MarkItemFragment.OLD_CTL_ID, old_control_id);
+                            i.putExtra(MarkItemFragment.NEW_POS_ID, old_position_id);
+                            i.putExtra(MarkItemFragment.NEW_CTL_ID, mItem.control_id);
                             ((Activity)mParentContext).setResult(Activity.RESULT_OK, i);
                             ((Activity)mParentContext).finish();
                         }
@@ -89,6 +94,7 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
 //        public final TextView mNameView;
         public DummyItem mItem;
         public int old_position_id;
+        public int old_control_id;
 
         public ViewHolder(View view, Context context) {
             super(view);

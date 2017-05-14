@@ -2,6 +2,9 @@ package com.liwn.zzl.markbit.mark;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.liwn.zzl.markbit.FileIO;
@@ -9,6 +12,7 @@ import com.liwn.zzl.markbit.MarkBitApplication;
 import com.liwn.zzl.markbit.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -17,6 +21,10 @@ import java.io.RandomAccessFile;
  */
 public class GetBitmap {
     private final static int preSize = 576;
+//    private final static int outer_circle_width = 77;
+//    private final static int outer_circle_height = 77;
+//    private final static int inner_circle_width = 60;
+//    private final static int inner_circle_height = 60;
     private final static int outer_circle_width = 77;
     private final static int outer_circle_height = 77;
     private final static int inner_circle_width = 60;
@@ -30,6 +38,10 @@ public class GetBitmap {
     private final static int mark_red = Color.parseColor("#FF4500");
     private final Bitmap mark_background;
 
+    private char[] key = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+
+
+    // generate the outter circle
     public GetBitmap() {
         super();
         mark_background = Bitmap.createBitmap(outer_circle_width, outer_circle_height, Bitmap.Config.ARGB_8888);
@@ -141,12 +153,11 @@ public class GetBitmap {
         return bitmap;
     }
 
+    // get mat from fonts, and then convert it to bitmap
     public Bitmap getBitmap(boolean[][] mat, boolean color) {
 
         if (mat == null) {
-            Bitmap img = Bitmap.createBitmap(2*MarkBitApplication.BIT_LCD_WIDTH, 2*MarkBitApplication.BIT_LCD_HEIGHT, Bitmap.Config.ARGB_8888);
-            img.eraseColor(Color.TRANSPARENT);
-            return img;
+            return mark_background;
         }
         int width = mat[0].length;
         int height = mat.length;
@@ -177,6 +188,7 @@ public class GetBitmap {
         return bitmap;
     }
 
+    // get bit from bin files
     public boolean[][] getIconBin(int index, int offset) {
 
         // System.out.println("index: " + index + ", part: " + part);
@@ -223,5 +235,64 @@ public class GetBitmap {
         }
 
         return mat;
+    }
+
+    @Nullable
+    public static boolean saveBitMatrix(@NonNull boolean[][] mat, int offset, int index) {
+
+        File icon = FileIO.getIconFile();
+        File rcon = FileIO.getRconFile();
+
+        int byte_size = 8;
+        int height = mat.length;
+        int width = mat[0].length;
+        int buf_size = 2 * width * height / byte_size;
+        if (width != MarkBitApplication.BIT_LCD_WIDTH || height != MarkBitApplication.BIT_LCD_HEIGHT) {
+//            Log.e("save bit mat error", "size is not valid.");
+            System.out.println("save bit mat error" + "size is not valid.");
+            return false;
+        }
+        byte[] buf = new byte[buf_size];
+
+//        if (i < height / 2 && j < width / 2) {
+//            img[i][j] = mat1[j][width - i - 1];
+//        } else if (i < height / 2 && j >= width / 2) {
+//            img[i][j] = mat1[j - width / 2][width/2 - i - 1];
+//        } else if (i >= height / 2 && j < width / 2) {
+//            img[i][j] = mat1[width/2 + j][height/2 + width/2 - i - 1];
+//        } else if (i >= height / 2 && j >= width / 2) {
+//            img[i][j] = mat1[j][width + height/2 - i - 1];
+//        }
+
+        int start = offset * buf_size / 2;
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                int byte_index = (i * width + j) / 8;
+                int byte_offset = (i * width + j) % 8;
+
+                boolean flag = false;
+                if (i < height / 2 && j < width / 2) {
+                    flag = mat[height / 2 - j][width / 2 + i];
+                } else if (i < height / 2 && j >= width / 2) {
+                    flag = mat[width - 1 - j][i];
+                } else if (i >= height / 2 && j < width / 2) {
+                    flag = mat[width/2 + height / 2 - j - 1][i - height/2];
+                } else if (i >= height / 2 && j >= width / 2) {
+                    flag = mat[3 * height / 2 - j - 1][i];
+                }
+
+                if (flag) {
+                    buf[start + byte_index] |= 0x80 >> byte_offset;
+                }
+            }
+        }
+
+        // no need to add the offset of color
+        int write_offset = index * imgIconSize + preSize;
+        FileIO.setBytes(icon, write_offset, buf.length, buf);
+        // TODO: set bytes to rcon
+//        FileIO.setBytes(rcon, index * buf_size, buf.length, buf);
+
+        return true;
     }
 }

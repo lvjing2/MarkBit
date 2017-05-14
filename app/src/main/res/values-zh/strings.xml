@@ -6,10 +6,10 @@
 
   <string name="index_setting">常用索引设置</string>
 
+  <string name="modify_mark_title">修改图标</string>
   <string name="all_mark_title">所有的图标</string>
   <string name="add_new_mark_by_this">更换图标</string>
-  <string name="add_new_yellow_mark">更改成黄色图标(不可撤回)</string>
-  <string name="add_new_red_mark">更改成红色图标(不可撤回)</string>
+  <string name="modify_mark">编辑文字图标</string>
   <string name="send_file">更新图标文件</string>
   <string name="cannot_access_file_system_hint">无法访问文件系统,请安装一个文件管理器.</string>
   <string name="bins_not_import">请将系统文件导入到文件夹中.</string>
@@ -34,7 +34,10 @@
   <string name="parameter_setting">设备参数设置</string>
   <string name="connected_to">成功连接到设备: </string>
 
+  <string name="back_to_save">返回保存</string>
+  <string name="drop_the_edit">丢弃更改</string>
   <string name="save">保存</string>
+  <string name="preview">预览</string>
   <string name="cancle">取消</string>
 
   <string name="version">版本号: </string>
@@ -106,7 +109,7 @@
   <string name="allowed_ble_device_name">请将蓝牙连接至: </string>
   <string name="lib_not_found">图库文件不存在.</string>
 
-  <string name="downloading">正在下载最新图库...</string>
+  <string name="downloading">正在下载最新图库&#8239;</string>
   <string name="net_hit">请先连通网络.</string>
   <string name="downlaod_success">下载成功!</string>
   <string name="download_failed">下载失败!</string>
@@ -114,4 +117,7 @@
   <string name="yellow">黄色</string>
   <string name="red">红色</string>
   <string name="modify_mark_text_hint">请输入两个数字或四个汉字</string>
+  <string name="save_notification_title">修改未保存</string>
+  <string name="save_notification_message">修改未保存,确认返回?</string>
+  <string name="modify_save_successfully">保存成功</string>
 </resources>

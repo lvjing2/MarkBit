@@ -12,8 +12,10 @@
 
     <ImageView
         android:id="@+id/markPreview"
-        android:layout_width="@dimen/itemWidth"
-        android:layout_height="@dimen/itemHeight"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_width="@dimen/allItemWidth"
+        android:layout_height="@dimen/allItemHeight"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -29,26 +31,51 @@
             android:id="@+id/mark_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:hint="@string/modify_mark_text_hint" />
+            android:layout_weight="7"
+            android:focusableInTouchMode="true"
+            android:hint="@string/modify_mark_text_hint">
 
-        <Switch
+            <requestFocus />
+        </EditText>
+
+        <!--<Switch-->
+            <!--android:id="@+id/color_switch"-->
+            <!--android:layout_width="75dp"-->
+            <!--android:layout_height="25dp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:showText="true"-->
+            <!--android:textOff="@string/yellow"-->
+            <!--android:textOn="@string/red"-->
+            <!--android:track="@drawable/switch_track_selector"-->
+            <!--android:switchMinWidth="75dp"-->
+            <!--android:thumb="@drawable/switch_thumb_selector" />-->
+
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/color_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:showText="true"
-            android:textOff="@string/red"
-            android:textOn="@string/yellow" />
+            android:layout_weight="3"
+            android:theme="@style/MySwitch"
+            android:minWidth="@dimen/switch_length" />
     </LinearLayout>
 
     <LinearLayout
+        android:weightSum="2"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mark_modify_workspace"
         android:gravity="end">
 
         <Button
+            android:layout_weight="1"
+            android:id="@+id/btn_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preview"/>
+        <Button
+            android:layout_weight="1"
             android:id="@+id/modify_mark_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

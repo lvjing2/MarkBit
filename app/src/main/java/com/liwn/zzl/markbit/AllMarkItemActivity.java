@@ -17,6 +17,7 @@ public class AllMarkItemActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private int mColumnCount;
     private int old_position_id;
+    private int old_control_id;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -43,9 +44,11 @@ public class AllMarkItemActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.all_mark_item);
 
         old_position_id = 0;
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             old_position_id = extras.getInt(MarkItemFragment.OLD_POS_ID);
+            old_control_id = extras.getInt(MarkItemFragment.OLD_CTL_ID);
 //            Log.e(TAG, "extras bundle is not null");
         }
 //        Log.e(TAG, "old position: " + old_position_id);
@@ -56,7 +59,7 @@ public class AllMarkItemActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(new GridLayoutManager(this, mColumnCount));
         }
 
-        recyclerView.setAdapter(new AllMarkItemRecyclerViewAdapter(old_position_id, MarkBitApplication.dummyContent.ALL_ITEM_MAP));
+        recyclerView.setAdapter(new AllMarkItemRecyclerViewAdapter(old_position_id, old_control_id, MarkBitApplication.dummyContent.ALL_ITEM_MAP));
         recyclerView.setSelected(true);
     }
 }

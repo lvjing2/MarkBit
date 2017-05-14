@@ -61,28 +61,41 @@ public class Num2Mat {
 	}
 	
 	public boolean[][] getMat() {
-		readFromLib();
-		if (font_height != 12 && font_height != 48) {
-			mat = new boolean[font_height][font_width];
-			// ����ȡ��
-			for (int i = 0; i < font_height; i++) {
-				for (int j = 0; j < font_width; j++) {
-					int index = j * font_height + i;
-					int flag = (cbuf[index / size_step] & key[index % size_step]);
-					mat[i][j] = flag > 0 ? true : false;
-				}
-			}
-		} else {
-			mat = new boolean[font_height][font_width];
-			// ����ȡ��
-			for (int i = 0; i < font_height; i++) {
-				for (int j = 0; j < font_width; j++) {
-					int index = i * font_width + j;
-					int flag = (cbuf[index / size_step] & key[index % size_step]);
-					mat[i][j] = flag > 0 ? true : false;
-				}
+//		readFromLib();
+		int ascii = (int) char_num;
+		if (ascii > 57 || ascii < 48) {
+			System.out.println("input char is invaild!");
+			return null;
+		}
+
+		int[][] tmp = AscIIMatrix.nums.get(ascii - 48);
+		mat = new boolean[font_height][font_width];
+		for (int i = 0; i < tmp.length; ++i) {
+			for (int j = 0; j < tmp[0].length; ++j) {
+				mat[i][j] = tmp[i][j] == 1 ? true : false;
 			}
 		}
+//		if (font_height != 12 && font_height != 48) {
+//			mat = new boolean[font_height][font_width];
+//			// ����ȡ��
+//			for (int i = 0; i < font_height; i++) {
+//				for (int j = 0; j < font_width; j++) {
+//					int index = j * font_height + i;
+//					int flag = (cbuf[index / size_step] & key[index % size_step]);
+//					mat[i][j] = flag > 0 ? true : false;
+//				}
+//			}
+//		} else {
+//			mat = new boolean[font_height][font_width];
+//			// ����ȡ��
+//			for (int i = 0; i < font_height; i++) {
+//				for (int j = 0; j < font_width; j++) {
+//					int index = i * font_width + j;
+//					int flag = (cbuf[index / size_step] & key[index % size_step]);
+//					mat[i][j] = flag > 0 ? true : false;
+//				}
+//			}
+//		}
 		return mat;
 	}
 	
