@@ -92,7 +92,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(Menu.NONE, MarkItemFragment.MENU1, 0, R.string.add_new_mark_by_this).setOnMenuItemClickListener(mOnMenu1ClickListener);
-            if (mItem.control_id < 5) {
+            if (mItem.control_id < MarkBitApplication.MODIFIABLE_MARK_NUM) {
                 menu.add(Menu.NONE, MarkItemFragment.MENU2, 1, R.string.modify_mark).setOnMenuItemClickListener(mOnMenu2ClickListener);
             }
         }

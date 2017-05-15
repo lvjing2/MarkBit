@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -20,12 +18,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.liwn.zzl.markbit.font.Num2Mat;
 import com.liwn.zzl.markbit.font.Str2FixMat;
-import com.liwn.zzl.markbit.font.StringValidCheck;
 import com.liwn.zzl.markbit.mark.GetBitmap;
 
 public class DrawActivity extends AppCompatActivity {
@@ -34,7 +29,7 @@ public class DrawActivity extends AppCompatActivity {
     private ImageView markPreview;
     private EditText markText;
     private SwitchCompat colorSwitch;
-    private Button preview;
+//    private Button preview;
     private Button submit;
     private String previousText;
     private boolean isSaved;
@@ -57,7 +52,7 @@ public class DrawActivity extends AppCompatActivity {
         markPreview = (ImageView) findViewById(R.id.markPreview);
         markText = (EditText) findViewById(R.id.mark_text);
         colorSwitch = (SwitchCompat) findViewById(R.id.color_switch);
-        preview = (Button) findViewById(R.id.btn_preview);
+//        preview = (Button) findViewById(R.id.btn_preview);
         submit = (Button) findViewById(R.id.modify_mark_submit);
         markPreview.setImageBitmap(new GetBitmap().getBitmap(null, false));
         markText.requestFocus();
@@ -82,19 +77,19 @@ public class DrawActivity extends AppCompatActivity {
             }
         });
 
-        preview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String text = markText.getText().toString();
-                boolean isChecked = colorSwitch.isChecked();
-
-                Str2FixMat str2FixMat = new Str2FixMat(text, MarkBitApplication.BIT_LCD_WIDTH, MarkBitApplication.BIT_LCD_HEIGHT, mContext);
-
-                boolean[][] mat = str2FixMat.getMat();
-                Bitmap bitmap = new GetBitmap().getBitmap(mat, isChecked);
-                markPreview.setImageBitmap(bitmap);
-            }
-        });
+//        preview.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String text = markText.getText().toString();
+//                boolean isChecked = colorSwitch.isChecked();
+//
+//                Str2FixMat str2FixMat = new Str2FixMat(text, MarkBitApplication.BIT_LCD_WIDTH, MarkBitApplication.BIT_LCD_HEIGHT, mContext);
+//
+//                boolean[][] mat = str2FixMat.getMat();
+//                Bitmap bitmap = new GetBitmap().getBitmap(mat, isChecked);
+//                markPreview.setImageBitmap(bitmap);
+//            }
+//        });
 
         submit.setEnabled(false);
         submit.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +101,8 @@ public class DrawActivity extends AppCompatActivity {
                 GetBitmap getBitmap = new GetBitmap();
                 Bitmap bitmap = getBitmap.getBitmap(mat, colorSwitch.isChecked());
                 markPreview.setImageBitmap(bitmap);
-                GetBitmap.saveBitMatrix(mat, colorSwitch.isChecked() ? 0 : 1, old_control_id);
+                GetBitmap.saveIconBitMatrix(mat, colorSwitch.isChecked() ? 0 : 1, old_control_id);
+                GetBitmap.saveRconBitMatrix(mat, colorSwitch.isChecked() ? 0 : 1, old_control_id);
 
                 Toast.makeText(v.getContext(), R.string.modify_save_successfully, Toast.LENGTH_LONG).show();
                 isSaved = true;
@@ -129,7 +125,14 @@ public class DrawActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                String text = markText.getText().toString();
+                boolean isChecked = colorSwitch.isChecked();
 
+                Str2FixMat str2FixMat = new Str2FixMat(text, MarkBitApplication.BIT_LCD_WIDTH, MarkBitApplication.BIT_LCD_HEIGHT, mContext);
+
+                boolean[][] mat = str2FixMat.getMat();
+                Bitmap bitmap = new GetBitmap().getBitmap(mat, isChecked);
+                markPreview.setImageBitmap(bitmap);
             }
         });
 

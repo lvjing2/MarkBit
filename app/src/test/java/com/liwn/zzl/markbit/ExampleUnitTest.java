@@ -107,13 +107,13 @@ public class ExampleUnitTest {
 
     private void printMat(boolean[][] mat) {
         for (int i = 0; i < mat.length; ++i) {
-            System.out.print("{");
+//            System.out.print("{");
             for (int j = 0; j < mat[0].length; ++j) {
-                System.out.print((mat[i][j] ? "+" : "o"));
-                if (j == mat[0].length - 1) {
-                    System.out.print("}");
-                }
-                System.out.print(" ");
+                System.out.print((mat[i][j] ? "1" : "0"));
+//                if (j == mat[0].length - 1) {
+//                    System.out.print("}");
+//                }
+//                System.out.print(" ");
             }
             System.out.println();
         }
@@ -172,6 +172,56 @@ public class ExampleUnitTest {
         try {
 //            File file = FileIO.getIconFile();
             File file = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/icon100.bin");
+            if (file == null) {
+                Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            RandomAccessFile raFile = new RandomAccessFile(file, "rw");
+
+            if (raFile != null) {
+                byte[] bytes = new byte[size];
+                raFile.seek(index * imgIconSize + offset * size + preSize);
+                raFile.read(bytes, 0, size);
+
+                int bytes_per_line = width / 8;
+                for (int i = 0; i < height; ++i) {
+                    // for (int j = 0; j < bytes_per_line; ++j) {
+                    // System.out.println(bytesToHexString(bytes, bytes_per_line * i, bytes_per_line));
+                    for (int j = 0; j < bytes_per_line; ++j) {
+                        for (int k = 0; k < 8; ++k) {
+                            if (((bytes[bytes_per_line * i + j] >> (8-k-1)) & 0x01) == 1) {
+                                // System.out.print("+");
+                                mat[i][j*8 + k] = true;
+                            } else {
+                                // System.out.print("o");
+                                mat[i][j*8 + k] = false;
+                            }
+                        }
+                    }
+                    // System.out.println();
+                    // }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mat;
+    }
+
+    // get bit from bin files
+    public boolean[][] getRawIconBin(int index, int offset) {
+
+        // System.out.println("index: " + index + ", part: " + part);
+        int width = MarkBitApplication.BIT_LCD_WIDTH;
+        int height = MarkBitApplication.BIT_LCD_HEIGHT;
+        int size = width * height / 8;
+
+        boolean[][] mat = new boolean[height][width];
+        try {
+//            File file = FileIO.getIconFile();
+            File file = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rawcon100.bin");
             if (file == null) {
                 Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
                 return null;
@@ -341,5 +391,130 @@ public class ExampleUnitTest {
         }
 
         return buf;
+    }
+
+
+    @Test
+    public void generateRcon() {
+        File rawconFile = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rawcon100.bin");
+        File iconFile = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/icon100.bin");
+        File rconFile = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rcon100.bin");
+
+        boolean[][] icon0 = getIconBin(0, 0);
+        boolean[][] icon1 = getIconBin(0, 1);
+//        boolean[][] icon0 = getRawIconBin(0, 0);
+//        boolean[][] icon1 = getRawIconBin(0, 1);
+        boolean[][] rcon = getRconBin(0);
+        int height = icon0.length;
+        int width = icon0[0].length;
+        boolean[][] icon = new boolean[height][width];
+
+        System.out.println("===================icon0=========================");
+        printMat(icon0);
+        System.out.println("===================icon1=========================");
+        printMat(icon1);
+        for (int i = 0; i < icon0.length; i++) {
+            for (int j = 0; j < icon0[0].length; j++) {
+                icon[i][j] = icon0[i][j] | icon1[i][j];
+            }
+        }
+
+        boolean[][] rcon_converted1 = new boolean[height][width];
+        boolean[][] rcon_converted2 = new boolean[height][width];
+        boolean[][] rcon_converted3 = new boolean[height][width];
+
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (i < height / 2 && j < width / 2) {
+                    rcon_converted1[i][j] = icon[j][width - i - 1];
+                } else if (i < height / 2 && j >= width / 2) {
+                    rcon_converted1[i][j] = icon[j - width / 2][width/2 - i - 1];
+                } else if (i >= height / 2 && j < width / 2) {
+                    rcon_converted1[i][j] = icon[width/2 + j][height/2 + width/2 - i - 1];
+                } else if (i >= height / 2 && j >= width / 2) {
+                    rcon_converted1[i][j] = icon[j][width + height/2 - i - 1];
+                }
+            }
+        }
+
+//        for (int i = 0; i < height; i++) {
+//            for (int j = 0; j < width; j++) {
+//                    rcon_converted2[j][height - i - 1] = rcon_converted1[i][j];
+//            }
+//        }
+
+        int tmp = 0;
+        for (int j = 0; j < height / 8; j++) {
+            for (int i = 0; i < width; i++) {
+                for (int k = 0; k < 8; k++) {
+                    rcon_converted2[tmp / width][tmp % width] = rcon_converted1[j * 8 + 8 - k - 1][i];
+                    tmp ++;
+                }
+            }
+        }
+
+
+
+
+        System.out.println("===================icon=========================");
+        printMat(icon);
+        System.out.println("====================rcon_converted1========================");
+        printMat(rcon_converted1);
+        System.out.println("====================rcon_converted2========================");
+        printMat(rcon_converted2);
+        System.out.println("====================rcon_converted3========================");
+        printMat(rcon_converted3);
+        System.out.println("====================rcon===================================");
+        printMat(rcon);
+    }
+
+    // get bit from bin files
+    private boolean[][] getRconBin(int index) {
+
+        // System.out.println("index: " + index + ", part: " + part);
+        int width = MarkBitApplication.BIT_LCD_WIDTH;
+        int height = MarkBitApplication.BIT_LCD_HEIGHT;
+        int size = width * height / 8;
+
+        boolean[][] mat = new boolean[height][width];
+        try {
+            File file = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rcon100.bin");
+            if (file == null) {
+                Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            RandomAccessFile raFile = new RandomAccessFile(file, "rw");
+
+            if (raFile != null) {
+                byte[] bytes = new byte[size];
+                raFile.seek(index * imgIconSize / 2 + preSize);
+                raFile.read(bytes, 0, size);
+
+                int bytes_per_line = width / 8;
+                for (int i = 0; i < height; ++i) {
+                    // for (int j = 0; j < bytes_per_line; ++j) {
+                    // System.out.println(bytesToHexString(bytes, bytes_per_line * i, bytes_per_line));
+                    for (int j = 0; j < bytes_per_line; ++j) {
+                        for (int k = 0; k < 8; ++k) {
+                            if (((bytes[bytes_per_line * i + j] >> (8-k-1)) & 0x01) == 1) {
+                                // System.out.print("+");
+                                mat[i][j*8 + k] = true;
+                            } else {
+                                // System.out.print("o");
+                                mat[i][j*8 + k] = false;
+                            }
+                        }
+                    }
+                    // System.out.println();
+                    // }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mat;
     }
 }

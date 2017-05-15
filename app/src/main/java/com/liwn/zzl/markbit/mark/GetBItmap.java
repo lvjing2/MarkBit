@@ -94,7 +94,7 @@ public class GetBitmap {
         return getOriBitmap(index);
     }
 
-    public Bitmap getOriBitmap(int index) {
+    private Bitmap getOriBitmap(int index) {
         boolean[][] mat0 = getIconBin(index, 0);
         boolean[][] mat1 = getIconBin(index, 1);
 
@@ -237,8 +237,104 @@ public class GetBitmap {
         return mat;
     }
 
+    // get bit from bin files
+    public boolean[][] getRconBin(int index) {
+
+        // System.out.println("index: " + index + ", part: " + part);
+        int width = MarkBitApplication.BIT_LCD_WIDTH;
+        int height = MarkBitApplication.BIT_LCD_HEIGHT;
+        int size = width * height / 8;
+
+        boolean[][] mat = new boolean[height][width];
+        try {
+            File file = FileIO.getRconFile();
+            if (file == null) {
+                Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            RandomAccessFile raFile = new RandomAccessFile(file, "rw");
+
+            if (raFile != null) {
+                byte[] bytes = new byte[size];
+                raFile.seek(index * imgIconSize / 2 + preSize / 2);
+                raFile.read(bytes, 0, size);
+
+                int bytes_per_line = width / 8;
+                for (int i = 0; i < height; ++i) {
+                    // for (int j = 0; j < bytes_per_line; ++j) {
+                    // System.out.println(bytesToHexString(bytes, bytes_per_line * i, bytes_per_line));
+                    for (int j = 0; j < bytes_per_line; ++j) {
+                        for (int k = 0; k < 8; ++k) {
+                            if (((bytes[bytes_per_line * i + j] >> (8-k-1)) & 0x01) == 1) {
+                                // System.out.print("+");
+                                mat[i][j*8 + k] = true;
+                            } else {
+                                // System.out.print("o");
+                                mat[i][j*8 + k] = false;
+                            }
+                        }
+                    }
+                    // System.out.println();
+                    // }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mat;
+    }
+
+    private Bitmap getOriRconBitmap(int index) {
+        boolean[][] mat0 = getRconBin(index);
+
+        if (mat0 == null) {
+            Bitmap img = Bitmap.createBitmap(2*MarkBitApplication.BIT_LCD_WIDTH, 2*MarkBitApplication.BIT_LCD_HEIGHT, Bitmap.Config.ARGB_8888);
+            img.eraseColor(Color.TRANSPARENT);
+            return img;
+        }
+        int width = mat0[0].length;
+        int height = mat0.length;
+        int bytes_per_line = width / 8;
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.eraseColor(Color.TRANSPARENT);
+//        Bitmap bitmap = mark_background.copy(Bitmap.Config.ARGB_8888, true);
+//        int start_width = (outer_circle_width - width) / 2;
+//        int start_height = (outer_circle_height - height) / 2;
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.print(mat0[i][j] ? "+" : "o");
+            }
+            System.out.println();
+        }
+
+        boolean[][] img = new boolean[height][width];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (i < height / 2 && j < width / 2) {
+                    img[i][j] = mat0[j][width - i - 1];
+                } else if (i < height / 2 && j >= width / 2) {
+                    img[i][j] = mat0[j - width / 2][width/2 - i - 1];
+                } else if (i >= height / 2 && j < width / 2) {
+                    img[i][j] = mat0[width/2 + j][height/2 + width/2 - i - 1];
+                } else if (i >= height / 2 && j >= width / 2) {
+                    img[i][j] = mat0[j][width + height/2 - i - 1];
+                }
+
+                if (img[i][j]) {
+                    bitmap.setPixel(j, i, mark_red);
+                }
+            }
+        }
+
+        return bitmap;
+    }
+
     @Nullable
-    public static boolean saveBitMatrix(@NonNull boolean[][] mat, int offset, int index) {
+    public static boolean saveIconBitMatrix(@NonNull boolean[][] mat, int offset, int index) {
 
         File icon = FileIO.getIconFile();
         File rcon = FileIO.getRconFile();
@@ -288,10 +384,67 @@ public class GetBitmap {
         }
 
         // no need to add the offset of color
-        int write_offset = index * imgIconSize + preSize;
-        FileIO.setBytes(icon, write_offset, buf.length, buf);
+        int write_offset = index * imgIconSize / 2 + preSize;
+        FileIO.setBytes(rcon, write_offset, buf.length, buf);
         // TODO: set bytes to rcon
 //        FileIO.setBytes(rcon, index * buf_size, buf.length, buf);
+
+        return true;
+    }
+
+
+    @Nullable
+    public static boolean saveRconBitMatrix(@NonNull boolean[][] mat, int offset, int index) {
+
+        File rcon = FileIO.getRconFile();
+
+        int byte_size = 8;
+        int height = mat.length;
+        int width = mat[0].length;
+        int buf_size = width * height / byte_size;
+        if (width != MarkBitApplication.BIT_LCD_WIDTH || height != MarkBitApplication.BIT_LCD_HEIGHT) {
+//            Log.e("save bit mat error", "size is not valid.");
+            System.out.println("save bit mat error" + "size is not valid.");
+            return false;
+        }
+        byte[] buf = new byte[buf_size];
+
+//        if (i < height / 2 && j < width / 2) {
+//            img[i][j] = mat1[j][width - i - 1];
+//        } else if (i < height / 2 && j >= width / 2) {
+//            img[i][j] = mat1[j - width / 2][width/2 - i - 1];
+//        } else if (i >= height / 2 && j < width / 2) {
+//            img[i][j] = mat1[width/2 + j][height/2 + width/2 - i - 1];
+//        } else if (i >= height / 2 && j >= width / 2) {
+//            img[i][j] = mat1[j][width + height/2 - i - 1];
+//        }
+
+        int tmp = 0;
+        boolean[][] tmpMat = new boolean[height][width];
+        for (int j = 0; j < height / 8; j++) {
+            for (int i = 0; i < width; i++) {
+                for (int k = 0; k < 8; k++) {
+                    tmpMat[tmp / width][tmp % width] = mat[j * 8 + 8 - k - 1][i];
+                    tmp ++;
+                }
+            }
+        }
+
+        int start = 0;
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                int byte_index = (i * width + j) / 8;
+                int byte_offset = (i * width + j) % 8;
+
+                if (tmpMat[i][j]) {
+                    buf[start + byte_index] |= 0x80 >> byte_offset;
+                }
+            }
+        }
+
+        // no need to add the offset of color
+        int write_offset = index * imgIconSize + preSize;
+        FileIO.setBytes(rcon, write_offset, buf.length, buf);
 
         return true;
     }

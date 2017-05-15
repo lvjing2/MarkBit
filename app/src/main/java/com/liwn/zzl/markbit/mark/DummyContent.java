@@ -148,6 +148,9 @@ public class DummyContent {
                 }
             }
 
+            DummyItem dummyItem = newDummyContentItem(old_control_id, new_control_id, new_control_id, false, false, "v0.0", bitmap, FileIO.default_file_name, true);
+            ALL_ITEM_MAP.put(old_control_id, dummyItem);
+
             // set to replaced item.
             int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_position_id;
 //            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
@@ -167,6 +170,9 @@ public class DummyContent {
                     ITEM_MAP_B.put(temp_id, dummyItem);
                 }
             }
+
+            DummyItem dummyItem = newDummyContentItem(old_control_id, new_control_id, new_control_id, false, false, "v0.0", bitmap, FileIO.default_file_name, true);
+            ALL_ITEM_MAP.put(old_control_id, dummyItem);
 
 //            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
             int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_position_id;
