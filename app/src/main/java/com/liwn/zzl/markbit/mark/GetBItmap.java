@@ -337,7 +337,6 @@ public class GetBitmap {
     public static boolean saveIconBitMatrix(@NonNull boolean[][] mat, int offset, int index) {
 
         File icon = FileIO.getIconFile();
-        File rcon = FileIO.getRconFile();
 
         int byte_size = 8;
         int height = mat.length;
@@ -384,8 +383,8 @@ public class GetBitmap {
         }
 
         // no need to add the offset of color
-        int write_offset = index * imgIconSize / 2 + preSize;
-        FileIO.setBytes(rcon, write_offset, buf.length, buf);
+        int write_offset = index * imgIconSize + preSize;
+        FileIO.setBytes(icon, write_offset, buf.length, buf);
         // TODO: set bytes to rcon
 //        FileIO.setBytes(rcon, index * buf_size, buf.length, buf);
 
@@ -443,7 +442,7 @@ public class GetBitmap {
         }
 
         // no need to add the offset of color
-        int write_offset = index * imgIconSize + preSize;
+        int write_offset = index * imgIconSize / 2 + preSize;
         FileIO.setBytes(rcon, write_offset, buf.length, buf);
 
         return true;

@@ -116,6 +116,7 @@
     <string name="yellow">yellow</string>
     <string name="red">red</string>
     <string name="modify_mark_text_hint">two numbers, one or four chinese characters</string>
-    <string name="blank">  </string>
+    <string name="save_notification_title">Modification not saved.</string>
+    <string name="save_notification_message">Are you sure to back?</string>
     <string name="modify_save_successfully">save successfully</string>
 </resources>
