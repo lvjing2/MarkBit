@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -12,4 +12,13 @@
         android:layout_width="@dimen/allItemWidth"
         android:layout_height="@dimen/allItemHeight"
         android:contentDescription="mark img" />
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/editable_label"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:src="@mipmap/ic_mode_edit_black_24dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp" />
+</RelativeLayout>

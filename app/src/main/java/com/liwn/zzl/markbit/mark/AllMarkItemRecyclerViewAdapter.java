@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.liwn.zzl.markbit.MarkBitApplication;
 import com.liwn.zzl.markbit.MarkItemFragment;
 import com.liwn.zzl.markbit.MarkItemFragment.OnListFragmentInteractionListener;
 import com.liwn.zzl.markbit.R;
@@ -43,12 +45,30 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case 1:
+                holder.mEditableLabel.setVisibility(View.VISIBLE);
+                break;
+            case 0:
+                holder.mEditableLabel.setVisibility(View.INVISIBLE);
+                break;
+        }
+
         holder.mItem = mValues.get(position);
         holder.mImgView.setImageBitmap(mValues.get(position).img);
         holder.old_position_id = old_position_id;
         holder.old_control_id = old_control_id;
 //        holder.mIdView.setText(String.valueOf(mValues.get(position).position));
 //        holder.mNameView.setText(mValues.get(position).filePath);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mValues.get(position).control_id < MarkBitApplication.MODIFIABLE_MARK_NUM) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -62,6 +82,7 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
         public final View mView;
         public final Context mParentContext;
         public final ImageView mImgView;
+        public final ImageView mEditableLabel;
 
 
         @Override
@@ -101,6 +122,8 @@ public class AllMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<AllMark
             mView = view;
             mParentContext = context;
             mImgView = (ImageView) view.findViewById(R.id.mark_allItem_img);
+            mEditableLabel = (ImageView) view.findViewById(R.id.editable_label);
+
 //            mIdView = (TextView) view.findViewById(R.id.markItem_id);
 //            mNameView = (TextView) view.findViewById(R.id.markItem_name);
 //            view.setOnCreateContextMenuListener(this);

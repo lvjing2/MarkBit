@@ -48,8 +48,17 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case 1:
+                holder.mEditableLabel.setVisibility(View.VISIBLE);
+                break;
+            case 0:
+                holder.mEditableLabel.setVisibility(View.INVISIBLE);
+                break;
+        }
         holder.mItem = mValues.get(position);
         holder.mImgView.setImageBitmap(mValues.get(position).img);
+
 //        holder.mIdView.setText(String.valueOf(mValues.get(position).control_id));
 //        holder.mNameView.setText(mValues.get(position).filePath);
 
@@ -66,6 +75,15 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
     }
 
     @Override
+    public int getItemViewType(int position) {
+        if (mValues.get(position).control_id < MarkBitApplication.MODIFIABLE_MARK_NUM) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public int getItemCount() {
         return mValues.size();
     }
@@ -75,6 +93,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
         public final View mView;
         public final Context mParentContext;
         public final ImageView mImgView;
+        public final ImageView mEditableLabel;
 //        public final TextView mIdView;
 //        public final TextView mNameView;
         public DummyItem mItem;
@@ -84,6 +103,7 @@ public class MyMarkItemRecyclerViewAdapter extends RecyclerView.Adapter<MyMarkIt
             mView = view;
             mParentContext = context;
             mImgView = (ImageView) view.findViewById(R.id.markItem_img);
+            mEditableLabel = (ImageView) view.findViewById(R.id.editable_label);
 //            mIdView = (TextView) view.findViewById(R.id.markItem_id);
 //            mNameView = (TextView) view.findViewById(R.id.markItem_name);
             view.setOnCreateContextMenuListener(this);

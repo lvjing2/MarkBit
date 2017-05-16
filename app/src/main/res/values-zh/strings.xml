@@ -59,7 +59,7 @@
 
   <string name="not_synced">请将%1$s发送至设备!</string>
   <string name="i_r_not_synced">请将%1$s和%2$s发送至相应的设备!</string>
-  <string name="please_synced">请通过蓝牙将更新的设置发送至设备</string>
+  <string name="please_synced">请通过蓝牙将修改的设置发送至设备</string>
 
   <string-array name="battery_types">
     <item>三元电池</item>
