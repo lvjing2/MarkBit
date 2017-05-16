@@ -119,4 +119,5 @@
     <string name="save_notification_title">Modification not saved.</string>
     <string name="save_notification_message">Are you sure to back?</string>
     <string name="modify_save_successfully">save successfully</string>
+    <string name="input_text_notification">Please input valid characters.</string>
 </resources>

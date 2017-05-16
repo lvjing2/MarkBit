@@ -97,6 +97,11 @@ public class DrawActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Str2FixMat str2FixMat = new Str2FixMat(markText.getText().toString(), MarkBitApplication.BIT_LCD_WIDTH, MarkBitApplication.BIT_LCD_HEIGHT, mContext);
+                if (str2FixMat.getMat() == null || str2FixMat.getMat().length == 0) {
+                    Toast.makeText(mContext, R.string.input_text_notification, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 boolean[][] mat = str2FixMat.getMat();
                 GetBitmap getBitmap = new GetBitmap();
                 Bitmap bitmap = getBitmap.getBitmap(mat, colorSwitch.isChecked());
@@ -108,6 +113,16 @@ public class DrawActivity extends AppCompatActivity {
                 isSaved = true;
                 //TODO: save
                 submit.setEnabled(false);
+
+                Intent i = new Intent();
+                int new_position_id = old_position_id;
+                int new_control_id = old_control_id;
+                i.putExtra(MarkItemFragment.OLD_POS_ID, old_position_id);
+                i.putExtra(MarkItemFragment.OLD_CTL_ID, old_control_id);
+                i.putExtra(MarkItemFragment.NEW_POS_ID, old_position_id);
+                i.putExtra(MarkItemFragment.NEW_CTL_ID, new_control_id);
+                ((Activity) mContext).setResult(Activity.RESULT_OK, i);
+                finish();
             }
         });
 

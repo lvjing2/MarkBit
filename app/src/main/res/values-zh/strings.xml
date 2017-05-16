@@ -116,8 +116,9 @@
 
   <string name="yellow">黄色</string>
   <string name="red">红色</string>
-  <string name="modify_mark_text_hint">请输入两个数字或四个汉字</string>
+  <string name="modify_mark_text_hint">请输入两个数字,一个或四个汉字</string>
   <string name="save_notification_title">修改未保存</string>
   <string name="save_notification_message">修改未保存,确认返回?</string>
   <string name="modify_save_successfully">保存成功</string>
+  <string name="input_text_notification">请输入两个数字,一个或四个汉字.</string>
 </resources>
