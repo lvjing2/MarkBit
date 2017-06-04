@@ -446,12 +446,14 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 if (new_file != null) {
                     int allBytes = (int) new_file.length();
 
-                    if (type == MarkBitApplication.UPDATE_TYPE_SETTING) {
+                    if (MarkBitApplication.UPDATE_TYPE_SETTING.equals(type)) {
                         mSendFileFragment.initProgressBar(MarkBitApplication.MARK_SETTING_SIZE);
-                    } else if (type == MarkBitApplication.UPDATE_TYPE_LIBRARY) {
+                    } else if (MarkBitApplication.UPDATE_TYPE_LIBRARY.equals(type)) {
                         mSendFileFragment.initProgressBar(allBytes);
+                    } else {
+                        Log.e(TAG, "update type undefined!");
+                        mSendFileFragment.initProgressBar(MarkBitApplication.MARK_SETTING_SIZE);
                     }
-//                    mSendFileFragment.initProgressBar(allBytes);
                     isFileStartSend = true;
 
 //                    initSendBytes();
@@ -466,10 +468,13 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             } else {
                 if (new_file != null) {
                     int allBytes = (int)new_file.length();
-                    if (type == MarkBitApplication.UPDATE_TYPE_SETTING) {
+                    if (MarkBitApplication.UPDATE_TYPE_SETTING.equals(type)) {
                         mSendFileFragment.initProgressBar(MarkBitApplication.MARK_SETTING_SIZE);
-                    } else if (type == MarkBitApplication.UPDATE_TYPE_LIBRARY) {
+                    } else if (MarkBitApplication.UPDATE_TYPE_LIBRARY.equals(type)) {
                         mSendFileFragment.initProgressBar(allBytes);
+                    } else {
+                        Log.e(TAG, "update type undefined!");
+                        mSendFileFragment.initProgressBar(MarkBitApplication.MARK_SETTING_SIZE);
                     }
 //                    mSendFileFragment.initProgressBar(allBytes);
 
@@ -540,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                         mMarkItemFragment.replaceMark(true, old_position_id, old_control_id, new_position_id, new_control_id);
 
                         MarkBitApplication.i_synced = false;
-//                        MarkBitApplication.r_synced = false;
+                        MarkBitApplication.r_synced = false;
                         updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                     }
                 }
@@ -556,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                         mMarkItemFragment.replaceMark(false, old_position_id, old_control_id, new_position_id, new_control_id);
 
                         MarkBitApplication.i_synced = false;
-//                        MarkBitApplication.r_synced = false;
+                        MarkBitApplication.r_synced = false;
                         updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
                     }
                 }
@@ -804,28 +809,28 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
     }
 
     private void updateSelfNotification(boolean i_synced, boolean r_synced) {
-//        if (i_synced && r_synced) {
-//            synced_notification.setVisibility(View.GONE);
-//        } else if (i_synced && !r_synced) {
-//            String notification = String.format(getString(R.string.not_synced), getString(R.string.R_name));
-//            synced_notification.setText(notification);
-//            synced_notification.setVisibility(View.VISIBLE);
-//        } else if (!i_synced && r_synced) {
-//            String notification = String.format(getString(R.string.not_synced), getString(R.string.I_name));
-//            synced_notification.setText(notification);
-//            synced_notification.setVisibility(View.VISIBLE);
-//        } else if (!i_synced && !r_synced) {
-//            String notification = String.format(getString(R.string.i_r_not_synced), getString(R.string.I_name), getString(R.string.R_name));
-//            synced_notification.setText(notification);
-//            synced_notification.setVisibility(View.VISIBLE);
-//        }
-
-        if (!i_synced || !r_synced) {
-            synced_notification.setVisibility(View.VISIBLE);
-            synced_notification.setText(getString(R.string.please_synced));
-        } else {
+        if (i_synced && r_synced) {
             synced_notification.setVisibility(View.GONE);
+        } else if (i_synced && !r_synced) {
+            String notification = String.format(getString(R.string.not_synced), getString(R.string.R_show_name));
+            synced_notification.setText(notification);
+            synced_notification.setVisibility(View.VISIBLE);
+        } else if (!i_synced && r_synced) {
+            String notification = String.format(getString(R.string.not_synced), getString(R.string.I_show_name));
+            synced_notification.setText(notification);
+            synced_notification.setVisibility(View.VISIBLE);
+        } else if (!i_synced && !r_synced) {
+            String notification = String.format(getString(R.string.i_r_not_synced), getString(R.string.I_show_name), getString(R.string.R_show_name));
+            synced_notification.setText(notification);
+            synced_notification.setVisibility(View.VISIBLE);
         }
+
+//        if (!i_synced || !r_synced) {
+//            synced_notification.setVisibility(View.VISIBLE);
+//            synced_notification.setText(getString(R.string.please_synced));
+//        } else {
+//            synced_notification.setVisibility(View.GONE);
+//        }
     }
 
     public void updateNotification(boolean i_synced, boolean r_synced) {

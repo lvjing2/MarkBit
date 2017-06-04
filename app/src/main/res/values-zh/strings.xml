@@ -57,8 +57,8 @@
   <string name="low_voltage_switch">低电压检测: </string>
   <string name="dump_switch">倾斜检测: </string>
 
-  <string name="not_synced">请将%1$s发送至设备!</string>
-  <string name="i_r_not_synced">请将%1$s和%2$s发送至相应的设备!</string>
+  <string name="not_synced">请将更新通过蓝牙发送至%1$s!</string>
+  <string name="i_r_not_synced">请将更新通过蓝牙发送至%1$s和%2$s!</string>
   <string name="please_synced">请通过蓝牙将修改的设置发送至设备</string>
 
   <string-array name="battery_types">
@@ -73,7 +73,9 @@
   <string name="I_name">icon100.bin</string>
   <string name="R_name">rcon100.bin</string>
   <string name="I_device_name">ZC-LEDBOARD</string>
-  <string name="R_device_name">ZC-TELECTRL</string>
+  <string name="R_device_name">ZC-REMOTE</string>
+  <string name="I_show_name">显示设备</string>
+  <string name="R_show_name">远程控制设备</string>
   <string name="factory_name">ZhongChe</string>
 
   <string name="mark_replace_title">替换</string>

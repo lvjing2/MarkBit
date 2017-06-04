@@ -57,8 +57,8 @@
     <string name="low_voltage_switch">Low voltage switch: </string>
     <string name="dump_switch">Dump switch: </string>
 
-    <string name="not_synced">%1$s not synchronized!</string>
-    <string name="i_r_not_synced">%1$s and %2$s not synchronized!</string>
+    <string name="not_synced">Please update setting to %1$s by bluetooth!</string>
+    <string name="i_r_not_synced">Please update setting to %1$s and %2$s by bluetooth!</string>
     <string name="please_synced">Please update setting by bluetooth.</string>
 
     <string-array name="battery_types">
@@ -72,7 +72,9 @@
     <string name="I_name">icon100.bin</string>
     <string name="R_name">rcon100.bin</string>
     <string name="I_device_name">ZC-LEDBOARD</string>
-    <string name="R_device_name">ZC-TELECTRL</string>
+    <string name="R_device_name">ZC-REMOTE</string>
+    <string name="I_show_name">Display device</string>
+    <string name="R_show_name">Remote control device</string>
     <string name="factory_name">ZhongChe</string>
 
     <string name="mark_replace_title">Replace with this mark</string>

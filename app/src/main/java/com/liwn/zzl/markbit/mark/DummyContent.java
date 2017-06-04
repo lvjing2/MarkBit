@@ -71,6 +71,7 @@ public class DummyContent {
 
     }
 
+    // change the item num of frequency used mark
     public static void updateItem(int num) {
         int size_A = ITEM_MAP_A.size();
         int size_B = ITEM_MAP_B.size();
@@ -114,6 +115,7 @@ public class DummyContent {
         }
     }
 
+    // change the item num of all mark
     public static void updateAllItem(int num) {
         int size = ALL_ITEM_MAP.size();
         if (num == size) {
@@ -132,6 +134,7 @@ public class DummyContent {
         }
     }
 
+    // change the content of item
     public static void replaceItemContent(boolean type, int old_position_id, int old_control_id, int new_position_id, int new_control_id) {
         Log.e("DummyContent", String.valueOf(type) + "; old_position_id: " + old_position_id + ", new_position_id: " + new_position_id
                 +"; old_control_id: " + old_control_id + ", new_control_id: " + new_control_id);
@@ -151,15 +154,15 @@ public class DummyContent {
             DummyItem dummyItem = newDummyContentItem(old_control_id, new_control_id, new_control_id, false, false, "v0.0", bitmap, FileIO.default_file_name, true);
             ALL_ITEM_MAP.put(old_control_id, dummyItem);
 
-            // set to replaced item.
-            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_position_id;
-//            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
-
-            int set_num = 1;
-            byte[] value = new byte[set_num];
-            value[0] = (byte) new_control_id;
-            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
-//            FileIO.setBytes(MarkBitApplication.r_file, r_offset, set_num, value);
+//            // set to replaced item.
+//            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_position_id;
+////            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
+//
+//            int set_num = 1;
+//            byte[] value = new byte[set_num];
+//            value[0] = (byte) new_control_id;
+//            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
+////            FileIO.setBytes(MarkBitApplication.r_file, r_offset, set_num, value);
         } else {
             Bitmap bitmap = new GetBitmap().getBitmap(new_control_id);
             for (Map.Entry entry : ITEM_MAP_B.entrySet()) {
@@ -174,17 +177,18 @@ public class DummyContent {
             DummyItem dummyItem = newDummyContentItem(old_control_id, new_control_id, new_control_id, false, false, "v0.0", bitmap, FileIO.default_file_name, true);
             ALL_ITEM_MAP.put(old_control_id, dummyItem);
 
-//            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
-            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_position_id;
-
-            int set_num = 1;
-            byte[] value = new byte[set_num];
-            value[0] = (byte) new_control_id;
-//            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
-            FileIO.setBytes(MarkBitApplication.i_file, r_offset, set_num, value);
+////            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
+//            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_position_id;
+//
+//            int set_num = 1;
+//            byte[] value = new byte[set_num];
+//            value[0] = (byte) new_control_id;
+////            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
+//            FileIO.setBytes(MarkBitApplication.i_file, r_offset, set_num, value);
         }
     }
 
+    // change the index of item
     public static void replaceItem(boolean type, int old_position_id, int old_control_id, int new_position_id, int new_control_id) {
         Log.e("DummyContent", String.valueOf(type) + "; old_position_id: " + old_position_id + ", new_position_id: " + new_position_id
         +"; old_control_id: " + old_control_id + ", new_control_id: " + new_control_id);
@@ -198,14 +202,13 @@ public class DummyContent {
             ITEM_MAP_A.put(old_position_id, dummyItem);
 
             // set to replaced item.
-            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_position_id;
-//            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
+            int offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_position_id;
 
             int set_num = 1;
             byte[] value = new byte[set_num];
             value[0] = (byte) new_control_id;
-            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
-//            FileIO.setBytes(MarkBitApplication.r_file, r_offset, set_num, value);
+            FileIO.setBytes(MarkBitApplication.i_file, offset, set_num, value);
+            FileIO.setBytes(MarkBitApplication.r_file, offset, set_num, value);
         } else {
             Bitmap bitmap = new GetBitmap().getBitmap(new_control_id);
             DummyItem dummyItem = newDummyContentItem(old_position_id, new_control_id, new_control_id, false, false, "v0.0", bitmap, FileIO.default_file_name, type);
@@ -213,50 +216,13 @@ public class DummyContent {
             ITEM_MAP_B.remove(old_position_id);
             ITEM_MAP_B.put(old_position_id, dummyItem);
 
-//            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
-            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_position_id;
+            int offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_position_id;
 
             int set_num = 1;
             byte[] value = new byte[set_num];
             value[0] = (byte) new_control_id;
-//            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
-            FileIO.setBytes(MarkBitApplication.i_file, r_offset, set_num, value);
-        }
-    }
-
-    public static void modifyItem(boolean type, int old_id, int new_id) {
-        Log.e("DummyContent", String.valueOf(type) + "; old_id: " + old_id + "; new_id: " + new_id);
-
-        if (type) {
-            Bitmap bitmap = new GetBitmap().getBitmap(new_id);
-            DummyItem dummyItem = newDummyContentItem(old_id, new_id, new_id, false, false, "v0.0", bitmap, FileIO.default_file_name, type);
-
-            ITEM_MAP_A.remove(old_id);
-            ITEM_MAP_A.put(old_id, dummyItem);
-
-            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
-//            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
-
-            int set_num = 1;
-            byte[] value = new byte[set_num];
-            value[0] = (byte) new_id;
-            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
-//            FileIO.setBytes(MarkBitApplication.r_file, r_offset, set_num, value);
-        } else {
-            Bitmap bitmap = new GetBitmap().getBitmap(new_id);
-            DummyItem dummyItem = newDummyContentItem(old_id, new_id, new_id, false, false, "v0.0", bitmap, FileIO.default_file_name, type);
-
-            ITEM_MAP_B.remove(old_id);
-            ITEM_MAP_B.put(old_id, dummyItem);
-
-//            int i_offset = (FileIO.A_INDEX_LIB_ADDR & 0xff) + old_id;
-            int r_offset = (FileIO.B_INDEX_LIB_ADDR & 0xff) + old_id;
-
-            int set_num = 1;
-            byte[] value = new byte[set_num];
-            value[0] = (byte) new_id;
-//            FileIO.setBytes(MarkBitApplication.i_file, i_offset, set_num, value);
-            FileIO.setBytes(MarkBitApplication.i_file, r_offset, set_num, value);
+            FileIO.setBytes(MarkBitApplication.i_file, offset, set_num, value);
+            FileIO.setBytes(MarkBitApplication.r_file, offset, set_num, value);
         }
     }
 

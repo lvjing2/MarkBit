@@ -108,6 +108,8 @@ public class DrawActivity extends AppCompatActivity {
                 markPreview.setImageBitmap(bitmap);
                 GetBitmap.saveIconBitMatrix(mat, colorSwitch.isChecked() ? 0 : 1, old_control_id);
                 GetBitmap.saveRconBitMatrix(mat, colorSwitch.isChecked() ? 0 : 1, old_control_id);
+                MarkBitApplication.i_synced = false;
+                MarkBitApplication.r_synced = false;
 
                 Toast.makeText(v.getContext(), R.string.modify_save_successfully, Toast.LENGTH_LONG).show();
                 isSaved = true;
