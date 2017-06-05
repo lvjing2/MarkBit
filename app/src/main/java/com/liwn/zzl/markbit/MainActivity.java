@@ -686,11 +686,19 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
             } else if (isUpdateType[0].equals(MarkBitApplication.UPDATE_TYPE_LIBRARY)) {
                 Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
             }
-//            Log.e(TAG, "filename: " + file.getName());
-            if (getString(R.string.I_name).equals(file.getName())) {
+            Log.i(TAG, "filename: " + file.getName());
+//            if (getString(R.string.I_name).equals(file.getName())) {
+//                MarkBitApplication.i_synced = true;
+//            } else if (getString(R.string.R_name).equals(file.getName())) {
+//                MarkBitApplication.r_synced = true;
+//            }
+
+            if (file.getName().startsWith(getString(R.string.I_name).split(".")[0]) && file.getName().endsWith(getString(R.string.I_name).split(".")[1])) {
                 MarkBitApplication.i_synced = true;
-            } else if (getString(R.string.R_name).equals(file.getName())) {
+            } else if (file.getName().startsWith(getString(R.string.R_name).split(".")[0]) && file.getName().endsWith(getString(R.string.R_name).split(".")[1])) {
                 MarkBitApplication.r_synced = true;
+            } else {
+                Log.e(TAG, "filename: " + file.getName() + "is not valid.");
             }
 
             updateSelfNotification(MarkBitApplication.i_synced, MarkBitApplication.r_synced);
