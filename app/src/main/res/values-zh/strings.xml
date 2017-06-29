@@ -20,12 +20,12 @@
   <string name="send_setting">更新设备参数</string>
   <string name="send_file_result_succeed">图库更改成功!</string>
   <string name="update_setting_result_succeed">设备设置更改成功!</string>
-  <string name="file_sending_title">文件发送中...</string>
-  <string name="file_sending_msg">文件发送进度...</string>
+  <string name="file_sending_title">文件发送中&#8230;</string>
+  <string name="file_sending_msg">文件发送进度&#8230;</string>
   <string name="not_connected">未连接任何设备</string>
   <string name="bluetooth_not_available">蓝牙不可用!</string>
   <string name="unknown_device">未知设备</string>
-  <string name="scanning">扫描设备...</string>
+  <string name="scanning">扫描设备&#8230;</string>
   <string name="select_device">选择连接的设备</string>
   <string name="title_other_devices">其他设备</string>
   <string name="button_scan">扫描新设备</string>
@@ -111,6 +111,8 @@
   <string name="allowed_ble_device_name">请将蓝牙连接至: </string>
   <string name="lib_not_found">图库文件不存在.</string>
 
+  <string name="library_type">请选择图库类型</string>
+  <string name="default_user_type">默认类型</string>
   <string name="downloading">正在下载最新图库&#8239;</string>
   <string name="net_hit">请先连通网络.</string>
   <string name="downlaod_success">下载成功!</string>
