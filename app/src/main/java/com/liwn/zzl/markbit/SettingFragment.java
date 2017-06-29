@@ -37,6 +37,7 @@ public class SettingFragment extends Fragment {
     private Switch st_magnetic;
     private Switch st_low_voltage;
     private Switch st_dump;
+    private final static int MIN_ALL_SAMPLE_NUM = 30;
 
     private OnFragmentInteractionListener mListener;
 
@@ -127,9 +128,9 @@ public class SettingFragment extends Fragment {
         sb_all_samples_num.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress < 100) {
-                    seekBar.setProgress(100);
-                    tv_all_samples_num_show.setText(String.valueOf(100));
+                if (progress < MIN_ALL_SAMPLE_NUM) {
+                    seekBar.setProgress(MIN_ALL_SAMPLE_NUM);
+                    tv_all_samples_num_show.setText(String.valueOf(MIN_ALL_SAMPLE_NUM));
                 } else {
                     tv_all_samples_num_show.setText(String.valueOf(progress));
                 }

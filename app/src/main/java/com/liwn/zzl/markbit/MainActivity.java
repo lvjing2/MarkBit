@@ -687,15 +687,10 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 Toast.makeText(this, getString(R.string.send_file_result_succeed), Toast.LENGTH_SHORT).show();
             }
             Log.i(TAG, "filename: " + file.getName());
-//            if (getString(R.string.I_name).equals(file.getName())) {
-//                MarkBitApplication.i_synced = true;
-//            } else if (getString(R.string.R_name).equals(file.getName())) {
-//                MarkBitApplication.r_synced = true;
-//            }
 
-            if (file.getName().startsWith(getString(R.string.I_name).split(".")[0]) && file.getName().endsWith(getString(R.string.I_name).split(".")[1])) {
+            if (file.getName().startsWith(getString(R.string.I_name).split("\\.")[0]) && file.getName().endsWith(getString(R.string.I_name).split("\\.")[1])) {
                 MarkBitApplication.i_synced = true;
-            } else if (file.getName().startsWith(getString(R.string.R_name).split(".")[0]) && file.getName().endsWith(getString(R.string.R_name).split(".")[1])) {
+            } else if (file.getName().startsWith(getString(R.string.R_name).split("\\.")[0]) && file.getName().endsWith(getString(R.string.R_name).split("\\.")[1])) {
                 MarkBitApplication.r_synced = true;
             } else {
                 Log.e(TAG, "filename: " + file.getName() + "is not valid.");
@@ -795,7 +790,7 @@ public class MainActivity extends AppCompatActivity implements MarkItemFragment.
                 byte[] subMes = Arrays.copyOfRange(message, i * perLen, (i+1) * perLen);
                 mBluetoothLeService.WriteValue(subMes);
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(25);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

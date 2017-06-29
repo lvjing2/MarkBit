@@ -1,6 +1,7 @@
 package com.liwn.zzl.markbit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -72,6 +73,8 @@ public class SendFileFragment extends Fragment {
     private Button btLogout;
     private boolean isBTConnected;
     private DownloadTask downloadTask;
+    private int userTypeCnt = 100;
+    private String[] userTypes = new String[userTypeCnt + 1];
 
     public void enableBT() {
         isBTConnected = true;
@@ -119,6 +122,7 @@ public class SendFileFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_sendfile, container, false);
 
+        setUserTypes();
         btFileSend = (Button) mView.findViewById(R.id.bt_file_send);
         btDownload = (Button) mView.findViewById(R.id.bt_file_download);
         btUpdateSetting = (Button) mView.findViewById(R.id.bt_setting_send);
@@ -157,7 +161,19 @@ public class SendFileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isBTConnected) {
-                    File file = FileIO.getIconFile();
+                    // TODO: send which file acording to the device name
+                    File file;
+                    if (compareDeviceName(MarkBitApplication.connectedDeviceName, getString(R.string.I_device_name))) {
+                        file = FileIO.getIconFile();
+                    } else if (compareDeviceName(MarkBitApplication.connectedDeviceName, getString(R.string.R_device_name))) {
+                        file = FileIO.getRconFile();
+                    } else {
+                        Toast.makeText(activityContext, getString(R.string.allowed_ble_device_name) + " " +
+                                        getString(R.string.I_device_name) + " " + getString(R.string.or) + " " + getString(R.string.R_device_name),
+                                Toast.LENGTH_SHORT).show();
+                        file = null;
+                        return;
+                    }
                     if (file != null) {
                         Uri setUri = Uri.fromFile(file);
                         mListener.sendFileFromUriByBT(setUri, MarkBitApplication.UPDATE_TYPE_SETTING);
@@ -192,7 +208,7 @@ public class SendFileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        downloadTask = new DownloadTask(activityContext);
+        downloadTask = new DownloadTask(activityContext, 0);
         mDownloadProgress = new ProgressDialog(activityContext);
         mDownloadProgress.setMessage(getString(R.string.downloading));
         mDownloadProgress.setIndeterminate(true);
@@ -206,17 +222,7 @@ public class SendFileFragment extends Fragment {
             }
         });
 
-        btDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isOnline()) {
-                    final DownloadTask downloadTask = new DownloadTask(activityContext);
-                    downloadTask.execute();
-                } else {
-                    Toast.makeText(activityContext, R.string.net_hit, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        btDownload.setOnClickListener(new AlertClickListener());
     }
 
     @Override
@@ -276,6 +282,13 @@ public class SendFileFragment extends Fragment {
         dialog.dismiss();
     }
 
+    private void setUserTypes() {
+        userTypes[0] = getString(R.string.default_user_type);
+        for (int i = 1; i <= userTypeCnt; ++i) {
+            userTypes[i] = String.valueOf(i);
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -291,25 +304,52 @@ public class SendFileFragment extends Fragment {
         void cancleFileSend();
     }
 
+    private class AlertClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            new AlertDialog.Builder(activityContext).setTitle(R.string.library_type).setItems(userTypes, new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                    if (isOnline()) {
+                        final DownloadTask downloadTask = new DownloadTask(activityContext, which);
+                        downloadTask.execute();
+                    } else {
+                        Toast.makeText(activityContext, R.string.net_hit, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }).show();
+        }
+    }
+
     private class DownloadTask extends AsyncTask<String, Integer, String> {
 
         private Context context;
+        private int userType;
         private PowerManager.WakeLock mWakeLock;
-        private String flagI = "icon";
-        private String flagR = "rcon";
+        private String flagI = "icon100";
+        private String flagR = "rcon100";
         private boolean isGetI = false;
         private boolean isGetR = false;
         private Map<String, String> urls = new HashMap<>();
 
-        public DownloadTask(Context context) {
+        public DownloadTask(Context context, int userType) {
             this.context = context;
+            this.userType = userType;
+            if (userType == 0) {
+                this.flagI = this.flagI + ".bin";
+                this.flagR = this.flagR + ".bin";
+            } else {
+                this.flagI = this.flagI + "_" + userType + ".bin";
+                this.flagR = this.flagR + "_" + userType + ".bin";
+            }
         }
 
         private boolean getUrl(Document doc) throws IOException {
             Elements elements = doc.getElementsByClass("li_text");
             for (Element e : elements) {
-                String content = e.child(1).text();
-                if (!isGetI && content.startsWith(flagI)) {
+                String content = e.child(0).child(0).text();
+                if (!isGetI && content.equals(flagI)) {
                     String urlInner = e.child(1).child(0).attr("href");
                     Document docInner = Jsoup.connect(MarkBitApplication.WEB_INDEX + urlInner).get();
                     Elements downloadWraps = docInner.getElementById("content_text").getElementsByTag("a");
@@ -323,7 +363,7 @@ public class SendFileFragment extends Fragment {
                         isGetI = true;
                         break;
                     }
-                } else if (!isGetR && content.startsWith(flagR)) {
+                } else if (!isGetR && content.equals(flagR)) {
                     String urlInner = e.child(1).child(0).attr("href");
                     Document docInner = Jsoup.connect(MarkBitApplication.WEB_INDEX + urlInner).get();
                     Elements downloadWraps = docInner.getElementById("content_text").getElementsByTag("a");

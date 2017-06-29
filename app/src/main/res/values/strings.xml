@@ -110,6 +110,8 @@
     <string name="allowed_ble_device_name">Please connect to: </string>
     <string name="lib_not_found">Library is not existed.</string>
 
+    <string name="library_type">Please choose library type</string>
+    <string name="default_user_type">default</string>
     <string name="downloading">Downloading library...</string>
     <string name="net_hit">Please connect the network firstly.</string>
     <string name="downlaod_success">Download Successfully!</string>

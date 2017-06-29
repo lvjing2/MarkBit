@@ -171,7 +171,8 @@ public class ExampleUnitTest {
         boolean[][] mat = new boolean[height][width];
         try {
 //            File file = FileIO.getIconFile();
-            File file = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/icon100.bin");
+//            File file = new File("C:\\Users\\Administrator\\Documents\\icon100.bin");
+            File file = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\icon100.bin");
             if (file == null) {
                 Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
                 return null;
@@ -221,7 +222,7 @@ public class ExampleUnitTest {
         boolean[][] mat = new boolean[height][width];
         try {
 //            File file = FileIO.getIconFile();
-            File file = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rawcon100.bin");
+            File file = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\rawcon100.bin");
             if (file == null) {
                 Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
                 return null;
@@ -285,7 +286,7 @@ public class ExampleUnitTest {
 //			}
 
                 byte[] cbuf = new byte[offset_step];
-                InputStream inputStream = new FileInputStream(new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/fonts/HZK" + font_size));
+                InputStream inputStream = new FileInputStream(new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\fonts\\HZK" + font_size));
                 inputStream.skip(offset);
                 if (inputStream.read(cbuf, 0, offset_step) < 0) {
                     System.out.println("read failed!");
@@ -350,8 +351,8 @@ public class ExampleUnitTest {
 
     private static byte[] saveBitMatrix(boolean[][] mat, int offset, int index) {
 
-        File icon = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/icon100.bin");
-        File rcon = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rcon100.bin");
+        File icon = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\icon100.bin");
+        File rcon = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\rcon100.bin");
 
         int byte_size = 8;
         int height = mat.length;
@@ -396,15 +397,15 @@ public class ExampleUnitTest {
 
     @Test
     public void generateRcon() {
-        File rawconFile = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rawcon100.bin");
-        File iconFile = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/icon100.bin");
-        File rconFile = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rcon100.bin");
+        File rawconFile = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\rawcon100.bin");
+        File iconFile = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\icon100.bin");
+        File rconFile = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\rcon100.bin");
 
-        boolean[][] icon0 = getIconBin(0, 0);
-        boolean[][] icon1 = getIconBin(0, 1);
+        boolean[][] icon0 = getIconBin(3, 0);
+        boolean[][] icon1 = getIconBin(3, 1);
 //        boolean[][] icon0 = getRawIconBin(0, 0);
 //        boolean[][] icon1 = getRawIconBin(0, 1);
-        boolean[][] rcon = getRconBin(0);
+        boolean[][] rcon = getRconBin(3);
         int height = icon0.length;
         int width = icon0[0].length;
         boolean[][] icon = new boolean[height][width];
@@ -469,6 +470,12 @@ public class ExampleUnitTest {
         printMat(rcon);
     }
 
+    @Test
+    public void printRcon() {
+        boolean[][] rcon = getRconBin(0);
+
+    }
+
     // get bit from bin files
     private boolean[][] getRconBin(int index) {
 
@@ -479,7 +486,8 @@ public class ExampleUnitTest {
 
         boolean[][] mat = new boolean[height][width];
         try {
-            File file = new File("/Users/zzl/Documents/android/MarkBit/app/src/main/assets/bins/rcon100.bin");
+            File file = new File("E:\\projects\\markBit\\MarkBit\\app\\src\\main\\assets\\bins\\rcon100.bin");
+//            File file = new File("C:\\Users\\Administrator\\Documents\\rcon100.bin");
             if (file == null) {
                 Toast.makeText(MarkBitApplication.applicationContext, R.string.bins_not_import, Toast.LENGTH_SHORT).show();
                 return null;

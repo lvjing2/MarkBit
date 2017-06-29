@@ -385,8 +385,6 @@ public class GetBitmap {
         // no need to add the offset of color
         int write_offset = index * imgIconSize + preSize;
         FileIO.setBytes(icon, write_offset, buf.length, buf);
-        // TODO: set bytes to rcon
-//        FileIO.setBytes(rcon, index * buf_size, buf.length, buf);
 
         return true;
     }
