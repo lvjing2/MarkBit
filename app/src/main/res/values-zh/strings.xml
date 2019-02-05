@@ -66,6 +66,12 @@
     <item>锂电池</item>
   </string-array>
 
+  <string name="bin_type">请选择图库类型</string>
+  <string name="zhtk">综合图库</string>
+  <string name="gaxf">公安消防</string>
+  <string name="gajj">公安交警</string>
+  <string name="jtyz">交通运政</string>
+
   <string name="battery_types_on">三元电池</string>
   <string name="battery_types_off">锂电池</string>
 

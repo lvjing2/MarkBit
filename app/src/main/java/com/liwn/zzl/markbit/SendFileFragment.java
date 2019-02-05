@@ -25,6 +25,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.liwn.zzl.markbit.bins.BinsDownloadUrl;
+import com.liwn.zzl.markbit.bins.IRPairs;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -283,8 +286,12 @@ public class SendFileFragment extends Fragment {
     }
 
     private void setUserTypes() {
-        userTypes[0] = getString(R.string.default_user_type);
-        for (int i = 1; i <= userTypeCnt; ++i) {
+        userTypes[0] = getString(R.string.zhtk);
+        userTypes[1] = getString(R.string.gaxf);
+        userTypes[2] = getString(R.string.gajj);
+        userTypes[3] = getString(R.string.jtyz);
+
+        for (int i = 4; i <= userTypeCnt; ++i) {
             userTypes[i] = String.valueOf(i);
         }
     }
@@ -327,8 +334,8 @@ public class SendFileFragment extends Fragment {
         private Context context;
         private int userType;
         private PowerManager.WakeLock mWakeLock;
-        private String flagI = "icon100";
-        private String flagR = "rcon100";
+        private String flagI = "icon100.bin";
+        private String flagR = "rcon100.bin";
         private boolean isGetI = false;
         private boolean isGetR = false;
         private Map<String, String> urls = new HashMap<>();
@@ -336,95 +343,14 @@ public class SendFileFragment extends Fragment {
         public DownloadTask(Context context, int userType) {
             this.context = context;
             this.userType = userType;
-            if (userType == 0) {
-                this.flagI = this.flagI + ".bin";
-                this.flagR = this.flagR + ".bin";
-            } else {
-                this.flagI = this.flagI + "_" + userType + ".bin";
-                this.flagR = this.flagR + "_" + userType + ".bin";
-            }
         }
 
-        private boolean getUrl(Document doc) throws IOException {
-            Elements elements = doc.getElementsByClass("li_text");
-            for (Element e : elements) {
-                String content = e.child(0).child(0).text();
-                if (!isGetI && content.equals(flagI)) {
-                    String urlInner = e.child(1).child(0).attr("href");
-                    Document docInner = Jsoup.connect(MarkBitApplication.WEB_INDEX + urlInner).get();
-                    Elements downloadWraps = docInner.getElementById("content_text").getElementsByTag("a");
-                    for (Element downloadWrap : downloadWraps) {
-                        String downloadUrl = downloadWrap.attr("href");
-                        if (!downloadUrl.contains(MarkBitApplication.WEB_INDEX)) {
-                            downloadUrl = MarkBitApplication.WEB_INDEX + downloadUrl;
-                        }
-                        Log.e("download url " + flagI, downloadUrl);
-                        urls.put(flagI, downloadUrl);
-                        isGetI = true;
-                        break;
-                    }
-                } else if (!isGetR && content.equals(flagR)) {
-                    String urlInner = e.child(1).child(0).attr("href");
-                    Document docInner = Jsoup.connect(MarkBitApplication.WEB_INDEX + urlInner).get();
-                    Elements downloadWraps = docInner.getElementById("content_text").getElementsByTag("a");
-                    for (Element downloadWrap : downloadWraps) {
-                        String downloadUrl = downloadWrap.attr("href");
-                        if (!downloadUrl.contains(MarkBitApplication.WEB_INDEX)) {
-                            downloadUrl = MarkBitApplication.WEB_INDEX + downloadUrl;
-                        }
-                        Log.e("download url " + flagR, downloadUrl);
-                        urls.put(flagR, downloadUrl);
-                        isGetR = true;
-                        break;
-                    }
-                }
-                if (isGetI && isGetR) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public boolean scanUrls() {
-            try {
-                Document doc = Jsoup.connect(MarkBitApplication.DOWNLOAD_INDEX).get();
-                if (getUrl(doc)) {
-                    return true;
-                }
-
-                // if not found at the first page, then scan the pages one by one
-                Elements pageWraps = doc.getElementsByClass("pages");
-                List<String> pageList = new ArrayList<>();
-                for (Element pageWarp : pageWraps) {
-                    Elements pages = pageWarp.getElementsByTag("a");
-                    for (Element page : pages) {
-                        if (page.text().matches("\\d+")) {
-                            pageList.add(page.attr("href"));
-                            System.out.println(page.attr("href"));
-                        }
-                    }
-                }
-
-                for (String s : pageList) {
-                    Document doci = Jsoup.connect(MarkBitApplication.WEB_INDEX + s).get();
-                    if (getUrl(doci)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-        private String download(String flag) {
+        private String download(int index, String http_url) {
             InputStream input = null;
             OutputStream output = null;
             HttpURLConnection connection = null;
             try {
-                URL url = new URL(urls.get(flag));
+                URL url = new URL(http_url);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
@@ -441,14 +367,8 @@ public class SendFileFragment extends Fragment {
 
                 // download the file
                 input = connection.getInputStream();
-                String filename = "";
-                if (flag.equals(flagI)) {
-                    filename = getString(R.string.I_name);
-                } else if (flag.equals(flagR)) {
-                    filename = getString(R.string.R_name);
-                } else {
-                    filename = getString(R.string.I_name);
-                }
+                String[] http_url_infos = http_url.split("/");
+                String filename = http_url_infos[http_url_infos.length-1];
                 output = new FileOutputStream(FileIO.getMediaFolderName() + "/" + filename);
 
                 byte data[] = new byte[4096];
@@ -462,9 +382,9 @@ public class SendFileFragment extends Fragment {
                     }
                     total += count;
                     // publishing the progress....
-                    if (flag.equals(flagI) && fileLength > 0) {
+                    if (index == 0 && fileLength > 0) {
                         publishProgress((int) (total * 50 / fileLength));
-                    } else if (flag.equals(flagR) && fileLength > 0) {
+                    } else if (index == 1 && fileLength > 0) {
                         publishProgress((int) (50 + total * 100 / fileLength));
                     }
 
@@ -502,19 +422,21 @@ public class SendFileFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... sUrl) {
-            boolean isReady = scanUrls();
-            if (!isReady) {
+            // 0,1,2,3 : 4
+            if (this.userType < BinsDownloadUrl.downloadUrls.size()) {
+                IRPairs pairs = BinsDownloadUrl.downloadUrls.get(this.userType);
+                String res1 = download(0, pairs.getiUrl());
+                String res2 = download(1, pairs.getrUrl());
+                Log.e(TAG, String.format("Download result: %s", res1));
+                Log.e(TAG, String.format("Download result: %s", res2));
+                if ("true".equals(res1) && "true".equals(res2)) {
+                    return "true";
+                }
                 return null;
+            } else {
+                Log.e(TAG, "Download failed cause the bin type is undefined.");
+                return "false";
             }
-
-            String res1 = download(flagI);
-            String res2 = download(flagR);
-            Log.e("Download result", res1);
-            Log.e("Download result", res2);
-            if ("true".equals(res1) && "true".equals(res2)) {
-                return "true";
-            }
-            return null;
         }
 
         @Override

@@ -66,6 +66,12 @@
         <item>Lithium battery</item>
     </string-array>
 
+    <string name="bin_type">Please select the type of marks</string>
+    <string name="zhtk">Common marks</string>
+    <string name="gaxf">Firefighting marks</string>
+    <string name="gajj">Traffic marks</string>
+    <string name="jtyz">Traffic office marks</string>
+
     <string name="battery_types_on">Three cell battery</string>
     <string name="battery_types_off">Lithium battery</string>
 
